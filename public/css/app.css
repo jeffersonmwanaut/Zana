@@ -1,0 +1,31 @@
+html,
+body {
+  font-family: "montserrat", sans-serif;
+}
+
+.bg-zana,
+.btn-zana {
+  background-color: rgba(161, 67, 42, 1);
+  color: white;
+}
+
+.bg-zana-light,
+.btn-zana-light {
+  background-color: rgba(183, 71, 42, 1);
+  color: white;
+}
+
+.bg-zana a,
+.bg-zana-light a {
+  color: white;
+}
+
+.btn-zana:hover {
+  background-color: rgba(161, 67, 42, 0.8);
+  color: white;
+}
+
+.btn-zana-light:hover {
+  background-color: rgba(183, 71, 42, 0.8);
+  color: white;
+}

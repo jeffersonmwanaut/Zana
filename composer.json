@@ -1,0 +1,19 @@
+{
+    "name": "jeffersonmwanaut/zana-framework",
+    "description": "The Zana standard framework",
+    "authors": [
+        {
+            "name": "Jefferson Mwanaut",
+            "email": "jeffersonmwanaut@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Zana\\": "vendor/zana/",
+            "": "src/"
+        }
+    },
+    "require": {
+        "phpmailer/phpmailer": "^6.8"
+    }
+}

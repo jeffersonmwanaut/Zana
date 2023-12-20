@@ -2,13 +2,6 @@
 
 use Zana\Controller;
 use Zana\Router\Router;
-use Zana\Config\Config;
-
-use Zana\ABAC\Policy;
-
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
-use PHPMailer\PHPMailer\Exception;
 
 class MainController extends Controller
 {
@@ -22,22 +15,6 @@ class MainController extends Controller
 
     public function websiteUnderConstruction()
     {
-        $policyConfigFilename = ROOT . '/config/ABAC/policy.json';
-        $policy = new Policy($policyConfigFilename);
-
-        $access = [
-            "subject"=> "user", 
-            "action"=> "view", 
-            "resource"=> "public", 
-            "environment"=> "production" 
-        ];
-
-        if ($policy->checkAccess($access)) {
-            echo "Access granted.";
-        } else {
-            echo "Access denied.";
-        }
-
         return $this->page
             ->addVars([
                 'dTitle' => "Website Under Construction"

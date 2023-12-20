@@ -25,7 +25,7 @@ return [
         'css_root' => $urlRoot . '/public/css',
         'js_root' => $urlRoot . '/public/js',
         'favicon' => [
-            'filename' => 'icon.png',
+            'filename' => $urlRoot . '/public/img/icon.png',
             'type' => 'image/png'
         ],
         'bootstrap' => [

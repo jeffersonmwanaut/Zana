@@ -2,11 +2,6 @@
 
 use Zana\Controller;
 use Zana\Router\Router;
-use Zana\Config\Config;
-
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
-use PHPMailer\PHPMailer\Exception;
 
 class MainController extends Controller
 {

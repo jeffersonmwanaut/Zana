@@ -1,0 +1,40 @@
+{ 
+    "policies": [ 
+        { 
+            "id": "policy_1", 
+            "effect": "allow", 
+            "rules": [ 
+                { 
+                    "subject": "owner", 
+                    "action": "edit", 
+                    "resource": "confidential", 
+                    "environment": "development" 
+                }, 
+                { 
+                    "subject": "admin", 
+                    "action": "edit", 
+                    "resource": "private", 
+                    "environment": "development" 
+                }, 
+                { 
+                    "subject": "user", 
+                    "action": "view", 
+                    "resource": "public", 
+                    "environment": "production" 
+                } 
+            ] 
+        }, 
+        { 
+            "id": "policy_2", 
+            "effect": "deny", 
+            "rules": [ 
+                { 
+                    "subject": "owner", 
+                    "action": "delete", 
+                    "resource": "private", 
+                    "environment": "development" 
+                } 
+            ] 
+        } 
+    ] 
+}

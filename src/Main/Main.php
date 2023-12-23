@@ -15,9 +15,9 @@ class Main extends Module
         );
 
         Router::get(
-            '/website-under-construction',
-            'Main\Controller\MainController#websiteUnderConstruction',
-            '_WEBSITE_UNDER_CONSTRUCTION'
+            '/under-construction',
+            'Main\Controller\MainController#underConstruction',
+            '_UNDER_CONSTRUCTION'
         );
     }
 }

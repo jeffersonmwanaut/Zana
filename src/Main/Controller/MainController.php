@@ -10,16 +10,16 @@ class MainController extends Controller
      */
     public function index()
     {
-        $this->httpResponse->redirect(URL_ROOT . '/' . Router::generateUrl('_WEBSITE_UNDER_CONSTRUCTION'));
+        $this->httpResponse->redirect(URL_ROOT . '/' . Router::generateUrl('_UNDER_CONSTRUCTION'));
     }
 
-    public function websiteUnderConstruction()
+    public function underConstruction()
     {
         return $this->page
             ->addVars([
-                'dTitle' => "Website Under Construction"
+                'dTitle' => "Under Construction"
             ])
-            ->setView(ROOT . '/src/Main/view/website-under-construction.php')
+            ->setView(ROOT . '/src/Main/view/under-construction.php')
             ->setTemplate(ROOT . '/template/base.template.php');
     }
 }

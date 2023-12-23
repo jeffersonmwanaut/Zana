@@ -5,9 +5,6 @@ use Zana\Router\Router;
 
 class MainController extends Controller
 {
-    /**
-     * Redirect to the doc if not implemented
-     */
     public function index()
     {
         $this->httpResponse->redirect(URL_ROOT . '/' . Router::generateUrl('_UNDER_CONSTRUCTION'));

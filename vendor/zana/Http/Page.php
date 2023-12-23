@@ -108,7 +108,7 @@ class Page
             $content = ob_get_clean();
             ob_start();
             require $this->template;
-            echo '<div class="text-center p-3">Powered by <a class="link-underline link-underline-opacity-0" href="' . URL_ROOT . '/' . Router::generateUrl('_DOC') . '">Zana</a></div>';
+            echo '<div class="text-center p-3">Powered by <a class="link-underline link-underline-opacity-0" href="https://github.com/jeffersonmwanaut/Zana">Zana</a></div>';
             
         }
         return ob_get_clean();

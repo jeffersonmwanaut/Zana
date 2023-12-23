@@ -49,6 +49,8 @@ class HttpResponse
     {
         if (!is_null($this->page)) {
             exit($this->page->getGeneratedPage());
+        } else {
+            throw new HttpException("Invalid view", HttpException::UNKNOWN_PAGE_ERR);
         }
     }
 

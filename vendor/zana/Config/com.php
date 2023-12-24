@@ -39,7 +39,7 @@ return [
                 'md' => 'https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.11.0/js/mdb.min.js'
             ]
         ],
-        'fontawesome' => 'https://use.fontawesome.com/releases/v5.15.4/css/all.css',
+        'fontawesome' => 'https://use.fontawesome.com/releases/v6.5.1/css/all.css',
         'jquery' => 'https://code.jquery.com/jquery-3.6.1.min.js',
         'google_fonts' => [ 
             'roboto' => 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap',

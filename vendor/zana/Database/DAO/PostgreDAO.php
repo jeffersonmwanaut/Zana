@@ -1,6 +1,8 @@
-<?php namespace Zana\Database;
+<?php namespace Zana\Database\DAO;
 
 use Zana\Pattern\DAO;
+use Zana\Database\DbFactory;
+use Zana\Database\DbType;
 
 /**
  * Class PostgreDAO

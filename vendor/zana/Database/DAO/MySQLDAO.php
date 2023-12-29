@@ -1,7 +1,9 @@
-<?php namespace Zana\Database;
+<?php namespace Zana\Database\DAO;
 
 use Exception;
 use Zana\Pattern\DAO;
+use Zana\Database\DbFactory;
+use Zana\Database\DbType;
 
 /**
  * Class MySQLDAO

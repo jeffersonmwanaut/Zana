@@ -25,4 +25,10 @@ abstract class DAO
      * @return mixed
      */
     public abstract function read($filter = ['fields' => [], 'conditions' => [], 'order' => 1, 'limit' => ['skip' => 0, 'range' => 20]]);
+
+    /**
+     * @param $object
+     * @return mixed
+     */
+    public abstract function save($object);
 }

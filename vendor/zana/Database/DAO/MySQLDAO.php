@@ -1,7 +1,7 @@
 <?php namespace Zana\Database\DAO;
 
 use Exception;
-use Zana\Pattern\DAO;
+use Zana\Pattern\DAO\DAO;
 use Zana\Database\DbFactory;
 use Zana\Database\DbType;
 
@@ -268,6 +268,26 @@ class MySQLDAO extends DAO
             $data[] = new $this->entity($row);
         }
         return isset($data) ? $data : false;
+    }
+
+    /**
+     * @param $object
+     * @return bool|mixed
+     * @throws \Exception
+     */
+    public function save($object)
+    {
+        if(method_exists($object, 'getId')) {
+            if(!empty($object->getId())){
+                $object = $this->update($object);
+            } else {
+                $object = $this->create($object);
+            }
+            return $object;
+        } else {
+            throw new \Exception('Class ' . get_class($this) . ' does not have method getId');
+        }
+        return false;
     }
 
 }

@@ -1,5 +1,5 @@
 <?php 
-require 'partial/base-header.inc.php'; 
+require 'partial/base-header.php'; 
 use Zana\Router\Router;
 ?>
 <nav class="navbar bg-zana">
@@ -29,4 +29,4 @@ use Zana\Router\Router;
     </div>
 </div>
 
-<?php require 'partial/base-footer.inc.php'; ?>
+<?php require 'partial/base-footer.php'; ?>

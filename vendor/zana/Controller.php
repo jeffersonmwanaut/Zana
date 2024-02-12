@@ -32,19 +32,24 @@ class Controller
      */
     protected $session;
 
+    protected $router;
+    protected $config;
+
     public function __construct()
     {
         $this->page = new Page();
         $this->httpRequest = new HttpRequest();
         $this->httpResponse = new HttpResponse();
         $this->session = new Session();
+        $this->router = Router::class;
+        $this->config = Config::class;
 
         $this->page->addVars([
             'httpRequest' => $this->httpRequest,
             'httpResponse' => $this->httpResponse,
             'session' => $this->session,
-            'router' => Router::class,
-            'config' => Config::class
+            'router' => $this->router,
+            'config' => $this->config
         ]);
     }
 }

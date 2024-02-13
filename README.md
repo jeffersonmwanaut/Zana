@@ -4,7 +4,7 @@
 
 <h3 align="center">Zana</h3>
 
-# Zana 5
+# Zana
 
 Turnkey PHP framework offering components that serve as a foundation and toolbox for your project.
 

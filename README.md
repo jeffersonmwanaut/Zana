@@ -10,14 +10,61 @@ Turnkey PHP framework offering components that serve as a foundation and toolbox
 
 ## Table of contents
 
+- [Software requirements](#software-requirements)
 - [Quick start](#quick-start-up)
 - [What's included](#whats-included)
 - [Creators](#creators)
 
+## Software requirements
+
+PHP version 7 or newer to develop using Zana. Other requirements are enforced by composer. See the require section of the `composer.json` file for details.
+
 ## Quick start-up
 
-Download the compressed file, Unzip it directly to the root of your project and quickly create your first web page. See it in practice with our [demo](#).
+### Installation
 
+Download the compressed file, Unzip it directly to the root of your project and quickly [create your first web page](#hello-world).
+
+### Hello world
+
+1. Open the Main module `./src/Main/Main.php` and add a new route for the Hello world example.
+```php
+class Main extends Module
+{
+    public function __construct()
+    {
+        // ...
+
+        Router::get(
+            '/hello-world', // The route or URI
+            'Main\Controller\MainController#helloWorld', // The controller or callback that will process the URI and render the web page
+            'HELLO_WORLD' // The route name
+        );
+    }
+}
+```
+2. Create the file `./src/Main/view/hello-world.php` that will be used as view by the controller to render the web page.
+```php
+<h1>Hello world!</h1>
+```
+3. Open the Main controller `./src/Main/Controller/MainController.php` and add a new callback that will process the hello world URI and render the web page.
+```php
+class MainController extends Controller
+{
+    // ...
+
+    public function helloWorld()
+    {
+        return $this->page
+            ->addVars([
+                'dTitle' => "Hello world" // Document title to display in the browser tab
+            ])
+            ->setView(ROOT . '/src/Main/view/hello-world.php') // The content of the hello-world web page
+            ->setTemplate(ROOT . '/template/base.template.php');
+    }
+}
+```
+4. Then point your browser to `http://localhost/my-project/hello-world` to see the hello world web page.
 
 ## What's included
 

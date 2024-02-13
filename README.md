@@ -23,7 +23,7 @@ PHP version 7 or newer to develop using Zana. Other requirements are enforced by
 
 ### Installation
 
-Download the compressed file, Unzip it directly to the root of your project and quickly [create your first web page](#hello-world).
+Download the compressed file, Unzip it directly to the root of your project and quickly [create your first page](#hello-world).
 
 ### Hello world
 
@@ -37,7 +37,7 @@ class Main extends Module
 
         Router::get(
             '/hello-world', // The route or URI
-            'Main\Controller\MainController#helloWorld', // The controller or callback that will process the URI and render the web page
+            'Main\Controller\MainController#helloWorld', // The controller or callback that will process the URI and render the page
             'HELLO_WORLD' // The route name
         );
     }
@@ -47,7 +47,7 @@ class Main extends Module
 ```php
 <h1>Hello world!</h1>
 ```
-3. Open the Main controller `./src/Main/Controller/MainController.php` and add a new callback that will process the hello world URI and render the web page.
+3. Open the Main controller `./src/Main/Controller/MainController.php` and add a new callback that will process the hello world URI and render the page.
 ```php
 class MainController extends Controller
 {
@@ -64,7 +64,7 @@ class MainController extends Controller
     }
 }
 ```
-4. Then point your browser to `http://localhost/my-project/hello-world` to see the hello world web page.
+4. Point to `http://localhost/my-project/hello-world` in the browser of choice to see the hello world page. Now you can start building with Zana by creating your own modules, controllers, views and templates.
 
 ## What's included
 

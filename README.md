@@ -43,7 +43,7 @@ class Main extends Module
     }
 }
 ```
-2. Create the file `./src/Main/view/hello-world.php` that will be used as view by the controller to render the web page.
+2. Create the file `./src/Main/view/hello-world.php` that will be used as view by the controller to render the page.
 ```php
 <h1>Hello world!</h1>
 ```

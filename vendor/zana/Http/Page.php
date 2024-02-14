@@ -133,7 +133,7 @@ class Page
      * @return $this
      * @throws HttpException
      */
-    public function setTemplate($template)
+    public function setTemplate($template = 'base.template')
     {
         if (!is_string($template) || empty($template)) {
             throw new HttpException("Invalid template", HttpException::INVALID_VIEW);

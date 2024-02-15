@@ -109,11 +109,7 @@ Within the download you'll find the following directories and files.
   │       │   └── website-under-construction.php
   │       └── Main.php
   ├── template/
-  │   ├── partial/
-  │   │   ├── base-footer.inc.php
-  │   │   └── base-header.inc.php
-  │   ├── base.template.php
-  │   └── zana.template.php
+  │   └── partial/
   ├── vendor/
   │   ├── zana/
   │   │   ├── ABAC/
@@ -160,6 +156,12 @@ Within the download you'll find the following directories and files.
   │   │   ├── Session/
   │   │   │   ├── Session.php
   │   │   │   └── SessionInterface.php
+  │   │   ├── template/
+  │   │   │   ├── partial/
+  │   │   │   │   ├── base-footer.inc.php
+  │   │   │   │   └── base-header.inc.php
+  │   │   │   ├── base.template.php
+  │   │   │   └── zana.template.php
   │   │   ├── Application.php
   │   │   ├── Controller.php
   │   │   ├── Exception.php

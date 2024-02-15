@@ -3,6 +3,7 @@ namespace Zana\Http;
 
 use Exception;
 use Zana\Router\Router;
+use Zana\Config\Config;
 
 /**
  * Class Page
@@ -26,6 +27,7 @@ class Page
      * @var string
      */
     protected $output;
+    protected $outputFormat;
 
     /**
      * Page constructor.
@@ -35,20 +37,9 @@ class Page
      */
     public function __construct($content = null, $outputFormat = PageFormat::HTML)
     {
-        switch ($outputFormat) {
-            case PageFormat::XML:
-                $this->xml($content);
-                break;
-            case PageFormat::JSON:
-                $this->json($content);
-                break;
-            case PageFormat::TEXT:
-                $this->text($content);
-                break;
-            default:
-                $this->html($content);
-                break;
-        }
+        // Page initialization
+        $this->outputFormat = $outputFormat;
+        $this->setTemplate('base.template');
     }
 
     /**
@@ -82,7 +73,7 @@ class Page
      */
     public function getGeneratedPage()
     {
-        if (is_null($this->view) && is_null($this->template)) {
+        if (is_null($this->view) && is_null($this->template) || $this->outputFormat != PageFormat::HTML) {
             return $this->output;
         } elseif (is_null($this->view) && !is_null($this->template)) {
             if (!file_exists($this->template)) {
@@ -121,10 +112,22 @@ class Page
      */
     public function setView($view)
     {
+        $routes = Router::routes();
+        $httpRequest = new HttpRequest();
+        $uri = $httpRequest->requestUri();
+        $method = $httpRequest->requestMethod();
+        $routesByMethod = $routes[$method];
+        $routeSearchResult = array_filter($routesByMethod, function($route) use ($uri) {
+            return $route->getUrl() == $uri;
+        });
+        $route = array_slice($routeSearchResult, 0, 1)[0];
+        $callable = $route->getCallable();
+        $module = explode('\\', $callable)[0];
+        
         if (!is_string($view) || empty($view)) {
             throw new HttpException("Invalid view", HttpException::INVALID_VIEW);
         }
-        $this->view = $view;
+        $this->view = Config::get('path')['root'] . '/src/' . $module . '/view/' . $view . '.php';
         return $this;
     }
 
@@ -138,7 +141,13 @@ class Page
         if (!is_string($template) || empty($template)) {
             throw new HttpException("Invalid template", HttpException::INVALID_VIEW);
         }
-        $this->template = $template;
+
+        if(in_array($template, ['base.template', 'zana.template'])) {
+            $templateRoot = Config::get('path')['root'] . '/vendor/zana/template';
+        } else {
+            $templateRoot = Config::get('path')['root'] . '/template';
+        }
+        $this->template = $templateRoot . '/' . $template . '.php';
         return $this;
     }
 
@@ -151,7 +160,9 @@ class Page
      */
     public function write($content, $outputFormat = PageFormat::HTML)
     {
-        switch ($outputFormat) {
+        $this->outputFormat = $outputFormat;
+
+        switch ($this->outputFormat) {
             case PageFormat::XML:
                 $this->xml($content);
                 break;

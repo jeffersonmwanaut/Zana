@@ -30,6 +30,21 @@ class Route
         $this->callable = $callable;
     }
 
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    public function getCallable()
+    {
+        return $this->callable;
+    }
+
+    public function getParams()
+    {
+        return $this->params;
+    }
+
     /**
      * @param string $url
      * @return bool
@@ -93,7 +108,7 @@ class Route
      * @param array $params
      * @return mixed|string
      */
-    public function getUrl(array $params)
+    public function getUrl(array $params = [])
     {
         $path = $this->path;
         foreach ($params as $param => $value){

@@ -1,6 +1,5 @@
 <?php 
-require 'partial/base-header.php'; 
-use Zana\Router\Router;
+require 'partial/base-header.php';
 ?>
 
 <?= $content ?>

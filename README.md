@@ -59,7 +59,7 @@ class MainController extends Controller
             ->addVars([
                 'dTitle' => "Hello world" // Document title to display in the browser tab
             ])
-            ->setView('hello-world.php'); // The content of the hello-world web page
+            ->setView('hello-world'); // The content of the hello-world web page
     }
 }
 ```

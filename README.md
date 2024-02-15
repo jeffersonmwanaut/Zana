@@ -59,8 +59,7 @@ class MainController extends Controller
             ->addVars([
                 'dTitle' => "Hello world" // Document title to display in the browser tab
             ])
-            ->setView(ROOT . '/src/Main/view/hello-world.php') // The content of the hello-world web page
-            ->setTemplate(ROOT . '/template/base.template.php');
+            ->setView('hello-world.php'); // The content of the hello-world web page
     }
 }
 ```

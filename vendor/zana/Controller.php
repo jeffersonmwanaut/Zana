@@ -37,7 +37,7 @@ class Controller
 
     public function __construct()
     {
-        $this->page = new Page();
+        $this->page = (new Page())->setModule(explode('\\', get_class($this))[0]);
         $this->httpRequest = new HttpRequest();
         $this->httpResponse = new HttpResponse();
         $this->session = new Session();

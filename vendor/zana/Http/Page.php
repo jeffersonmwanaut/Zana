@@ -28,6 +28,7 @@ class Page
      */
     protected $output;
     protected $outputFormat;
+    protected $module;
 
     /**
      * Page constructor.
@@ -111,23 +112,11 @@ class Page
      * @throws HttpException
      */
     public function setView($view)
-    {
-        $routes = Router::routes();
-        $httpRequest = new HttpRequest();
-        $uri = $httpRequest->requestUri();
-        $method = $httpRequest->requestMethod();
-        $routesByMethod = $routes[$method];
-        $routeSearchResult = array_filter($routesByMethod, function($route) use ($uri) {
-            return $route->getUrl() == $uri;
-        });
-        $route = array_slice($routeSearchResult, 0, 1)[0];
-        $callable = $route->getCallable();
-        $module = explode('\\', $callable)[0];
-        
+    {        
         if (!is_string($view) || empty($view)) {
             throw new HttpException("Invalid view", HttpException::INVALID_VIEW);
         }
-        $this->view = Config::get('path')['root'] . '/src/' . $module . '/view/' . $view . '.php';
+        $this->view = Config::get('path')['root'] . '/src/' . $this->module . '/view/' . $view . '.php';
         return $this;
     }
 
@@ -136,7 +125,7 @@ class Page
      * @return $this
      * @throws HttpException
      */
-    public function setTemplate($template = 'base.template')
+    public function setTemplate($template)
     {
         if (!is_string($template) || empty($template)) {
             throw new HttpException("Invalid template", HttpException::INVALID_VIEW);
@@ -218,6 +207,12 @@ class Page
     protected function text($param)
     {
         $this->output = $param;
+        return $this;
+    }
+
+    public function setModule($module)
+    {
+        $this->module = $module;
         return $this;
     }
 }

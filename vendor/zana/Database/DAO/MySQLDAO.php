@@ -238,7 +238,7 @@ class MySQLDAO extends DAO
             foreach ($conditions as $condition => $value) {
                 $queryConditions[$condition] = $value;
                 if ($condition === 'id') {
-                    $queryConditionString .= "`" . $condition . "` = :" . $condition . ", ";
+                    $queryConditionString .= "`" . $condition . "` = :" . $condition . ",   ";
                     break;
                 }
                 $queryConditionString .= "`" . $condition . "` LIKE :" . $condition . " OR ";

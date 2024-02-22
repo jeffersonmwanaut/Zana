@@ -58,7 +58,7 @@ class MySQLDAO extends DAO
             if(preg_match('#^is[A-Z]?#', $property)) {
                 $method = $property;
             } else {
-                $method = 'get' . $property;
+                $method = 'get' . ucfirst($property);
             }
             if (method_exists($object, $method)) {
                 // Get value from property getter
@@ -106,7 +106,7 @@ class MySQLDAO extends DAO
             if(preg_match('#^is[A-Z]?#', $property)) {
                 $method = $property;
             } else {
-                $method = 'get' . $property;
+                $method = 'get' . ucfirst($property);
             }
             if (method_exists($object, $method)) {
                 // Get value from property getter

@@ -55,11 +55,13 @@ class MySQLDAO extends DAO
         $objectProperties = (new \ReflectionClass($object))->getProperties();
         foreach ($objectProperties as $key => $reflectionProperty) {
             $property = $reflectionProperty->getName();
-            if(preg_match('#^is[A-Z]?#', $property)) {
-                $method = $property;
+
+            if(method_exists($object, 'is' . ucfirst($property))) {
+                $method = 'is' . ucfirst($property);
             } else {
                 $method = 'get' . ucfirst($property);
             }
+
             if (method_exists($object, $method)) {
                 // Get value from property getter
                 $value = $object->$method();
@@ -103,11 +105,13 @@ class MySQLDAO extends DAO
         $objectProperties = (new \ReflectionClass($object))->getProperties();
         foreach ($objectProperties as $key => $reflectionProperty) {
             $property = $reflectionProperty->getName();
-            if(preg_match('#^is[A-Z]?#', $property)) {
-                $method = $property;
+            
+            if(method_exists($object, 'is' . ucfirst($property))) {
+                $method = 'is' . ucfirst($property);
             } else {
                 $method = 'get' . ucfirst($property);
             }
+            
             if (method_exists($object, $method)) {
                 // Get value from property getter
                 $value = $object->$method();

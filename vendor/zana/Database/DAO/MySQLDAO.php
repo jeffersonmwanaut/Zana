@@ -80,9 +80,12 @@ class MySQLDAO extends DAO
         $query = $this->pdo->prepare($queryString);
 
         foreach ($queryParams as $field => $value) {
-            $type = gettype($value);
-            if (is_int($type)) $query->bindValue($field, $value, \PDO::PARAM_INT);
-            elseif (is_bool($type)) $query->bindValue($field, $value, \PDO::PARAM_BOOL);
+            if (is_int($value)) $query->bindValue($field, $value, \PDO::PARAM_INT);
+            elseif (is_bool($value)) $query->bindValue($field, $value, \PDO::PARAM_BOOL);
+            elseif($value instanceof \DateTime) {
+                $value = $value->format('Y-m-d H:i:s');
+                $query->bindValue($field, $value, \PDO::PARAM_STR);
+            }
             else $query->bindValue($field, $value, \PDO::PARAM_STR);
         }
         $query->execute();
@@ -131,9 +134,12 @@ class MySQLDAO extends DAO
         $query = $this->pdo->prepare($queryString);
 
         foreach ($queryParams as $field => $value) {
-            $type = gettype($value);
-            if (is_int($type)) $query->bindValue($field, $value, \PDO::PARAM_INT);
-            elseif (is_bool($type)) $query->bindValue($field, $value, \PDO::PARAM_BOOL);
+            if (is_int($value)) $query->bindValue($field, $value, \PDO::PARAM_INT);
+            elseif (is_bool($value)) $query->bindValue($field, $value, \PDO::PARAM_BOOL);
+            elseif($value instanceof \DateTime) {
+                $value = $value->format('Y-m-d H:i:s');
+                $query->bindValue($field, $value, \PDO::PARAM_STR);
+            }
             else $query->bindValue($field, $value, \PDO::PARAM_STR);
         }
         $query->bindValue('id', $object->getId(), \PDO::PARAM_INT);

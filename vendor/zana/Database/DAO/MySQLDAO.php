@@ -215,9 +215,12 @@ class MySQLDAO extends DAO
             if(substr($value, 0, 1) === '!') {
                 $value = substr($value, 1);
             }
-            $type = gettype($value);
-            if (is_int($type)) $query->bindValue($field, $value, \PDO::PARAM_INT);
-            elseif (is_bool($type)) $query->bindValue($field, $value, \PDO::PARAM_BOOL);
+            if (is_int($value)) $query->bindValue($field, $value, \PDO::PARAM_INT);
+            elseif (is_bool($value)) $query->bindValue($field, $value, \PDO::PARAM_BOOL);
+            elseif($value instanceof \DateTime) {
+                $value = $value->format('Y-m-d H:i:s');
+                $query->bindValue($field, $value, \PDO::PARAM_STR);
+            }
             else $query->bindValue($field, $value, \PDO::PARAM_STR);
         }
         $query->bindValue('skip', $limit['skip'], \PDO::PARAM_INT);
@@ -259,17 +262,16 @@ class MySQLDAO extends DAO
         $queryString = "SELECT * FROM `" . $this->table . "` WHERE " . $queryConditionString . " ORDER BY " . $order . " LIMIT :skip, :range";
         $query = $this->pdo->prepare($queryString);
         foreach ($queryConditions as $field => $value) {
-            $type = gettype($value);
-
+            if (is_int($value)) $query->bindValue($field, $value, \PDO::PARAM_INT);
+            elseif (is_bool($value)) $query->bindValue($field, $value, \PDO::PARAM_BOOL);
+            elseif($value instanceof \DateTime) {
+                $value = $value->format('Y-m-d H:i:s');
+                $query->bindValue($field, $value, \PDO::PARAM_STR);
+            }
+            else $query->bindValue($field, $value, \PDO::PARAM_STR);
             if($field === 'id') {
-                if (is_int($type)) $query->bindValue($field, $value, \PDO::PARAM_INT);
-                elseif (is_bool($type)) $query->bindValue($field, $value, \PDO::PARAM_BOOL);
-                else $query->bindValue($field, $value, \PDO::PARAM_STR);
                 break;
             }
-            if (is_int($type)) $query->bindValue($field, $value, \PDO::PARAM_INT);
-            elseif (is_bool($type)) $query->bindValue($field, $value, \PDO::PARAM_BOOL);
-            else $query->bindValue($field, $value, \PDO::PARAM_STR);
         }
         $query->bindValue('skip', $limit['skip'], \PDO::PARAM_INT);
         $query->bindValue('range', $limit['range'], \PDO::PARAM_INT);

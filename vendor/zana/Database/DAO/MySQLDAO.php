@@ -172,9 +172,10 @@ class MySQLDAO extends DAO
      * @param array $filter Database filter
      * @return mixed|void
      */
-    public function readAll($filter = ['fields' => [], 'order' => 1])
+    public function readAll($filter = ['fields' => [], 'conditions' => [], 'order' => 1])
     {
         $fields = isset($filter['fields']) == false ? [] : $filter['fields'];
+        $conditions = isset($filter['conditions']) == false ? [] : $filter['conditions'];
         $order = isset($filter['order']) == false ? 1 : $filter['order'];
 
         // Build fields string
@@ -190,8 +191,37 @@ class MySQLDAO extends DAO
             $fieldString = substr($fieldString, 0, -2);
         }
 
-        $queryString = "SELECT " . $fieldString . " FROM `" . $this->table . "` ORDER BY " . $order;
+        $queryConditions = [];
+        $queryConditionString = null;
+        if (empty($conditions)) {
+            $conditions = "1";
+            $queryConditionString = $conditions;
+        } else {
+            foreach ($conditions as $condition => $value) {
+                $queryConditions[$condition] = $value;
+                if(substr($value, 0, 1) === '!') {
+                    $queryConditionString .= "`" . $condition . "` <> :" . $condition . " AND ";
+                } else {
+                    $queryConditionString .= "`" . $condition . "` = :" . $condition . " AND ";
+                }
+            }
+            $queryConditionString = substr($queryConditionString, 0, -5);
+        }
+
+        $queryString = "SELECT " . $fieldString . " FROM `" . $this->table . "` WHERE " . $queryConditionString . " ORDER BY " . $order;
         $query = $this->pdo->prepare($queryString);
+        foreach ($queryConditions as $field => $value) {
+            if(substr($value, 0, 1) === '!') {
+                $value = substr($value, 1);
+            }
+            if (is_int($value)) $query->bindValue($field, $value, \PDO::PARAM_INT);
+            elseif (is_bool($value)) $query->bindValue($field, $value, \PDO::PARAM_BOOL);
+            elseif($value instanceof \DateTime) {
+                $value = $value->format('Y-m-d H:i:s');
+                $query->bindValue($field, $value, \PDO::PARAM_STR);
+            }
+            else $query->bindValue($field, $value, \PDO::PARAM_STR);
+        }
         $query->execute();
         while ($row = $query->fetch(\PDO::FETCH_ASSOC)) {
             $data[] = new $this->entity($row);

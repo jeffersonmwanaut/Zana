@@ -42,11 +42,14 @@ class Entity
             // Substitute underscores for whitespaces, capitalize the first letter of each word and remove whitespaces.
             $method = 'set' . str_replace(' ', '', ucwords(str_replace('_', ' ', $property)));
             if (method_exists($this, $method)) {
-                $date = \DateTime::createFromFormat('Y-m-d H:i:s', $value);
-                if ($date !== false) {
-                    // it's a date
-                    $value = $date;
+                if(!$value instanceof \DateTime) {
+                    $date = \DateTime::createFromFormat('Y-m-d H:i:s', $value);
+                    if ($date !== false) {
+                        // it's a date
+                        $value = $date;
+                    }
                 }
+                
                 // Call method only if exists, otherwise throw exception in else bloc.
                 $this->$method($value);
             } else {

@@ -172,37 +172,6 @@ class MySQLDAO extends DAO
      * @param array $filter Database filter
      * @return mixed|void
      */
-    public function readAll($filter = ['fields' => [], 'order' => 1])
-    {
-        $fields = isset($filter['fields']) == false ? [] : $filter['fields'];
-        $order = isset($filter['order']) == false ? 1 : $filter['order'];
-
-        // Build fields string
-        $fieldString = null;
-        if (empty($fields)) {
-            $fields = "*";
-            $fieldString = $fields;
-        } else {
-            $fields = explode(', ', $fields);
-            foreach ($fields as $field) {
-                $fieldString .= "`" . $field . "`, ";
-            }
-            $fieldString = substr($fieldString, 0, -2);
-        }
-
-        $queryString = "SELECT " . $fieldString . " FROM `" . $this->table . "` ORDER BY " . $order;
-        $query = $this->pdo->prepare($queryString);
-        $query->execute();
-        while ($row = $query->fetch(\PDO::FETCH_ASSOC)) {
-            $data[] = new $this->entity($row);
-        }
-        return isset($data) ? $data : false;
-    }
-
-    /**
-     * @param array $filter Database filter
-     * @return mixed|void
-     */
     public function read($filter = ['fields' => [], 'conditions' => [], 'order' => 1, 'limit' => ['skip' => 0, 'range' => 20]])
     {
         $fields = isset($filter['fields']) == false ? [] : $filter['fields'];

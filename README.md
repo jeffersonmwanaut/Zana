@@ -80,19 +80,19 @@ class MainController extends Controller
 That's it! Now open your browser and navigate to `http://localhost/my-project/hello-world`. If everything is working, you will see the hello world page.
 
 ## Project structure
-`./config`
+`config/`
 <p>Contains configuration.</p>
 
-`./public`
+`public/`
 <p>This is the document root for your project: you put any publicly accessible files here.</p>
 
-`./template`
+`template/`
 <p>All your PHP code goes here.</p>
 
-`./src`
+`src/`
 <p>All your templates go here.</p>
 
-`./vendor`
+`vendor/`
 <p>Zana code and third-party libraries live here! <br>Third-party libraries are downloaded via [Composer](https://getcomposer.org/download/)</p>
 
 ## Creators

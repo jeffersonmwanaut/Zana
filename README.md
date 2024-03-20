@@ -6,18 +6,20 @@
 
 # Zana
 
-Turnkey PHP framework offering components that serve as a foundation and toolbox for your project.
+Turnkey PHP framework offering components that serve as a foundation and toolbox for your web application.
 
 ## Table of contents
 
-- [Software requirements](#software-requirements)
+- [Technical requirements](#technical-requirements)
 - [Quick start](#quick-start-up)
-- [What's included](#whats-included)
+- [Project structure](#project-structure)
 - [Creators](#creators)
 
-## Software requirements
+## Technical requirements
 
-PHP version 7 or newer to develop using Zana. Other requirements are enforced by composer. See the require section of the `composer.json` file for details.
+Before you create your first Zana application you must:
+* Install PHP 7 or higher;
+* [Install composer](https://getcomposer.org/download/), which is used to install PHP packages.
 
 ## Quick start-up
 
@@ -27,7 +29,14 @@ Download the compressed file, Unzip it directly to the root of your project and 
 
 ### Hello world
 
-1. Open the Main module `./src/Main/Main.php` and add a new route for the Hello world example.
+Creating a new page is a two-step process:
+1. Create a route: A route is the URL (e.g. /hello-world) to your page and points to a controller.
+2. Create a controller: A controller is the PHP function you write that builds the page. You take the incoming request information and use it to create a Zana page object, which can hold HTML, TEXT, JSON or XML content.
+
+#### Create a route
+
+Open the Main module `./src/Main/Main.php` and add a new route `/hello-world` for the Hello world example.
+
 ```php
 class Main extends Module
 {
@@ -37,17 +46,16 @@ class Main extends Module
 
         Router::get(
             '/hello-world', // The route or URI
-            'Main\Controller\MainController#helloWorld', // The controller or callback that will process the URI and render the page
+            'Main\Controller\MainController#helloWorld', // The controller function that will build the page
             'HELLO_WORLD' // The route name
         );
     }
 }
 ```
-2. Create the file `./src/Main/view/hello-world.php` that will be used as view by the controller to render the page.
-```php
-<h1>Hello world!</h1>
-```
-3. Open the Main controller `./src/Main/Controller/MainController.php` and add a new callback that will process the hello world URI and render the page.
+
+#### Create a controller
+
+1. Open the Main controller `./src/Main/Controller/MainController.php` and add a new function `helloWorld()` that will build the page.
 ```php
 class MainController extends Controller
 {
@@ -59,120 +67,33 @@ class MainController extends Controller
             ->addVars([
                 'dTitle' => "Hello world" // Document title to display in the browser tab
             ])
-            ->setView('hello-world'); // The content of the hello-world web page
+            ->setView('hello-world'); // The view that contains the hello-world web page content
     }
 }
 ```
-4. Point to `http://localhost/my-project/hello-world` in the browser of choice to see the hello world page. Now you can start building with Zana by creating your own modules, controllers, views and templates.
 
-## What's included
+2. Create the view `./src/Main/view/hello-world.php` that will be used by the controller to render the page.
+```php
+<h1>Hello world!</h1>
+```
 
-Within the download you'll find the following directories and files.
+That's it! Now open your browser and navigate to `http://localhost/my-project/hello-world`. If everything is working, you will see the hello world page.
 
-<details>
-  <summary>Download contents</summary>
+## Project structure
+`./config`
+<p>Contains configuration.</p>
 
-  ```text
-  zana/
-  ├── config/
-  │   ├── ABAC/
-  │   │   └── policy.json
-  │   ├── com.php
-  │   ├── dev.php
-  │   ├── mode.txt
-  │   ├── modules.php
-  │   └── prod.php
-  ├── public/
-  │   ├── css/
-  │   │   └── app.css
-  │   ├── img/
-  │   │   ├── icon.png
-  │   │   ├── zana-1.png
-  │   │   └── zana-2.png
-  │   ├── js/
-  │   │   └── app.js
-  │   └── app.php
-  ├── src/
-  │   ├── Doc/
-  │   │   ├── Controller/
-  │   │   │   └── DocController.php
-  │   │   ├── view/
-  │   │   │   ├── default.php
-  │   │   │   ├── download.php
-  │   │   │   ├── example.php
-  │   │   │   └── structure.php
-  │   │   └── Doc.php
-  │   └── Main/
-  │       ├── Controller/
-  │       │   └── MainController.php
-  │       ├── view/
-  │       │   └── website-under-construction.php
-  │       └── Main.php
-  ├── template/
-  │   └── partial/
-  ├── vendor/
-  │   ├── zana/
-  │   │   ├── ABAC/
-  │   │   │   └── Policy.php
-  │   │   ├── Config/
-  │   │   │   ├── com.php
-  │   │   │   ├── Config.php
-  │   │   │   ├── dev.php
-  │   │   │   ├── mode.txt
-  │   │   │   ├── modules.php
-  │   │   │   └── prod.php
-  │   │   ├── Cookie/
-  │   │   │   └── Cookie.php
-  │   │   ├── Database/
-  │   │   │   ├── Connection/
-  │   │   │   │   ├── MySQLDB.php
-  │   │   │   │   ├── PostgreSQLDB.php
-  │   │   │   │   └── SQLiteDB.php
-  │   │   │   ├── DAO/
-  │   │   │   │   ├── MySQLDAP.php
-  │   │   │   │   ├── PostgreDAO.php
-  │   │   │   │   └── SQLiteAO.php
-  │   │   │   ├── DbFactory.php
-  │   │   │   └── DbType.php
-  │   │   ├── Entity/
-  │   │   │   ├── Entity.php
-  │   │   │   └── JsonSerializableEntity.php
-  │   │   ├── Http/
-  │   │   │   ├── HttpException.php
-  │   │   │   ├── HttpRequest.php
-  │   │   │   ├── HttpResponse.php
-  │   │   │   ├── Page.php
-  │   │   │   └── PageFormat.php
-  │   │   ├── Pattern/
-  │   │   │   ├── DAO/
-  │   │   │   │   ├── DAO.php
-  │   │   │   │   └── IDAO.php
-  │   │   │   ├── AbstractFactory.php
-  │   │   │   └── Singleton.php
-  │   │   ├── Router/
-  │   │   │   ├── Route.php
-  │   │   │   ├── Router.php
-  │   │   │   └── RouterException.php
-  │   │   ├── Session/
-  │   │   │   ├── Session.php
-  │   │   │   └── SessionInterface.php
-  │   │   ├── template/
-  │   │   │   ├── partial/
-  │   │   │   │   ├── base-footer.inc.php
-  │   │   │   │   └── base-header.inc.php
-  │   │   │   ├── base.template.php
-  │   │   │   └── zana.template.php
-  │   │   ├── Application.php
-  │   │   ├── Controller.php
-  │   │   ├── Exception.php
-  │   │   └── Module.php
-  │   └── autoload.php
-  ├── .htaccess
-  ├── composer.json
-  ├── composer.lock
-  └── README.md
-  ```
-</details>
+`./public`
+<p>This is the document root for your project: you put any publicly accessible files here.</p>
+
+`./template`
+<p>All your PHP code goes here.</p>
+
+`./src`
+<p>All your templates go here.</p>
+
+`./vendor`
+<p>Zana code and third-party libraries live here! <br>Third-party libraries are downloaded via [Composer](https://getcomposer.org/download/)</p>
 
 ## Creators
 

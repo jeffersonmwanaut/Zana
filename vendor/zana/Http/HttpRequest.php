@@ -126,8 +126,7 @@ class HttpRequest
      */
     public function referrer()
     {
-        $config = (\Zana\Application::getInstance())->getConfig();
-        $urlRoot = $config->get('path')['url_root'];
+        $urlRoot = \Zana\Config\Config::get('path')['url_root'];
         return str_replace($_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] . $urlRoot . '/', '', $_SERVER['HTTP_REFERER']);
     }
 

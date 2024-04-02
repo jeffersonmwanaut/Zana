@@ -229,7 +229,7 @@ class MySQLDAO extends DAO
         while ($row = $query->fetch(\PDO::FETCH_ASSOC)) {
             $data[] = new $this->entity($row);
         }
-        return isset($data) ? $data : false;
+        return isset($data) ? $data : [];
     }
 
     /**
@@ -279,7 +279,7 @@ class MySQLDAO extends DAO
         while ($row = $query->fetch(\PDO::FETCH_ASSOC)) {
             $data[] = new $this->entity($row);
         }
-        return isset($data) ? $data : false;
+        return isset($data) ? $data : [];
     }
 
     /**

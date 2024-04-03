@@ -4,6 +4,7 @@ use Zana\Http\HttpException;
 use Zana\Http\HttpRequest;
 use Zana\Http\Page;
 use Zana\Pattern\Singleton;
+use Zana\Config\Config;
 
 class Router extends Singleton
 {
@@ -145,7 +146,7 @@ class Router extends Singleton
         if (!isset(self::$namedRoutes[$routeName])) {
             throw new RouterException('No route matches <b>' . $routeName . '</b>', RouterException::NO_ROUTE_MATCHES);
         }
-        return self::$namedRoutes[$routeName]->getUrl($params);
+        return Config::get('path')['url_root'] . '/' . self::$namedRoutes[$routeName]->getUrl($params);
     }
 
     /**

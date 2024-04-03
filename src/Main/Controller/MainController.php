@@ -7,7 +7,7 @@ class MainController extends Controller
 {
     public function index()
     {
-        $this->httpResponse->redirect(URL_ROOT . '/' . Router::generateUrl('_UNDER_CONSTRUCTION'));
+        $this->httpResponse->redirect(Router::generateUrl('_UNDER_CONSTRUCTION'));
     }
 
     public function underConstruction()

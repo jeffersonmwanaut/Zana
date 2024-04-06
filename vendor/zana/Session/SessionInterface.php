@@ -10,18 +10,18 @@ interface SessionInterface
      * @param $key
      * @return mixed
      */
-    public function get($key);
+    public static function get($key);
 
     /**
      * @param $key
      * @param $value
      * @return mixed
      */
-    public function set($key, $value);
+    public static function set($key, $value);
 
     /**
      * @param $key
      * @return mixed
      */
-    public function delete($key);
+    public static function delete($key);
 }

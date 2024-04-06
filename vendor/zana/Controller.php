@@ -40,7 +40,7 @@ class Controller
         $this->page = (new Page())->setModule(explode('\\', get_class($this))[0]);
         $this->httpRequest = new HttpRequest();
         $this->httpResponse = new HttpResponse();
-        $this->session = new Session();
+        $this->session = Session::class;
         $this->router = Router::class;
         $this->config = Config::class;
 

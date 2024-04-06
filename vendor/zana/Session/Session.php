@@ -9,7 +9,7 @@ class Session implements SessionInterface
     /**
      * Start Session
      */
-    public function start()
+    public static function start()
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -19,39 +19,39 @@ class Session implements SessionInterface
     /**
      * @inheritDoc
      */
-    public function get($key)
+    public static function get($key)
     {
-        $this->start();
+        self::start();
         return array_key_exists($key, $_SESSION) ? $_SESSION[$key] : false;
     }
 
     /**
      * @inheritDoc
      */
-    public function set($key, $value)
+    public static function set($key, $value)
     {
-        $this->start();
+        self::start();
         $_SESSION[$key] = $value;
     }
 
     /**
      * @inheritDoc
      */
-    public function delete($key)
+    public static function delete($key)
     {
-        $this->start();
+        self::start();
         unset($_SESSION[$key]);
     }
 
-    public function setFlash($key, $message)
+    public static function setFlash($key, $message)
     {
-        $this->start();
+        self::start();
         $_SESSION['flash'][$key] = $message;
     }
 
-    public function getFlash($key)
+    public static function getFlash($key)
     {
-        $this->start();
+        self::start();
         $flash = array_key_exists($key, $_SESSION['flash']) ? $_SESSION['flash'][$key] : false;
         $flashesArrayKeys = array_keys($_SESSION['flash']);
         if(count($flashesArrayKeys) > 1) {
@@ -63,9 +63,9 @@ class Session implements SessionInterface
         }
     }
 
-    public function getFlashes()
+    public static function getFlashes()
     {
-        $this->start();
+        self::start();
         $flash = $_SESSION['flash'];
         unset($_SESSION['flash']);
         return $flash;
@@ -75,9 +75,9 @@ class Session implements SessionInterface
      * Test if session flash is set
      * @return bool
      */
-    public function hasFlashes()
+    public static function hasFlashes()
     {
-        $this->start();
+        self::start();
         return isset($_SESSION['flash']);
     }
 
@@ -85,9 +85,9 @@ class Session implements SessionInterface
      * @param string $key
      * @return bool
      */
-    public function hasFlash($key)
+    public static function hasFlash($key)
     {
-        $this->start();
+        self::start();
         return isset($_SESSION['flash'][$key]);
     }
 }

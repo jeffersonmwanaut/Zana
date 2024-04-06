@@ -29,15 +29,15 @@ class Policy {
     
         // Loop through the policies array
         foreach ($this->policies['policies'] as $policy) {
-            // Check if the access matches the current policy
-            if ($this->policyMatchesAccess($policy, $access)) {
-                // If a match is found, check the policy effect
-                if ($policy['effect'] !== 'allow') {
-                    // If the policy effect is not allow, return false
-                    return false;
-                } else {
-                    // If the policy effect is allow, update the default result as true
+            if (array_key_exists($key, $access)) {
+                if(in_array($value, ['*', 'all'])) {
                     $result = true;
+                } else {
+                    if ($access[$key] !== $value) {
+                        return false;
+                    } else {
+                        $result = true;
+                    }
                 }
             }
         }

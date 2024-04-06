@@ -12,9 +12,9 @@
                 }, 
                 { 
                     "subject": "admin", 
-                    "action": "edit", 
-                    "resource": "private", 
-                    "environment": "development" 
+                    "action": "*", 
+                    "resource": "*", 
+                    "environment": "*" 
                 }, 
                 { 
                     "subject": "user", 

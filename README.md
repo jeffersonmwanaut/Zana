@@ -13,6 +13,7 @@ Turnkey PHP framework offering components that serve as a foundation and toolbox
 - [Technical requirements](#technical-requirements)
 - [Quick start](#quick-start-up)
 - [Project structure](#project-structure)
+- [What's next](what's-next)
 - [Creators](#creators)
 
 ## Technical requirements
@@ -94,6 +95,36 @@ That's it! Now open your browser and navigate to `http://localhost/my-project/he
 
 `vendor/`
 <p>Zana code and third-party libraries live here! <br>Third-party libraries are downloaded via [Composer](https://getcomposer.org/download/)</p>
+
+## What's next
+
+Bravo! You've learned a whole new way of building beautiful and functional applications.
+<br>To finish mastering the fundamentals, read these articles:
+* [Routing](#routing)
+* [Controller](#controller)
+* [Templates](#templates)
+* [Front-end Tools: Bootstrap](#front-end-tools-bootstrap)
+* [Configuring Zana](#configuring-zana)
+
+## Routing
+
+...
+
+## Controller
+
+...
+
+## Templates
+
+...
+
+## Front-end Tools: Bootstrap
+
+...
+
+## Configuring Zana
+
+...
 
 ## Creators
 

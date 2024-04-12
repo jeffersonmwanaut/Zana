@@ -108,7 +108,22 @@ Bravo! You've learned a whole new way of building beautiful and functional appli
 
 ## Routing
 
+### Creating Routes
+
 ...
+
+### Route Parameters
+
+...
+
+### Route Aliasing
+
+...
+
+### Generating URLs
+
+...
+
 
 ## Controller
 

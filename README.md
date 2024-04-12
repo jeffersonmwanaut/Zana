@@ -43,13 +43,12 @@ class Main extends Module
 {
     public function __construct()
     {
-        // ...
-
         Router::get(
             '/hello-world', // The route or URI
             'Main\Controller\MainController#helloWorld', // The controller function that will build the page
             'HELLO_WORLD' // The route name
         );
+        // ...
     }
 }
 ```
@@ -60,8 +59,6 @@ class Main extends Module
 ```php
 class MainController extends Controller
 {
-    // ...
-
     public function helloWorld()
     {
         return $this->page
@@ -70,6 +67,7 @@ class MainController extends Controller
             ])
             ->setView('hello-world'); // The view that contains the hello-world web page content
     }
+    // ...
 }
 ```
 
@@ -99,7 +97,8 @@ That's it! Now open your browser and navigate to `http://localhost/my-project/he
 ## What's next
 
 Bravo! You've learned a whole new way of building beautiful and functional applications.
-<br>To finish mastering the fundamentals, read these articles:
+
+To finish mastering the fundamentals, read these articles:
 * [Routing](#routing)
 * [Controller](#controller)
 * [Templates](#templates)
@@ -108,7 +107,7 @@ Bravo! You've learned a whole new way of building beautiful and functional appli
 
 ## Routing
 
-When your application receives a request, it calls a controller action to generate the response. The routing configuration defines which action to run for each incoming URL. It also provides other useful features, like generating SEO-friendly URLs (e.g. /articles/42 instead of index.php?article_id=42).
+When your application receives a request, it calls a controller action to generate the response. The routing configuration defines which action to run for each incoming URL. It also provides other useful features, like generating SEO-friendly URLs (e.g. `/books/42` instead of `index.php?book_id=42`).
 
 ### Creating Routes
 
@@ -116,11 +115,81 @@ When your application receives a request, it calls a controller action to genera
 
 ### Route Parameters
 
-...
+The previous examples defined routes where the URL never changes (e.g. `/books`). However, it's common to define routes where some parts are variable. For example, the URL to display a specific book will probably include the title or id (e.g. `/books/all-about-zana` or `/books/42`).
+
+In Zana routes, variable parts start with the colon sign `:`. For example, the route to display a specific book contents is defined as `/books/:id`.
+
+```php
+class Book extends Module
+{
+    public function __construct()
+    {
+        Router::get(
+            '/books/:id',
+            'Book\Controller\BookController#show'
+        );
+        // ...
+    }
+}
+```
+
+The name of the variable part (`:id` in this example) is used to create a PHP variable where that route content is stored and passed to the controller. If a user visits the `/books/42` URL, Zana executes the `show()` method in the `BookController` class and passes a `$id = 42` argument to the `show()` method.
+
+Routes can define any number of parameters, but each of them can only be used once on each route (e.g. `/books/:id/page/:pageNumber`).
+
+#### Parameters Validation
+
+Imagine that your application has a show route (URL: `/books/:id`) and a list route (URL: `/books/:author`). Given that route parameters accept any value, there's no way to differentiate both routes.
+
+If the user requests `/books/gt90`, both routes will match and Zana will use the route which was defined first. To fix this, add some validation to the :id parameter using the requirements option:
+
+```php
+class Book extends Module
+{
+    public function __construct()
+    {
+        Router::get(
+            '/books/:id',
+            'Book\Controller\BookController#show'
+        )->with('id', '\d+');
+
+        Router::get(
+            '/books/:author',
+            'Book\Controller\BookController#list'
+        );
+        // ...
+    }
+}
+```
+
+The `with` option defines the PHP regular expressions that route parameters must match for the entire route to match.
 
 ### Route Aliasing
 
-...
+Route alias allow you to have multiple name for the same route:
+
+```php
+class Book extends Module
+{
+    public function __construct()
+    {
+        Router::get(
+            '/books/:id',
+            'Book\Controller\BookController#show'
+            'BOOK'
+        )->with('id', '\d+');
+
+        Router::get(
+            '/books/:id',
+            'Book\Controller\BookController#show'
+            'SHOW_BOOK'
+        )->with('id', '\d+');
+        // ...
+    }
+}
+```
+
+In this example, both `BOOK` and `SHOW_BOOK` routes can be used in the application and will produce the same result.
 
 ### Generating URLs
 

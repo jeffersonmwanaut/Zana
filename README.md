@@ -108,6 +108,8 @@ Bravo! You've learned a whole new way of building beautiful and functional appli
 
 ## Routing
 
+When your application receives a request, it calls a controller action to generate the response. The routing configuration defines which action to run for each incoming URL. It also provides other useful features, like generating SEO-friendly URLs (e.g. /articles/42 instead of index.php?article_id=42).
+
 ### Creating Routes
 
 ...

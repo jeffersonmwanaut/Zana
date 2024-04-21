@@ -40,7 +40,6 @@ class Page
     {
         // Page initialization
         $this->outputFormat = $outputFormat;
-        $this->setTemplate('base.template');
     }
 
     /**

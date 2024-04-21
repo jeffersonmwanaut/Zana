@@ -38,7 +38,7 @@ class HttpResponse
      */
     public function redirect($location, $replace = true, $statusCode = null)
     {
-        header('Location: ' . $location, $replace, $statusCode);
+        header('Location: ' . $location, $replace, $statusCode ?? 302);
         exit();
     }
 

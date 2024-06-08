@@ -13,12 +13,12 @@ use Zana\Database\DbException;
 class SQLiteDAO extends DAO
 {
 
-    public function create($object)
+    public function create($object, $ignoreProperties = [])
     {
         // TODO: Implement create() method.
     }
 
-    public function update($object)
+    public function update($object, $ignoreProperties = [])
     {
         // TODO: Implement update() method.
     }
@@ -33,7 +33,7 @@ class SQLiteDAO extends DAO
         // TODO: Implement read() method.
     }
 
-    public function save($object)
+    public function save($object, $ignoreProperties = [])
     {
         // TODO: Implement save() method.
     }

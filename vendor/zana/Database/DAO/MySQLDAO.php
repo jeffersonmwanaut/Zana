@@ -48,7 +48,7 @@ class MySQLDAO extends DAO
      * @return bool|mixed
      * @throws Exception
      */
-    public function create($object)
+    public function create($object, $ignoreProperties = [])
     {
         $queryString = "INSERT INTO `" . $this->table . "` SET ";
         $queryParams = [];
@@ -56,12 +56,16 @@ class MySQLDAO extends DAO
         foreach ($objectProperties as $key => $reflectionProperty) {
             $property = $reflectionProperty->getName();
 
+            if(in_array($property, $ignoreProperties)) {
+                continue;
+            }
+
             if(method_exists($object, 'is' . ucfirst($property))) {
                 $method = 'is' . ucfirst($property);
             } else {
                 $method = 'get' . ucfirst($property);
             }
-
+            
             if (method_exists($object, $method)) {
                 // Get value from property getter
                 $value = $object->$method();
@@ -101,13 +105,17 @@ class MySQLDAO extends DAO
      * @return bool|mixed
      * @throws Exception
      */
-    public function update($object)
+    public function update($object, $ignoreProperties = [])
     {
         $queryString = "UPDATE `" . $this->table . "` SET ";
         $queryParams = [];
         $objectProperties = (new \ReflectionClass($object))->getProperties();
         foreach ($objectProperties as $key => $reflectionProperty) {
             $property = $reflectionProperty->getName();
+
+            if(in_array($property, $ignoreProperties)) {
+                continue;
+            }
             
             if(method_exists($object, 'is' . ucfirst($property))) {
                 $method = 'is' . ucfirst($property);
@@ -287,13 +295,13 @@ class MySQLDAO extends DAO
      * @return bool|mixed
      * @throws \Exception
      */
-    public function save($object)
+    public function save($object, $ignoreProperties = [])
     {
         if(method_exists($object, 'getId')) {
             if(!empty($object->getId())){
-                $object = $this->update($object);
+                $object = $this->update($object, $ignoreProperties);
             } else {
-                $object = $this->create($object);
+                $object = $this->create($object, $ignoreProperties);
             }
             return $object;
         } else {

@@ -19,6 +19,11 @@ class Entity
         $this->hydrate($data);
     }
 
+    public function ignoreProperties():?array
+    {
+        return [];
+    }
+
     /**
      * This method assigns values from table columns to the object properties
      * To make it easy I set some simple rules :<br>
@@ -39,11 +44,45 @@ class Entity
     public function hydrate(array $data)
     {
         foreach ($data as $property => $value) {
+            if (substr($property, -3) == '_id') {
+                // Property is an object
+                /**
+                 * For a property to be detected as an object, its type must be explicitly added when declared in the class.
+                 * Example: protected User $user;
+                 * In addition, the column name in the database must end with "_id".
+                 * Example: user_id
+                 */
+                $property = str_replace('_id', '', $property);
+                $objectProperty = str_replace(' ', '', str_replace('_', ' ', $property));
+                $reflectionClass = new \ReflectionClass($this);
+                $reflectionClassProperties = $reflectionClass->getProperties();
+                foreach ($reflectionClassProperties as $reflectionClassProperty) {
+                    if ($reflectionClassProperty->getName() == $objectProperty) {
+                        $objectProperty = $reflectionClassProperty->getType()->getName();
+                        break;
+                    }
+                }
+                // Find manager
+                $objectPropertyParts = explode('\\', $objectProperty);
+                $manager = $objectPropertyParts[count($objectPropertyParts) - 3] . '\\Manager\\' . str_replace('Entity', 'Manager', $objectPropertyParts[count($objectPropertyParts) - 1]);
+                // Check that the manager class exists before trying to use it
+                if (class_exists($manager)) {
+                    // Create instance of manager
+                    $manager = new $manager();
+                    $result = $manager->find(['id' => $value]);
+                    if (!empty($result)) {
+                        $value = $result[0]; // Substitute the value by the actual object property's value
+                    }
+                } else {
+                    // Exception is thrown here if class not found.
+                    throw new Exception('Undefined class ' . $manager . ' in ' . get_class($this) . ' on line ' . __LINE__);
+                }
+            }
             // Substitute underscores for whitespaces, capitalize the first letter of each word and remove whitespaces.
-            $method = 'set' . str_replace(' ', '', ucwords(str_replace('_', ' ', $property)));
-            if (method_exists($this, $method)) {
+            $setter = 'set' . str_replace(' ', '', ucwords(str_replace('_', ' ', $property)));
+            if (method_exists($this, $setter)) {
                 if(!$value instanceof \DateTime) {
-                    if (!is_null($value)) {
+                    if (!is_null($value) && is_string($value)) {
                         $date = \DateTime::createFromFormat('Y-m-d H:i:s', $value);
                         if ($date !== false) {
                             // it's a date
@@ -53,10 +92,10 @@ class Entity
                 }
                 
                 // Call method only if exists, otherwise throw exception in else bloc.
-                $this->$method($value);
+                $this->$setter($value);
             } else {
                 // Exception is thrown here if method not found.
-                throw new Exception('Call to undefined method ' . $method . ' in ' . get_class($this) . ' on line ' . __LINE__);
+                throw new Exception('Call to undefined method ' . $setter . ' in ' . get_class($this) . ' on line ' . __LINE__);
             }
         }
     }

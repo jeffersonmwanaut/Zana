@@ -91,6 +91,39 @@ class Router extends Singleton
     /**
      * @param string $path
      * @param mixed $callable
+     * @param string $routeName
+     * @param array $requestMethods
+     * @return Route
+     */
+    public static function any($path, $callable, $routeName = null, $requestMethods = ['GET'])
+    {
+        $route = new Route($path, $callable);
+        foreach($requestMethods as $requestMethod) {
+            $route = self::addRoute($path, $callable, $routeName, $requestMethod);
+        }
+        return $route;
+    }
+
+    /**
+     * @param string $path
+     * @param mixed $callable
+     * @param string $routeName
+     * @return Route
+     */
+    public static function all($path, $callable, $routeName = null)
+    {
+        $requestMethods = ['GET','POST','PATCH','PUT','DELETE'];
+        
+        $route = new Route($path, $callable);
+        foreach($requestMethods as $requestMethod) {
+            $route = self::addRoute($path, $callable, $routeName, $requestMethod);
+        }
+        return $route;
+    }
+
+    /**
+     * @param string $path
+     * @param mixed $callable
      * @param string $routeName 
      * @param string $method
      * @return Route

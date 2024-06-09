@@ -48,7 +48,7 @@ class MySQLDAO extends DAO
      * @return bool|mixed
      * @throws Exception
      */
-    public function create($object, $ignoreProperties = [])
+    public function create($object)
     {
         $queryString = "INSERT INTO `" . $this->table . "` SET ";
         $queryParams = [];
@@ -56,7 +56,7 @@ class MySQLDAO extends DAO
         foreach ($objectProperties as $key => $reflectionProperty) {
             $property = $reflectionProperty->getName();
 
-            if(in_array($property, $ignoreProperties)) {
+            if(in_array($property, $object->ignoreProperties())) {
                 continue;
             }
 
@@ -105,7 +105,7 @@ class MySQLDAO extends DAO
      * @return bool|mixed
      * @throws Exception
      */
-    public function update($object, $ignoreProperties = [])
+    public function update($object)
     {
         $queryString = "UPDATE `" . $this->table . "` SET ";
         $queryParams = [];
@@ -113,7 +113,7 @@ class MySQLDAO extends DAO
         foreach ($objectProperties as $key => $reflectionProperty) {
             $property = $reflectionProperty->getName();
 
-            if(in_array($property, $ignoreProperties)) {
+            if(in_array($property, $object->ignoreProperties())) {
                 continue;
             }
             
@@ -295,13 +295,13 @@ class MySQLDAO extends DAO
      * @return bool|mixed
      * @throws \Exception
      */
-    public function save($object, $ignoreProperties = [])
+    public function save($object)
     {
         if(method_exists($object, 'getId')) {
             if(!empty($object->getId())){
-                $object = $this->update($object, $ignoreProperties);
+                $object = $this->update($object, $object->ignoreProperties());
             } else {
-                $object = $this->create($object, $ignoreProperties);
+                $object = $this->create($object, $object->ignoreProperties());
             }
             return $object;
         } else {

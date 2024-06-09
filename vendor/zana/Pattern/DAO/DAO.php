@@ -6,13 +6,13 @@ abstract class DAO
      * @param $object
      * @return mixed
      */
-    public abstract function create($object, $ignoreProperties = []);
+    public abstract function create($object);
 
     /**
      * @param $object
      * @return mixed
      */
-    public abstract function update($object, $ignoreProperties = []);
+    public abstract function update($object);
 
     /**
      * @param $object
@@ -30,5 +30,5 @@ abstract class DAO
      * @param $object
      * @return mixed
      */
-    public abstract function save($object, $ignoreProperties = []);
+    public abstract function save($object);
 }

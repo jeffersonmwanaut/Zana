@@ -12,12 +12,12 @@ use Zana\Database\DbException;
 class PostgreDAO extends DAO
 {
 
-    public function create($object, $ignoreProperties = [])
+    public function create($object)
     {
         // TODO: Implement create() method.
     }
 
-    public function update($object, $ignoreProperties = [])
+    public function update($object)
     {
         // TODO: Implement update() method.
     }
@@ -32,7 +32,7 @@ class PostgreDAO extends DAO
         // TODO: Implement read() method.
     }
 
-    public function save($object, $ignoreProperties = [])
+    public function save($object)
     {
         // TODO: Implement save() method.
     }

@@ -19,7 +19,7 @@ Turnkey PHP framework offering components that serve as a foundation and toolbox
 ## Technical requirements
 
 Before you create your first Zana application you must:
-* Install PHP 7 or higher;
+* Install PHP 8 or higher;
 * [Install composer](https://getcomposer.org/download/), which is used to install PHP packages.
 
 ## Quick start-up

@@ -39,6 +39,12 @@ Creating a new page is a two-step process:
 Open the Main module `./src/Main/Main.php` and add a new route `/hello-world` for the Hello world example.
 
 ```php
+// src/Main/Main.php
+namespace Main;
+
+use Zana\Module;
+use Zana\Router\Router;
+
 class Main extends Module
 {
     public function __construct()
@@ -57,6 +63,11 @@ class Main extends Module
 
 1. Open the Main controller `./src/Main/Controller/MainController.php` and add a new function `helloWorld()` that will build the page.
 ```php
+// src/Main/Controller/MainController.php
+namespace Main;
+
+use Zana\Controller;
+
 class MainController extends Controller
 {
     public function helloWorld()
@@ -99,11 +110,17 @@ That's it! Now open your browser and navigate to `http://localhost/my-project/he
 Bravo! You've learned a whole new way of building beautiful and functional applications.
 
 To finish mastering the fundamentals, read these articles:
+* [Module](#module)
 * [Routing](#routing)
 * [Controller](#controller)
 * [Templates](#templates)
 * [Front-end Tools: Bootstrap](#front-end-tools-bootstrap)
 * [Configuring Zana](#configuring-zana)
+
+## Module
+
+...
+
 
 ## Routing
 
@@ -111,7 +128,38 @@ When your application receives a request, it calls a controller action to genera
 
 ### Creating Routes
 
-...
+Routes can be configured in your application module using the router.
+
+Suppose you want to define a route for the `/books` URL in your application. To do so, create a [module class](#module) like the following:
+
+```php
+// src/Main/Main.php
+namespace Main;
+
+use Zana\Module;
+use Zana\Router\Router;
+
+class Main extends Module
+{
+    public function __construct()
+    {
+        Router::get(
+            '/books', // The route or URI
+            'Main\Controller\MainController#index', // The controller's method that will build the page
+            'BOOKS' // The route name
+        );
+        // ...
+    }
+}
+```
+
+This code defines a route called `BOOKS` that matches when the user requests the `/books` URL. When the match occures, the application runs the `index` method of the `MainController` class.
+
+The query string of a URL is not considered when matching routes. In this example, URLs like `/books?author=gt90` will also match the `BOOKS` route.
+
+If you define multiple routes with the same route name, Zana only consider the first route, ignoring all the others.
+
+The route name `BOOKS` is not important for now, but will be essential later when [generating URLs](#generating-urls). You only have to keep in mind that each route name must be unique in the application.
 
 ### Route Parameters
 
@@ -120,13 +168,19 @@ The previous examples defined routes where the URL never changes (e.g. `/books`)
 In Zana routes, variable parts start with the colon sign `:`. For example, the route to display a specific book contents is defined as `/books/:id`.
 
 ```php
+// src/Main/Main.php
+namespace Main;
+
+use Zana\Module;
+use Zana\Router\Router;
+
 class Book extends Module
 {
     public function __construct()
     {
         Router::get(
             '/books/:id',
-            'Book\Controller\BookController#show'
+            'Book\Controller\BookController#index'
         );
         // ...
     }
@@ -144,6 +198,12 @@ Imagine that your application has a show route (URL: `/books/:id`) and a list ro
 If the user requests `/books/gt90`, both routes will match and Zana will use the route which was defined first. To fix this, add some validation to the :id parameter using the requirements option:
 
 ```php
+// src/Main/Main.php
+namespace Main;
+
+use Zana\Module;
+use Zana\Router\Router;
+
 class Book extends Module
 {
     public function __construct()
@@ -169,6 +229,12 @@ The `with` option defines the PHP regular expressions that route parameters must
 Route alias allow you to have multiple name for the same route:
 
 ```php
+// src/Main/Main.php
+namespace Main;
+
+use Zana\Module;
+use Zana\Router\Router;
+
 class Book extends Module
 {
     public function __construct()

@@ -91,19 +91,24 @@ That's it! Now open your browser and navigate to `http://localhost/my-project/he
 
 ## Project structure
 `config/`
-<p>Contains configuration.</p>
+
+Contains configuration.
 
 `public/`
-<p>This is the document root for your project: you put any publicly accessible files here.</p>
+
+This is the document root for your project: you put any publicly accessible files here.
 
 `template/`
-<p>All your PHP code goes here.</p>
+
+All your templates go here.
 
 `src/`
-<p>All your templates go here.</p>
+
+All your PHP code goes here.
 
 `vendor/`
-<p>Zana code and third-party libraries live here! <br>Third-party libraries are downloaded via [Composer](https://getcomposer.org/download/)</p>
+
+Zana code and third-party libraries live here! <br>Third-party libraries are downloaded via [Composer](https://getcomposer.org/download/)
 
 ## What's next
 

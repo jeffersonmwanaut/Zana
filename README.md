@@ -31,8 +31,8 @@ Download the compressed file, Unzip it directly to the root of your project and 
 ### Hello world
 
 Creating a new page is a two-step process:
-1. Create a route: A route is the URL (e.g. /hello-world) to your page and points to a controller.
-2. Create a controller: A controller is the PHP function you write that builds the page. You take the incoming request information and use it to create a Zana page object, which can hold HTML, TEXT, JSON or XML content.
+1. Create a route: A route is the URL (e.g. `/hello-world`) to your page and points to a controller.
+2. Create a controller: A controller is the PHP function you write that renders the page. You take the incoming request information and use it to create a Zana page object, which can hold HTML, TEXT, JSON or XML content.
 
 #### Create a route
 
@@ -61,7 +61,8 @@ class Main extends Module
 
 #### Create a controller
 
-1. Open the Main controller `./src/Main/Controller/MainController.php` and add a new function `helloWorld()` that will build the page.
+1. Open the Main controller `./src/Main/Controller/MainController.php` and add a new function `helloWorld()` that will render the page.
+
 ```php
 // src/Main/Controller/MainController.php
 namespace Main;
@@ -112,9 +113,7 @@ Zana code and third-party libraries live here! <br>Third-party libraries are dow
 
 ## What's next
 
-Bravo! You've learned a whole new way of building beautiful and functional applications.
-
-To finish mastering the fundamentals, read these articles:
+Now that you've learned a new way of building beautiful and functional applications, finish mastering the fundamentals by reading the following articles:
 * [Module](#module)
 * [Routing](#routing)
 * [Controller](#controller)

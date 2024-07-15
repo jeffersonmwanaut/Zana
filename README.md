@@ -200,13 +200,13 @@ Routes can be configured in your application module using the router.
 Suppose you want to define a route for the `/books` URL in your application. To do so, create a [module class](#module) like the following:
 
 ```php
-// src/Main/Main.php
-namespace Main;
+// src/Blog/Blog.php
+namespace Blog;
 
 use Zana\Module;
 use Zana\Router\Router;
 
-class Main extends Module
+class Blog extends Module
 {
     public function __construct()
     {
@@ -235,13 +235,13 @@ The previous examples defined routes where the URL never changes (e.g. `/books`)
 In Zana routes, variable parts start with the colon sign `:`. For example, the route to display a specific book contents is defined as `/books/:id`.
 
 ```php
-// src/Main/Main.php
-namespace Main;
+// src/Blog/Blog.php
+namespace Blog;
 
 use Zana\Module;
 use Zana\Router\Router;
 
-class Book extends Module
+class Blog extends Module
 {
     public function __construct()
     {
@@ -265,13 +265,13 @@ Imagine that your application has a show route (URL: `/books/:id`) and a list ro
 If the user requests `/books/gt90`, both routes will match and Zana will use the route which was defined first. To fix this, add some validation to the :id parameter using the requirements option:
 
 ```php
-// src/Main/Main.php
-namespace Main;
+// src/Blog/Blog.php
+namespace Blog;
 
 use Zana\Module;
 use Zana\Router\Router;
 
-class Book extends Module
+class Blog extends Module
 {
     public function __construct()
     {
@@ -296,13 +296,13 @@ The `with` option defines the PHP regular expressions that route parameters must
 Route alias allow you to have multiple name for the same route:
 
 ```php
-// src/Main/Main.php
-namespace Main;
+// src/Blog/Blog.php
+namespace Blog;
 
 use Zana\Module;
 use Zana\Router\Router;
 
-class Book extends Module
+class Blog extends Module
 {
     public function __construct()
     {

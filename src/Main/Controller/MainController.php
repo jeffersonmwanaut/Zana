@@ -16,6 +16,7 @@ class MainController extends Controller
             ->addVars([
                 'dTitle' => "Under Construction"
             ])
-            ->setView('under-construction');
+            ->setView('under-construction')
+            ->setTemplate('base.template');
     }
 }

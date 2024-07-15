@@ -4,6 +4,7 @@ require '../vendor/autoload.php';
 \Zana\Config\Config::getInstance();
 // Define constants from config parameters
 define('CONFIG', \Zana\Config\Config::get());
+define('DOMAIN', \Zana\Config\Config::get('path')['domain']);
 define('ROOT', \Zana\Config\Config::get('path')['root']);
 define('URL_ROOT', \Zana\Config\Config::get('path')['url_root']);
 define('BOOTSTRAP', \Zana\Config\Config::get('path')['bootstrap']);

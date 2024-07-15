@@ -18,7 +18,7 @@
     <link rel="stylesheet" type="text/css" href="<?= FONTAWESOME ?>">
     <link rel="stylesheet" type="text/css" href="<?= CSS ?>/app.css">
     <link rel="shortcut icon" href="<?= FAVICON['filename'] ?>" type="<?= FAVICON['type'] ?>">
-    <link href="<?= GOOGLE_FONTS['montserrat'] ?>" rel="stylesheet">
+    <link href="<?= FONTS['montserrat'] ?>" rel="stylesheet">
     <title><?= isset($dTitle) ? $dTitle : 'Zana' ?></title>
 </head>
 <body>

@@ -41,7 +41,7 @@ return [
         ],
         'fontawesome' => 'https://use.fontawesome.com/releases/v6.5.1/css/all.css',
         'jquery' => 'https://code.jquery.com/jquery-3.6.1.min.js',
-        'google_fonts' => [ 
+        'fonts' => [ 
             'roboto' => 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap',
             'montserrat' => 'https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;400;600;700&display=swap'
         ]

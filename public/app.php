@@ -13,7 +13,7 @@ define('JQUERY', \Zana\Config\Config::get('path')['jquery']);
 define('IMG', \Zana\Config\Config::get('path')['img_root']);
 define('CSS', \Zana\Config\Config::get('path')['css_root']);
 define('JS', \Zana\Config\Config::get('path')['js_root']);
-define('GOOGLE_FONTS', \Zana\Config\Config::get('path')['google_fonts']);
+define('FONTS', \Zana\Config\Config::get('path')['fonts']);
 // Initialize router
 \Zana\Router\Router::getInstance();
 // Initialize app

@@ -36,7 +36,7 @@ Creating a new page is a two-step process:
 
 #### Create a route
 
-Open the Main module `./src/Main/Main.php` and add a new route `/hello-world` for the Hello world example.
+Open the Main module `src/Main/Main.php` and add a new route `/hello-world` for the Hello world example.
 
 ```php
 // src/Main/Main.php
@@ -61,7 +61,7 @@ class Main extends Module
 
 #### Create a controller
 
-1. Open the Main controller `./src/Main/Controller/MainController.php` and add a new function `helloWorld()` that will render the page.
+1. Open the Main controller `src/Main/Controller/MainController.php` and add a new function `helloWorld()` that will render the page.
 
 ```php
 // src/Main/Controller/MainController.php
@@ -83,7 +83,7 @@ class MainController extends Controller
 }
 ```
 
-2. Create the view `./src/Main/view/hello-world.php` that will be used by the controller to render the page.
+2. Create the view `src/Main/view/hello-world.php` that will be used by the controller to render the page.
 ```php
 <h1>Hello world!</h1>
 ```
@@ -91,6 +91,7 @@ class MainController extends Controller
 That's it! Now open your browser and navigate to `http://localhost/my-project/hello-world`. If everything is working, you will see the hello world page.
 
 ## Project structure
+
 `config/`
 
 Contains configuration.
@@ -123,7 +124,69 @@ Now that you've learned a new way of building beautiful and functional applicati
 
 ## Module
 
-...
+A module represents a business application task. It encapsulates the data model associated with a task and the custom code to implement the task.
+
+Modules used in your applications must be enabled in the `config/modules.php` file.
+
+```php
+// config/modules.php
+return [
+    'modules' => [
+        \Blog\Blog::class
+    ]
+];
+```
+
+### Creatin a module
+
+This section creates and enables a new module called Blog.
+
+Start by creating a new class called Blog:
+```php
+// src/Blog/Blog.php
+namespace Blog;
+
+use Zana\Module;
+use Zana\Router\Router;
+
+class Blog extends Module
+{
+    
+}
+```
+
+Now that the module has been created, let's enable it:
+
+```php
+// config/modules.php
+return [
+    'modules' => [
+        \Blog\Blog::class
+    ]
+];
+```
+
+The module is now ready to be used.
+
+### Module Directory Structure
+
+The directory structure of a module is meant to help to keep code consistent between all Zana modules, but is flexible to be adjusted if needed.
+
+`Controller/`
+
+Contains the controllers related to the module.
+
+`Entity/`
+
+Contains the entities or model classes related to the module.
+
+`Manager/`
+
+Contains the database access objects related to the module.
+
+`view/`
+
+Contains the views related to the module.
 
 
 ## Routing

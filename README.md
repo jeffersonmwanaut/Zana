@@ -142,23 +142,23 @@ Modules used in your applications must be enabled in the `config/modules.php` fi
 // config/modules.php
 return [
     'modules' => [
-        \Blog\Blog::class
+        \Book\Book::class
     ]
 ];
 ```
 
 ### Creatin a module
 
-Let's start by creating a new class called Blog:
+Let's start by creating a new class called Book:
 
 ```php
-// src/Blog/Blog.php
-namespace Blog;
+// src/Book/Book.php
+namespace Book;
 
 use Zana\Module;
 use Zana\Router\Router;
 
-class Blog extends Module
+class Book extends Module
 {
     
 }
@@ -170,7 +170,7 @@ Now that the module has been created, let's enable it:
 // config/modules.php
 return [
     'modules' => [
-        \Blog\Blog::class
+        \Book\Book::class
     ]
 ];
 ```
@@ -186,12 +186,12 @@ The directory structure of a module is meant to help to keep code consistent bet
 .
 .
 ├── src/
-.    └── Blog/
+.    └── Book/
 .        ├── Controller/
 .        ├── Entity/
          ├── Manager/
          ├── view/
-         └── Blog.php
+         └── Book.php
 ```
 
 * Controller: Contains the controllers related to the module.
@@ -214,13 +214,13 @@ Routes can be configured in your application module using the router.
 Suppose you want to define a route for the `/books` URL in your application. To do so, create a [module class](#module) like the following:
 
 ```php
-// src/Blog/Blog.php
-namespace Blog;
+// src/Book/Book.php
+namespace Book;
 
 use Zana\Module;
 use Zana\Router\Router;
 
-class Blog extends Module
+class Book extends Module
 {
     public function __construct()
     {
@@ -249,19 +249,19 @@ The previous examples defined routes where the URL never changes (e.g. `/books`)
 In Zana routes, variable parts start with the colon sign `:`. For example, the route to display a specific book contents is defined as `/books/:id`.
 
 ```php
-// src/Blog/Blog.php
-namespace Blog;
+// src/Book/Book.php
+namespace Book;
 
 use Zana\Module;
 use Zana\Router\Router;
 
-class Blog extends Module
+class Book extends Module
 {
     public function __construct()
     {
         Router::get(
             '/books/:id',
-            'Book\Controller\BookController#index'
+            'Book\Controller\BookController#show'
         );
         // ...
     }
@@ -279,13 +279,13 @@ Imagine that your application has a show route (URL: `/books/:id`) and a list ro
 If the user requests `/books/gt90`, both routes will match and Zana will use the route which was defined first. To fix this, add some validation to the :id parameter using the requirements option:
 
 ```php
-// src/Blog/Blog.php
-namespace Blog;
+// src/Book/Book.php
+namespace Book;
 
 use Zana\Module;
 use Zana\Router\Router;
 
-class Blog extends Module
+class Book extends Module
 {
     public function __construct()
     {
@@ -310,13 +310,13 @@ The `with` option defines the PHP regular expressions that route parameters must
 Route alias allow you to have multiple name for the same route:
 
 ```php
-// src/Blog/Blog.php
-namespace Blog;
+// src/Book/Book.php
+namespace Book;
 
 use Zana\Module;
 use Zana\Router\Router;
 
-class Blog extends Module
+class Book extends Module
 {
     public function __construct()
     {
@@ -340,8 +340,50 @@ In this example, both `BOOK` and `SHOW_BOOK` routes can be used in the applicati
 
 ### Generating URLs
 
-...
+Generating URLs allows you to not write the `<a href="...">` values manually in your HTML templates. Also, if the URL of some route changes, you only have to update the route configuration and all links will be updated.
 
+To generate a URL, you need to specify the name of the route (e.g. `BOOK`) and the values of the parameters defined by the route (e.g. `id = 42`).
+
+### Generating URLs in Controllers
+
+Since your controller extends from `Zana\Controller\Controller`, you can use the `generateUrl()` static method from the `Zana\Router\Router` class.
+
+```php
+// scr/Book/Controller/BookController.php
+namespace Book\Controller;
+
+use Zana\Controller;
+
+class BookController extends Controller
+{
+    public function index():Page
+    {
+        // Generate a URL with no parameters
+        $bookListPage = $this->router::generateUrl('BOOKS');
+
+        // Generate a URL with parameters
+        $bookPage = $this->router::generateUrl('BOOK', ['id' => $book->getId()]);
+    }
+}
+```
+
+### Generating URLs in Templates
+
+Instead of writing the link URLs by hand, use the `generateUrl()` static method from the `Zana\Router\Router` to generate URLs based on the routing configuration.
+
+Later, if you want to modify the URL of a particular page, all you'll need to do is change the routing configuration, the templates will automatically generate the new URL.
+
+```php
+<div>
+    <!-- src/Book/view/index.php -->
+    
+    <!-- Generate a URL with no parameters -->
+    <a href="<?= $router::generateUrl('BOOKS') ?>">List Books</a>
+    
+    <!-- Generate a URL with parameters -->
+    <a href="<?= $router::generateUrl('BOOK', ['id' => $book->getId()]) ?>">Show Book</a>
+</div>
+```
 
 ## Controller
 

@@ -139,9 +139,8 @@ return [
 
 ### Creatin a module
 
-This section creates and enables a new module called Blog.
+Let's start by creating a new class called Blog:
 
-Start by creating a new class called Blog:
 ```php
 // src/Blog/Blog.php
 namespace Blog;

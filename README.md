@@ -186,15 +186,12 @@ The directory structure of a module is meant to help to keep code consistent bet
 .
 .
 ├── src/
-|    └── Blog/
-|        ├── Controller/
-|        ├── Entity/
-|        ├── Manager/
-|        ├── view/
-|        └── Blog.php
-.
-.
-.
+.    └── Blog/
+.        ├── Controller/
+.        ├── Entity/
+         ├── Manager/
+         ├── view/
+         └── Blog.php
 ```
 
 * Controller: Contains the controllers related to the module.

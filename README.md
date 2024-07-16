@@ -349,7 +349,7 @@ To generate a URL, you need to specify the name of the route (e.g. `BOOK`) and t
 Since your controller extends from `Zana\Controller\Controller`, you can use the `generateUrl()` static method from the `Zana\Router\Router` class.
 
 ```php
-// scr/Book/Controller/BookController.php
+// src/Book/Controller/BookController.php
 namespace Book\Controller;
 
 use Zana\Controller;
@@ -373,7 +373,7 @@ Instead of writing the link URLs by hand, use the `generateUrl()` static method 
 
 Later, if you want to modify the URL of a particular page, all you'll need to do is change the routing configuration, the templates will automatically generate the new URL.
 
-```php
+```html
 <div>
     <!-- src/Book/view/index.php -->
     

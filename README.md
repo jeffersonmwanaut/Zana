@@ -94,21 +94,21 @@ That's it! Now open your browser and navigate to `http://localhost/my-project/he
 
 ```
 .
-├── config
-|    ├── ABAC
+├── config/
+|    ├── ABAC/
 |    ├── com.php
 |    ├── dev.php
 |    ├── mode.txt
 |    ├── modules.php
 |    └── prod.php
-├── public
-|    ├── css
-|    ├── img
-|    ├── js
+├── public/
+|    ├── css/
+|    ├── img/
+|    ├── js/
 |    └── app.php
-├── src
-├── template
-├── vendor
+├── src/
+├── template/
+├── vendor/
 └── .htaccess
 ```
 
@@ -185,12 +185,12 @@ The directory structure of a module is meant to help to keep code consistent bet
 .
 .
 .
-├── src
-|    └── Blog
-|        ├── Controller
-|        ├── Entity
-|        ├── Manager
-|        ├── view
+├── src/
+|    └── Blog/
+|        ├── Controller/
+|        ├── Entity/
+|        ├── Manager/
+|        ├── view/
 |        └── Blog.php
 .
 .

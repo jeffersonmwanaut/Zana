@@ -96,6 +96,7 @@ That's it! Now open your browser and navigate to `http://localhost/my-project/he
 .
 ├── config/
 |    ├── ABAC/
+|    |    └── policy.json
 |    ├── com.php
 |    ├── dev.php
 |    ├── mode.txt
@@ -103,11 +104,20 @@ That's it! Now open your browser and navigate to `http://localhost/my-project/he
 |    └── prod.php
 ├── public/
 |    ├── css/
+|    |    └── app.css
 |    ├── img/
 |    ├── js/
+|    |    └── app.js
 |    └── app.php
 ├── src/
+|    └── Main
+|    |    ├── Controller/
+|    |    ├── Entity/
+|    |    ├── Manager/
+|    |    ├── view/
+|    |    └── Main.php
 ├── template/
+|    └── partial/
 ├── vendor/
 └── .htaccess
 ```

@@ -111,11 +111,11 @@ That's it! Now open your browser and navigate to `http://localhost/my-project/he
 |    └── app.php
 ├── src/
 |    └── Main
-|    |    ├── Controller/
-|    |    ├── Entity/
-|    |    ├── Manager/
-|    |    ├── view/
-|    |    └── Main.php
+|        ├── Controller/
+|        ├── Entity/
+|        ├── Manager/
+|        ├── view/
+|        └── Main.php
 ├── template/
 |    └── partial/
 ├── vendor/

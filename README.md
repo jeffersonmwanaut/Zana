@@ -116,9 +116,9 @@ That's it! Now open your browser and navigate to `http://localhost/my-project/he
 
 * public: This is the document root for your project: you put any publicly accessible files here.
 
-* template: All your templates go here.
-
 * src: All your PHP code goes here.
+
+* template: All your templates go here.
 
 * vendor: Zana code and third-party libraries live here! Third-party libraries are downloaded via [Composer](https://getcomposer.org/download/)
 

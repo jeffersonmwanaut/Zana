@@ -92,25 +92,35 @@ That's it! Now open your browser and navigate to `http://localhost/my-project/he
 
 ## Project structure
 
-`config/`
+```
+.
+├── config
+|    ├── ABAC
+|    ├── com.php
+|    ├── dev.php
+|    ├── mode.txt
+|    ├── modules.php
+|    └── prod.php
+├── public
+|    ├── css
+|    ├── img
+|    ├── js
+|    └── app.php
+├── src
+├── template
+├── vendor
+└── .htaccess
+```
 
-Contains configuration.
+* config: Contains configuration.
 
-`public/`
+* public: This is the document root for your project: you put any publicly accessible files here.
 
-This is the document root for your project: you put any publicly accessible files here.
+* template: All your templates go here.
 
-`template/`
+* src: All your PHP code goes here.
 
-All your templates go here.
-
-`src/`
-
-All your PHP code goes here.
-
-`vendor/`
-
-Zana code and third-party libraries live here! <br>Third-party libraries are downloaded via [Composer](https://getcomposer.org/download/)
+* vendor: Zana code and third-party libraries live here! Third-party libraries are downloaded via [Composer](https://getcomposer.org/download/)
 
 ## What's next
 
@@ -171,21 +181,29 @@ The module is now ready to be used.
 
 The directory structure of a module is meant to help to keep code consistent between all Zana modules, but is flexible to be adjusted if needed.
 
-`Controller/`
+```
+.
+.
+.
+├── src
+|    └── Blog
+|        ├── Controller
+|        ├── Entity
+|        ├── Manager
+|        ├── view
+|        └── Blog.php
+.
+.
+.
+```
 
-Contains the controllers related to the module.
+* Controller: Contains the controllers related to the module.
 
-`Entity/`
+* Entity: Contains the entities or model classes related to the module.
 
-Contains the entities or model classes related to the module.
+* Manager: Contains the database access objects related to the module.
 
-`Manager/`
-
-Contains the database access objects related to the module.
-
-`view/`
-
-Contains the views related to the module.
+* view: Contains the views related to the module.
 
 
 ## Routing

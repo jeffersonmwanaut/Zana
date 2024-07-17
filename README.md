@@ -215,7 +215,7 @@ The directory structure of a module is meant to help to keep code consistent bet
 
 ## Routing
 
-When your application receives a request, it calls a controller action to generate the response. The routing configuration defines which action to run for each incoming URL. It also provides other useful features, like generating SEO-friendly URLs (e.g. `/books/42` instead of `index.php?book_id=42`).
+Your application receives requests through the router. The router then assign them to related controller actions to generate the responses. The routing configuration defines which action to run for each incoming URL. It also provides other useful features, like generating SEO-friendly URLs (e.g. `/books/42` instead of `index.php?book_id=42`).
 
 ### Creating Routes
 
@@ -395,9 +395,139 @@ Later, if you want to modify the URL of a particular page, all you'll need to do
 </div>
 ```
 
+### Redirecting
+
+If you want to redirect the user to another page, use the `redirect()` method from the `HttpResponse` object.
+
+```php
+// src/Book/Controller/BookController.php
+namespace Book\Controller;
+
+use Zana\Controller;
+use Zana\Http\HttpResponse;
+
+class BookController extends Controller
+{
+    public function index():Page
+    {
+        // Redirect to the book list page
+        $this->httpResponse->redirect($this->router::generateUrl('BOOKS'));
+
+        // redirects externally
+        $this->httpResponse->redirect("https://example.com");
+    }
+}
+```
+
 ## Controller
 
-...
+A controller is a function that is assigned a request by the router to create and return a response. The response is in fact a page object and could be in a TEXT, HTML, JSON or XML format. The controller runs whatever arbitrary logic your application needs to render the content of a page.
+
+### Basic Controller
+
+A controller is usually a method inside a controller class.
+
+```php
+// src/Main/Controller/MainController.php
+namespace Main\Controller;
+
+use Zana\Controller;
+
+class MainController extends Controller
+{
+    public function helloWorld():Page
+    {
+        return $this->page->write("<h1>Hello world</h1>", PageFormat::HTML); // PageFormat is defaulted to HTML
+    }
+}
+```
+
+### Mapping a URL to a Controller
+
+In order to view the result of this controller, you need to map a URL to it via a route. Routes are defined in the modules as shown below:
+
+```php
+// src/Main/Main.php
+namespace Main;
+
+use Zana\Module;
+use Zana\Router\Router;
+
+class Main extends Module
+{
+    public function __construct()
+    {
+        // ...
+
+        Router::get(
+            '/hello-world',
+            'Main\Controller\MainController#helloWorld'
+            'HELLO_WORLD'
+        );
+
+        // ...
+    }
+}
+```
+
+To see your page, go to this URL in your browser: `http://localhost/my-project/hello-world`
+
+For more information on routing, see [Routing](#Routing).
+
+### Rendering Templates
+
+If you're serving HTML, you'll want to render a template. The `setView()` method renders a template and puts that content into the response for you.
+
+```php
+// src/Main/Controller/MainController.php
+namespace Main;
+
+use Zana\Controller;
+
+class MainController extends Controller
+{
+    public function helloWorld()
+    {
+        return $this->page
+            ->addVars([
+                'dTitle' => "Hello world" // Document title to display in the browser tab
+            ])
+            ->setView('hello-world'); // The view that contains the hello-world web page content
+    }
+    // ...
+}
+```
+
+```html
+<div>
+    <!-- src/Main/view/hello-world.php -->
+    
+    <h1>Hello world</h1>
+</div>
+```
+
+If you want to use your own template, use both the `setView()` and `setTemplate()` methods. The `setTemplate()` allows you to specify the path of your custom template. We recommand you to put your templates in the `template` folder.
+
+```php
+// src/Main/Controller/MainController.php
+namespace Main;
+
+use Zana\Controller;
+
+class MainController extends Controller
+{
+    public function helloWorld()
+    {
+        return $this->page
+            ->addVars([
+                'dTitle' => "Hello world" // Document title to display in the browser tab
+            ])
+            ->setView('hello-world') // The view that contains the hello-world web page content
+            ->setTemplate('my-template'); // The template of the hello-world web page, assuming that my-template is located in the template folder.
+    }
+    // ...
+}
+```
 
 ## Templates
 

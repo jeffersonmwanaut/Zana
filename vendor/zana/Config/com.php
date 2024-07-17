@@ -32,12 +32,10 @@ return [
         'bootstrap' => [
             'css' => [
                 'core' => 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.x/dist/css/bootstrap.min.css',
-                'md' => 'https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.11.0/css/mdb.min.css'
             ],
             'js' => [
                 'core' => 'https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js',
-                'popper' => 'https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js',
-                'md' => 'https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.11.0/js/mdb.min.js'
+                'popper' => 'https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js'
             ]
         ],
         'fontawesome' => 'https://use.fontawesome.com/releases/v6.5.1/css/all.css',

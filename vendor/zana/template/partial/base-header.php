@@ -12,8 +12,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!-- Bootstrap css core -->
     <link rel="stylesheet" type="text/css" href="<?= BOOTSTRAP['css']['core'] ?>">
-    <!-- Bootstrap css Material Design -->
-    <link rel="stylesheet" type="text/css" href="<?= BOOTSTRAP['css']['md'] ?>">
     <!-- Fontawesome -->
     <link rel="stylesheet" type="text/css" href="<?= FONTAWESOME ?>">
     <link rel="stylesheet" type="text/css" href="<?= CSS ?>/app.css">

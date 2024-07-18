@@ -93,7 +93,7 @@ That's it! Now open your browser and navigate to `http://localhost/my-project/he
 ## Project structure
 
 ```
-.
+my-project/
 ├── config/
 |    ├── ABAC/
 |    |    └── policy.json
@@ -196,12 +196,15 @@ The directory structure of a module is meant to help to keep code consistent bet
 .
 .
 ├── src/
-.    └── Book/
-.        ├── Controller/
-.        ├── Entity/
-         ├── Manager/
-         ├── view/
-         └── Book.php
+|    └── Book/
+|        ├── Controller/
+|        ├── Entity/
+|        ├── Manager/
+|        ├── view/
+|        └── Book.php
+.
+.
+.
 ```
 
 * Controller: Contains the controllers related to the module.

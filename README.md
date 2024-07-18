@@ -630,7 +630,7 @@ class MainController extends Controller
 {
     public function index():Page
     {
-        $databaseName = $this->config::get('db')['mysql']['name'];
+        $databaseName = $this->config::get('db.mysql.name'); // Use key path to get related value
         // ...
     }
 }
@@ -642,7 +642,7 @@ class MainController extends Controller
 <div>
     <!-- src/Main/view/hello-world.php -->
     
-    <h1><?= $config::get('db')['mysql']['name'] ?></h1>
+    <h1><?= $config::get('db.mysql.name') ?></h1>
 </div>
 ```
 

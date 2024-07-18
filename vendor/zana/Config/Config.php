@@ -59,10 +59,21 @@ class Config
     public static function get($key = null)
     {
         if(is_null($key)) return self::$settings;
-        if (!isset(self::$settings[$key])) {
-            return null;
+
+        $keyParts = explode('.', $key);
+        $keyLenght = count($keyParts);
+        $value = self::$settings;
+        
+        $index = 0;
+        while($index < $keyLenght) {
+        	if(!isset($value[$keyParts[$index]])) {
+            	return null;
+            }
+        	$value = $value[$keyParts[$index]];
+            $index++;
         }
-        return self::$settings[$key];
+        
+        return $value;
     }
 
     /**

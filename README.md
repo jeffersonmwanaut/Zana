@@ -100,7 +100,7 @@ my-project/
 |    ├── com.json
 |    ├── dev.json
 |    ├── mode.env
-|    ├── modules.php
+|    ├── modules.json
 |    └── prod.json
 ├── public/
 |    ├── css/
@@ -146,15 +146,14 @@ Now that you've learned a new way of building beautiful and functional applicati
 
 A module represents a business application task. It encapsulates the data model associated with a task and the custom code to implement the task.
 
-Modules used in your applications must be enabled in the `config/modules.php` file.
+Modules used in your applications must be enabled in the `config/modules.json` file.
 
-```php
-// config/modules.php
-return [
-    'modules' => [
-        \Book\Book::class
+```json
+{
+    "modules": [
+        "Book/Book"
     ]
-];
+}
 ```
 
 ### Creatin a module
@@ -174,15 +173,14 @@ class Book extends Module
 }
 ```
 
-Now that the module has been created, let's enable it:
+Now that the module has been created, let's enable it in the `config/modules.json` file:
 
-```php
-// config/modules.php
-return [
-    'modules' => [
-        \Book\Book::class
+```json
+{
+    "modules": [
+        "Book/Book"
     ]
-];
+}
 ```
 
 The module is now ready to be used.
@@ -553,7 +551,7 @@ my-project/
 |    ├── com.json
 |    ├── dev.json
 |    ├── mode.env
-|    ├── modules.php
+|    ├── modules.json
 |    └── prod.json
 ```
 
@@ -561,7 +559,7 @@ my-project/
 * The `com.json` file contains the configuration related to both development and production environments.
 * The `dev.json` file contains the configuration related to the development environment only.
 * The `mode.env` file contains the value of the active environment.
-* The `modules.php` file contains the active modules of the application.
+* The `modules.json` file contains the active modules of the application.
 * The `prod.json` file contains the configuration related to the production environment only.
 
 ### Configuration Environments

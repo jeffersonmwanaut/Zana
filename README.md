@@ -97,11 +97,11 @@ my-project/
 ├── config/
 |    ├── ABAC/
 |    |    └── policy.json
-|    ├── com.php
-|    ├── dev.php
-|    ├── mode.txt
+|    ├── com.json
+|    ├── dev.json
+|    ├── mode.env
 |    ├── modules.php
-|    └── prod.php
+|    └── prod.json
 ├── public/
 |    ├── css/
 |    |    └── app.css
@@ -550,19 +550,19 @@ my-project/
 ├── config/
 |    ├── ABAC/
 |    |    └── policy.json
-|    ├── com.php
-|    ├── dev.php
-|    ├── mode.txt
+|    ├── com.json
+|    ├── dev.json
+|    ├── mode.env
 |    ├── modules.php
-|    └── prod.php
+|    └── prod.json
 ```
 
 * The `ABAC` folder contains the configuration of access control policies.
-* The `com.php` file contains the configuration related to both development and production environments.
-* The `dev.php` file contains the configuration related to the development environment only.
-* The `mode.txt` file contains the value of the active environment.
+* The `com.json` file contains the configuration related to both development and production environments.
+* The `dev.json` file contains the configuration related to the development environment only.
+* The `mode.env` file contains the value of the active environment.
 * The `modules.php` file contains the active modules of the application.
-* The `prod.php` file contains the configuration related to the production environment only.
+* The `prod.json` file contains the configuration related to the production environment only.
 
 ### Configuration Environments
 
@@ -578,9 +578,9 @@ A typical Zana application begins with two environments:
 
 ### Selecting the Active Environment
 
-Zana applications come with a file called `mode.txt` located in the `config/` folder. This file is used to define the value of the active environment.
+Zana applications come with a file called `mode.env` located in the `config/` folder. This file is used to define the value of the active environment.
 
-Open the `mode.txt` file and edit the content to change the environment in which the application runs. For example, to run the application in production:
+Open the `mode.env` file and edit the content to change the environment in which the application runs. For example, to run the application in production:
 
 ```txt
 prod
@@ -588,30 +588,27 @@ prod
 
 ### Common Configuration
 
-In reality, each environment differs only somewhat from other. This means that all environments share a large base of common configuration, which is put in the `com.php` file.
+In reality, each environment differs only somewhat from other. This means that all environments share a large base of common configuration, which is put in the `com.json` file.
 
 ### Configuring Environment Variables
 
-For example, to define the database:
+For example, to define the database for the development environment in the `config/dev.json` file:
 
-```php
-// config/dev.php
-
-return [
-    'db' => [
-        'mysql' => [
-            'host' => 'YOUR_HOST', // The hostname or IP address of the MySQL server. Put localhost if MySQL server is running on the same machine as the Zana application.
-            'port' => YOUR_PORT, // The port number that the MySQL server is listening on. The default port for MySQL is 3306.
-            'name' => 'YOUR_DATABASE_NAME', // The name of the database to connect to.
-            'user' => 'YOUR_DATABASE_USERNAME', // The username to use for the database connection.
-            'password' => 'YOUR_DATABASE_USER_PASSWORD', // The password to use for the database connection. It's not recommended to use empty password for security reason.
-            'charset' => 'YOUR_CHARSET', // The charecter set to use for the database connection.
-            'collation' => 'YOUR_COLLATION', // The collection to use for the database connection.
-            'prefix' => 'YOUR_PREFIX' // The prefix to use for table names in the database. Empty means no prefix is used.
-        ]
-    ],
-    // ...
-]
+```json
+{
+    "db": {
+        "mysql": {
+            "host": "YOUR_HOST",
+            "port": "YOUR_PORT",
+            "name": "YOUR_DATABASE_NAME",
+            "user": "YOUR_DATABASE_USERNAME",
+            "password": "YOUR_DATABASE_USER_PASSWORD",
+            "charset": "utf8",
+            "collation": "utf8mb4_general_ci",
+            "prefix": ""
+        }
+    }
+}
 ```
 
 ### Accessing Configuration Parameters

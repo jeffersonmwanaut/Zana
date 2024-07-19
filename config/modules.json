@@ -1,0 +1,7 @@
+{
+    "modules": [
+        "Main/Main",
+        "Blog/Blog",
+        "Contact/Contact"
+    ]
+}

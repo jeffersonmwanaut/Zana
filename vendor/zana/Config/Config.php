@@ -32,22 +32,22 @@ class Config
         
         // Get config directives
         $vendorCommonConfig = require_once($vendorConfigDir . '/com.php');
-        $vendorModeConfig = require_once($vendorConfigDir . '/' . self::$mode . '.php');
+        $vendorModeConfig   = require_once($vendorConfigDir . '/' . self::$mode . '.php');
         
-        $vendorModules = require_once($vendorConfigDir . '/modules.php');
+        $vendorModules = json_decode($vendorConfigDir . '/modules.json', true)['modules'];
         
-        $userModeConfig = $userCommonConfig = $userModules = [];
+        $userModeConfig       = $userCommonConfig = $userModules = [];
         $userCommonConfigFile = $userConfigDir . '/com.json';
-        $userModulesFile = $userConfigDir . '/modules.php';
-        $userConfigFile = $userConfigDir . '/' . self::$mode . '.json';
+        $userModulesFile      = $userConfigDir . '/modules.json';
+        $userConfigFile       = $userConfigDir . '/' . self::$mode . '.json';
         
-        if (file_exists($userCommonConfigFile)) $userCommonConfig = json_decode(file_get_contents($userConfigDir . '/com.json'), true);
-        if (file_exists($userConfigFile)) $userModeConfig = json_decode(file_get_contents($userConfigDir . '/' . self::$mode . '.json'), true);
-        if(file_exists($userModulesFile)) $userModules = require_once($userConfigDir . '/modules.php');
+        if (file_exists($userCommonConfigFile)) $userCommonConfig = json_decode(file_get_contents($userCommonConfigFile), true);
+        if (file_exists($userConfigFile)) $userModeConfig         = json_decode(file_get_contents($userConfigFile), true);
+        if (file_exists($userModulesFile)) $userModules           = json_decode($userModulesFile, true)['modules'];
         
-        $vendorConfig = array_merge_recursive($vendorModeConfig, $vendorCommonConfig);
-        $userConfig = array_merge_recursive($userModeConfig, $userCommonConfig);
-        $modules = array_merge_recursive($vendorModules, $userModules);
+        $vendorConfig   = array_merge_recursive($vendorModeConfig, $vendorCommonConfig);
+        $userConfig     = array_merge_recursive($userModeConfig, $userCommonConfig);
+        $modules        = array_merge_recursive($vendorModules, $userModules);
         self::$settings = array_replace_recursive($vendorConfig, $userConfig, $modules);
     }
 

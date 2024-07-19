@@ -19,6 +19,8 @@ class Application extends Singleton
     {
         foreach (\Zana\Config\Config::get('modules') as $module)
         {
+            $module = preg_replace('#/#', '\\', $module);
+            if($module[0] !== '\\') $module = '\\' . $module;
             self::$modules[] = new $module();
         }   
     }

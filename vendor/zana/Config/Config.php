@@ -28,7 +28,7 @@ class Config
         $userConfigDir = dirname($vendorConfigDir, 3) . '/config';
 
         // Get mode
-        self::$mode = file_exists($userConfigDir . '/mode.txt') ? file_get_contents($userConfigDir . DIRECTORY_SEPARATOR . 'mode.txt') : file_get_contents($vendorConfigDir . DIRECTORY_SEPARATOR . 'mode.txt');
+        self::$mode = file_exists($userConfigDir . '/mode.env') ? file_get_contents($userConfigDir . DIRECTORY_SEPARATOR . 'mode.env') : file_get_contents($vendorConfigDir . DIRECTORY_SEPARATOR . 'mode.env');
         
         // Get config directives
         $vendorCommunConfig = require_once($vendorConfigDir . '/com.php');
@@ -37,12 +37,12 @@ class Config
         $vendorModules = require_once($vendorConfigDir . '/modules.php');
         
         $userModeConfig = $userCommunConfig = $userModules = [];
-        $userCommunConfigFile = $userConfigDir . '/com.php';
+        $userCommunConfigFile = $userConfigDir . '/com.json';
         $userModulesFile = $userConfigDir . '/modules.php';
-        $userConfigFile = $userConfigDir . '/' . self::$mode . '.php';
+        $userConfigFile = $userConfigDir . '/' . self::$mode . '.json';
         
-        if (file_exists($userCommunConfigFile)) $userCommunConfig = require_once($userConfigDir . '/com.php');
-        if (file_exists($userConfigFile)) $userModeConfig = require_once($userConfigDir . '/' . self::$mode . '.php');
+        if (file_exists($userCommunConfigFile)) $userCommunConfig = json_decode(file_get_contents($userConfigDir . '/com.json'), true);
+        if (file_exists($userConfigFile)) $userModeConfig = json_decode(file_get_contents($userConfigDir . '/' . self::$mode . '.json'), true);
         if(file_exists($userModulesFile)) $userModules = require_once($userConfigDir . '/modules.php');
         
         $vendorConfig = array_merge_recursive($vendorModeConfig, $vendorCommunConfig);

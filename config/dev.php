@@ -1,5 +1,5 @@
 <?php
-/** 
+/*
 This PHP array configuration sets up a MySQL database connection.
 You'll need to replace the placeholders with your actual database details:
 

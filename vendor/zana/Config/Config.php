@@ -34,7 +34,7 @@ class Config
         $vendorCommonConfig = require_once($vendorConfigDir . '/com.php');
         $vendorModeConfig   = require_once($vendorConfigDir . '/' . self::$mode . '.php');
         
-        $vendorModules = json_decode($vendorConfigDir . '/modules.json', true)['modules'];
+        $vendorModules = json_decode(file_get_contents($vendorConfigDir . '/modules.json'), true);
         
         $userModeConfig       = $userCommonConfig = $userModules = [];
         $userCommonConfigFile = $userConfigDir . '/com.json';
@@ -43,7 +43,7 @@ class Config
         
         if (file_exists($userCommonConfigFile)) $userCommonConfig = json_decode(file_get_contents($userCommonConfigFile), true);
         if (file_exists($userConfigFile)) $userModeConfig         = json_decode(file_get_contents($userConfigFile), true);
-        if (file_exists($userModulesFile)) $userModules           = json_decode($userModulesFile, true)['modules'];
+        if (file_exists($userModulesFile)) $userModules           = json_decode(file_get_contents($userModulesFile), true);
         
         $vendorConfig   = array_merge_recursive($vendorModeConfig, $vendorCommonConfig);
         $userConfig     = array_merge_recursive($userModeConfig, $userCommonConfig);

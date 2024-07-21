@@ -8,10 +8,10 @@ require 'partial/base-header.php';
         <?= $session::getFlash('success') ?>
     </div>
 <?php endif; ?>
-<?php if ($session::hasFlash('error')): ?>
+<?php if ($session::hasFlash('danger')): ?>
     <div class="alert alert-danger mt-2">
     <i class="fas fa-exclamation-triangle me-2"></i>
-        <?= $session::getFlash('error') ?>
+        <?= $session::getFlash('danger') ?>
     </div>
 <?php endif; ?>
 

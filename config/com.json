@@ -1,1 +1,7 @@
-{}
+{
+    "formValidatorRules": {
+        "name": "required",
+        "email": "required|email",
+        "password": "required|minLength:8"
+    }
+}

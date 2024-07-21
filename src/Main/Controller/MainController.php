@@ -10,6 +10,16 @@ class MainController extends Controller
         $this->httpResponse->redirect(Router::generateUrl('_UNDER_CONSTRUCTION'));
     }
 
+    public function error404()
+    {
+        return $this->page
+            ->addVars([
+                'dTitle' => "404 Error: Page Not Found"
+            ])
+            ->setView('404')
+            ->setTemplate('base.template');
+    }
+
     public function underConstruction()
     {
         return $this->page

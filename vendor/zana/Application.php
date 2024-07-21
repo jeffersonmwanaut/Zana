@@ -2,6 +2,8 @@
 
 use Zana\Pattern\Singleton;
 use Zana\Http\HttpResponse;
+use Zana\Config\Config;
+use Zana\Router\Router;
 
 /**
  * Create by: Jefferson Mwanaut
@@ -17,21 +19,27 @@ class Application extends Singleton
 
     public function __construct()
     {
-        foreach (\Zana\Config\Config::get('modules') as $module)
+        foreach (Config::get('modules') as $module)
         {
             $module = preg_replace('#/#', '\\', $module);
             if($module[0] !== '\\') $module = '\\' . $module;
             self::$modules[] = new $module();
-        }   
+        }    
     }
 
     public static function run()
     {
+        $httpResponse = new HttpResponse();
         try {
-            $page = \Zana\Router\Router::run();
-            (new HttpResponse($page))->send();
+            $page = Router::run();
+            $httpResponse->setPage($page);
+            $httpResponse->send();
         } catch (Exception $e) {
-            echo $e;
+            if(Config::mode() !== 'prod') {
+                echo $e;
+            } else {
+                $httpResponse->redirect(Router::generateUrl('_404'), $statusCode = 404);
+            }
         }
     }
 }

@@ -15,6 +15,12 @@ class Main extends Module
         );
 
         Router::get(
+            '/404',
+            'Main\Controller\MainController#error404',
+            '_404'
+        );
+
+        Router::get(
             '/under-construction',
             'Main\Controller\MainController#underConstruction',
             '_UNDER_CONSTRUCTION'

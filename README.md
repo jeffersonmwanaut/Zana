@@ -356,7 +356,7 @@ Generating URLs allows you to not write the `<a href="...">` values manually in 
 
 To generate a URL, you need to specify the name of the route (e.g. `BOOK`) and the values of the parameters defined by the route (e.g. `id = 42`).
 
-### Generating URLs in Controllers
+#### Generating URLs in Controllers
 
 Since your controller extends from `Zana\Controller\Controller`, you can use the `generateUrl()` static method from the `Zana\Router\Router` class.
 
@@ -379,7 +379,7 @@ class BookController extends Controller
 }
 ```
 
-### Generating URLs in Templates
+#### Generating URLs in Templates
 
 Instead of writing the link URLs by hand, use the `generateUrl()` static method from the `Zana\Router\Router` to generate URLs based on the routing configuration.
 
@@ -396,6 +396,23 @@ Later, if you want to modify the URL of a particular page, all you'll need to do
     <a href="<?= $router::generateUrl('BOOK', ['id' => $book->getId()]) ?>">Show Book</a>
 </div>
 ```
+
+### URL Builder
+
+The `Zana\Router\UrlBuilder` allows you to construct URLs in a more modular and flexible way, which can be useful in complex scenarios. This is a alternative approach to the `Zana\Router\Router::generateUrl()` method.
+
+```php
+$urlBuilder = new UrlBuilder();
+$url = $urlBuilder
+    ->setRoute('DASHBOARD')
+    ->setRouteParameter('id', 123)
+    ->setQueryStringParameter('slug', 'john-doe')
+    ->build();
+
+echo $url;
+```
+
+This would generate a URL like `/dashboard/123?slug=john-doe`.
 
 ### Redirecting
 

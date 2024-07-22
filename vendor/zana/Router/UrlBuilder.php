@@ -49,12 +49,12 @@ class UrlBuilder {
         if ($this->requiresAuthentication) {
             // Add authentication token or login URL to the URL
             // For example:
-            $url .= '?auth_token=' . Auth::getToken();
+            // $url .= '?auth_token=' . Auth::getToken();
         }
         if ($this->requiresAuthorization) {
             // Add authorization token or permission check to the URL
             // For example:
-            $url .= '?permission=' . Permission::CHECK_ADMIN;
+            // $url .= '?permission=' . Permission::CHECK_ADMIN;
         }
         return $url;
     }

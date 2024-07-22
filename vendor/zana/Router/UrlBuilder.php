@@ -2,22 +2,28 @@
 
 class UrlBuilder {
     private $route;
-    private $parameters = [];
+    private $routeParameters = [];
+    private $queryStringParameters = [];
 
     public function setRoute($route) {
         $this->route = $route;
         return $this;
     }
 
-    public function setParameter($key, $value) {
-        $this->parameters[$key] = $value;
+    public function setRouteParameter($key, $value) {
+        $this->routeParameters[$key] = $value;
+        return $this;
+    }
+
+    public function setQueryStringParameter($key, $value) {
+        $this->queryStringParameters[$key] = $value;
         return $this;
     }
 
     public function build() {
-        $url = Router::generateUrl($this->route);
-        if (!empty($this->parameters)) {
-            $url .= '?' . http_build_query($this->parameters);
+        $url = Router::generateUrl($this->route, $this->routeParameters);
+        if (!empty($this->queryStringParameters)) {
+            $url.= '?'. http_build_query($this->queryStringParameters);
         }
         return $url;
     }

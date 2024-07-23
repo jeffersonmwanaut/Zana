@@ -6,6 +6,7 @@ use Zana\Http\HttpResponse;
 use Zana\Session\Session;
 use Zana\Session\SessionInterface;
 use Zana\Router\Router;
+use Zana\Router\Route;
 use Zana\Config\Config;
 /**
  * Class Controller

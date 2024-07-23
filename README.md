@@ -399,7 +399,7 @@ Later, if you want to modify the URL of a particular page, all you'll need to do
 
 ### URL Builder
 
-The `Zana\Router\UrlBuilder` allows you to construct URLs in a more modular and flexible way, which can be useful in complex scenarios. This is a alternative approach to the `Zana\Router\Router::generateUrl()` method. For example, you could use the URL builder to generate URLs with query parameters, anchor tags, or even URLs that require authentication or authorization.
+The `Zana\Router\UrlBuilder` allows you to construct URLs in a more modular and flexible way, which can be useful in complex scenarios. This is a alternative approach to the `Zana\Router\Router::generateUrl()` method. For example, you could use the URL builder to generate URLs with query parameters or anchor tags.
 
 To generate a URL like `/dashboard/123?slug=john-doe`:
 
@@ -421,30 +421,6 @@ $urlBuilder = new UrlBuilder();
 $url = $urlBuilder
     ->setRoute('DASHBOARD')
     ->setAnchor('top')
-    ->build();
-
-echo $url;
-```
-
-URL that requires authentication like `/admin/dashboard?auth_token=abc123`:
-
-```php
-$urlBuilder = new UrlBuilder();
-$url = $urlBuilder
-    ->setRoute('ADMIN_DASHBOARD')
-    ->requiresAuthentication()
-    ->build();
-
-echo $url;
-```
-
-URL that requires authorization like `/admin/dashboard?permission=admin_access`:
-
-```php
-$urlBuilder = new UrlBuilder();
-$url = $urlBuilder
-    ->setRoute(Route::ADMIN_DASHBOARD)
-    ->requiresAuthorization()
     ->build();
 
 echo $url;

@@ -4,6 +4,7 @@ use Zana\Pattern\Singleton;
 use Zana\Http\HttpResponse;
 use Zana\Config\Config;
 use Zana\Router\Router;
+use Zana\Router\Route;
 
 /**
  * Create by: Jefferson Mwanaut
@@ -38,7 +39,7 @@ class Application extends Singleton
             if(Config::mode() !== 'prod') {
                 echo $e;
             } else {
-                $httpResponse->redirect(Router::generateUrl('_404'), $statusCode = 404);
+                $httpResponse->redirect(Router::generateUrl(Route::ERR_404), $statusCode = 404);
             }
         }
     }

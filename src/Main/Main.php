@@ -2,6 +2,7 @@
 
 use Zana\Module;
 use Zana\Router\Router;
+use Zana\Router\Route;
 
 class Main extends Module
 {
@@ -11,19 +12,19 @@ class Main extends Module
         Router::get(
             '/', // url path
             'Main\Controller\MainController#index', // Controller + action
-            '_MAIN' // route name
+            Route::MAIN // route name
         );
 
         Router::get(
             '/404',
             'Main\Controller\MainController#error404',
-            '_404'
+            Route::ERR_404
         );
 
         Router::get(
             '/under-construction',
             'Main\Controller\MainController#underConstruction',
-            '_UNDER_CONSTRUCTION'
+            Route::UNDER_CONSTRUCTION
         );
     }
 }

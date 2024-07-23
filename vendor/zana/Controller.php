@@ -33,6 +33,7 @@ class Controller
     protected $session;
 
     protected $router;
+    protected $route;
     protected $config;
 
     public function __construct()
@@ -42,6 +43,7 @@ class Controller
         $this->httpResponse = new HttpResponse();
         $this->session = Session::class;
         $this->router = Router::class;
+        $this->route = Route::class;
         $this->config = Config::class;
 
         $this->page->addVars([
@@ -49,6 +51,7 @@ class Controller
             'httpResponse' => $this->httpResponse,
             'session' => $this->session,
             'router' => $this->router,
+            'route' => $this->route,
             'config' => $this->config
         ]);
     }

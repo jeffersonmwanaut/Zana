@@ -19,6 +19,10 @@ class Route
      */
     private $params = [];
 
+    const   MAIN = '_MAIN',
+            UNDER_CONSTRUCTION = '_UNDER_CONSTRUCTION',
+            ERR_404 = '_404';
+
     /**
      * @param string $path
      * @param mixed $callable

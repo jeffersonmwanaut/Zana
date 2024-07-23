@@ -2,12 +2,13 @@
 
 use Zana\Controller;
 use Zana\Router\Router;
+use Zana\Router\Route;
 
 class MainController extends Controller
 {
     public function index()
     {
-        $this->httpResponse->redirect(Router::generateUrl('_UNDER_CONSTRUCTION'));
+        $this->httpResponse->redirect(Router::generateUrl(Route::UNDER_CONSTRUCTION));
     }
 
     public function error404()

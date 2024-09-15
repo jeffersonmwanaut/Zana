@@ -38,8 +38,8 @@ class MySQLDAO extends DAO
             $table = end($parts);
             $table = strtolower(preg_replace('#[A-Z]{1}#', '_' . '$0', $table));
             $table = substr($table, 1);
-            $this->table = $table;
         }
+        $this->table = $table;
         $this->pdo = (new DbFactory())->create(DbType::MYSQL)->pdo();
     }
 

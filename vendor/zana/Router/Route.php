@@ -56,7 +56,7 @@ class Route
     public function match($url)
     {
         $url = trim($url, '/');
-        $path = preg_replace_callback('#:([\w]+)#', [$this, 'paramMatch'], $this->path);
+        $path = preg_replace_callback('#(:|{)([\w]+)(}|)?#', [$this, 'paramMatch'], $this->path);
         $regex = '#^' . $path . '$#';
         if (!preg_match($regex, $url, $matches)) {
             return false;
@@ -72,8 +72,8 @@ class Route
      */
     private function paramMatch($matches)
     {
-        if (isset($this->params[$matches[1]])) {
-            return '(' . $this->params[$matches[1]] . ')';
+        if (isset($this->params[$matches[2]])) {
+            return '(' . $this->params[$matches[2]] . ')';
         }
         return '([^/]+)';
     }

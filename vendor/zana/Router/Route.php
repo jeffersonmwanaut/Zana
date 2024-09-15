@@ -116,7 +116,7 @@ class Route
     {
         $path = $this->path;
         foreach ($params as $param => $value){
-            $path = str_replace(':' . $param, $value, $path);
+            $path = preg_replace('#(:|{)('. $param .')(}|)?#', $value, $path);
         }
         return $path;
     }

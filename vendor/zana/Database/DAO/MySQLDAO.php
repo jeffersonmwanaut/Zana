@@ -4,6 +4,7 @@ use Exception;
 use Zana\Pattern\DAO\DAO;
 use Zana\Database\DbFactory;
 use Zana\Database\DbType;
+use Zana\Database\ResultSet;
 
 /**
  * Class MySQLDAO
@@ -30,9 +31,8 @@ class MySQLDAO extends DAO
      */
     public function __construct($table = null)
     {
+        $this->entity = preg_replace('#(Manager|DAO|Dao)#', 'Entity', get_called_class());
         if (is_null($table)) {
-            $this->entity = preg_replace('#(Manager|DAO|Dao)#', 'Entity', get_called_class());
-
             $table = preg_replace('#(Entity)#', '', $this->entity);
             $parts = explode('\\', $table);
             $table = end($parts);
@@ -237,7 +237,7 @@ class MySQLDAO extends DAO
         while ($row = $query->fetch(\PDO::FETCH_ASSOC)) {
             $data[] = new $this->entity($row);
         }
-        return isset($data) ? $data : [];
+        return new ResultSet($data);
     }
 
     /**
@@ -287,7 +287,7 @@ class MySQLDAO extends DAO
         while ($row = $query->fetch(\PDO::FETCH_ASSOC)) {
             $data[] = new $this->entity($row);
         }
-        return isset($data) ? $data : [];
+        return new ResultSet($data);
     }
 
     /**

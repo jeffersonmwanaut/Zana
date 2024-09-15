@@ -234,6 +234,7 @@ class MySQLDAO extends DAO
         $query->bindValue('skip', $limit['skip'], \PDO::PARAM_INT);
         $query->bindValue('range', $limit['range'], \PDO::PARAM_INT);
         $query->execute();
+        $data = [];
         while ($row = $query->fetch(\PDO::FETCH_ASSOC)) {
             $data[] = new $this->entity($row);
         }
@@ -284,6 +285,7 @@ class MySQLDAO extends DAO
         $query->bindValue('skip', $limit['skip'], \PDO::PARAM_INT);
         $query->bindValue('range', $limit['range'], \PDO::PARAM_INT);
         $query->execute();
+        $data = [];
         while ($row = $query->fetch(\PDO::FETCH_ASSOC)) {
             $data[] = new $this->entity($row);
         }

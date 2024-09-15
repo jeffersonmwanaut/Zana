@@ -72,6 +72,14 @@ class MySQLDAO extends DAO
                 // Get database field corresponding to property name
                 $field = strtolower(preg_replace('#[A-Z]{1}#', '_' . '$0', $property));
                 // Get data and data type, identified by field name, as query param.
+
+                if (is_object($value)) {
+                    if(method_exists($value, 'getId')) {
+                        $value = $value->getId();
+                        $field = $field . '_id';
+                    }
+                }
+
                 $queryParams[$field] = $value;
                 // Concat the field and nominative param for prepared query.
                 $queryString .= "`" . $field . "` = :" . $field . ", ";
@@ -84,13 +92,17 @@ class MySQLDAO extends DAO
         $query = $this->pdo->prepare($queryString);
 
         foreach ($queryParams as $field => $value) {
-            if (is_int($value)) $query->bindValue($field, $value, \PDO::PARAM_INT);
-            elseif (is_bool($value)) $query->bindValue($field, $value, \PDO::PARAM_BOOL);
-            elseif($value instanceof \DateTime) {
+            if (is_int($value)){
+                $query->bindValue($field, $value, \PDO::PARAM_INT);
+            } elseif (is_bool($value)) {
+                $query->bindValue($field, $value, \PDO::PARAM_BOOL);
+            } elseif($value instanceof \DateTime) {
                 $value = $value->format('Y-m-d H:i:s');
                 $query->bindValue($field, $value, \PDO::PARAM_STR);
             }
-            else $query->bindValue($field, $value, \PDO::PARAM_STR);
+            else {
+                $query->bindValue($field, $value, \PDO::PARAM_STR);
+            }
         }
         $query->execute();
         if ($query->rowCount() > 0) {
@@ -128,6 +140,14 @@ class MySQLDAO extends DAO
                 $value = $object->$method();
                 // Get database field corresponding to property name
                 $field = strtolower(preg_replace('#[A-Z]{1}#', '_' . '$0', $property));
+
+                if (is_object($value)) {
+                    if(method_exists($value, 'getId')) {
+                        $value = $value->getId();
+                        $field = $field . '_id';
+                    }
+                }
+                
                 // Get data and data type, identified by field name, as query param.
                 $queryParams[$field] = $value;
                 // Concat the field and nominative param for prepared query.
@@ -243,7 +263,7 @@ class MySQLDAO extends DAO
 
     /**
      * @param array $filter Database filter
-     * @return bool
+     * @return mixed
      */
     public function find($filter = ['conditions' => [], 'order' => 1, 'limit' => ['skip' => 0, 'range' => 20]])
     {

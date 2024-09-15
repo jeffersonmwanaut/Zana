@@ -42,9 +42,5 @@ return [
     'mail' => [
         'contact' => 'contact@' . $domain,
         'noreply' => 'noreply@' . $domain
-    ],
-    'path' => [
-        'root' => $root,
-        'url_root' => $urlRoot
     ]
 ];

@@ -21,6 +21,8 @@ $urlRoot = str_replace('/public/app.php', '', $protocol . '://'. $domain . $_SER
  */
 return [
     'path' => [
+        'root' => $root,
+        'url_root' => $urlRoot,
         'domain' => $domain,
         'img_root' => $urlRoot . '/public/img',
         'css_root' => $urlRoot . '/public/css',

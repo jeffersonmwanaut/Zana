@@ -71,7 +71,7 @@ class Entity
                     $manager = new $manager();
                     $result = $manager->find(['id' => $value]);
                     if (!empty($result)) {
-                        $value = $result[0]; // Substitute the value by the actual object property's value
+                        $value = $result->first(); // Substitute the value by the actual object property's value
                     }
                 } else {
                     // Exception is thrown here if class not found.

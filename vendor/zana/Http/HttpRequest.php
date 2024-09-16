@@ -124,6 +124,17 @@ class HttpRequest
     /**
      * @return string
      */
+    public function requestUrl()
+    {
+        $urlRoot = \Zana\Config\Config::get('path')['url_root'];
+        $params = explode('?', $_SERVER['REQUEST_URI']);
+        $params = isset($params[1]) ? '?' . $params[1] : '';
+        return $urlRoot . '/' . $this->get('url') . $params;
+    }
+
+    /**
+     * @return string
+     */
     public function referrer()
     {
         $urlRoot = \Zana\Config\Config::get('path')['url_root'];

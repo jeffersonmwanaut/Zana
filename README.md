@@ -141,6 +141,7 @@ Now that you've learned a new way of building beautiful and functional applicati
 * [Templates](#templates)
 * [Front-end Tools: Bootstrap](#front-end-tools-bootstrap)
 * [Configuring Zana](#configuring-zana)
+* [Forms](#forms)
 
 ## Module
 
@@ -669,6 +670,66 @@ class MainController extends Controller
     <h1><?= $config::get('db.mysql.name') ?></h1>
 </div>
 ```
+
+## Forms
+
+### Building Forms
+
+...
+
+### Rendering Forms
+
+...
+
+### Processing Forms
+
+...
+
+### Validating Forms
+
+Validation is done by adding a set of rules, called form validation rules, in the `config/com.json` file:
+
+```json
+{
+    "formValidatorRules": {
+        "name": "required",
+        "email": "required|email",
+        "password": "required|minLength:8"
+    }
+}
+```
+
+Now you can use the `Zana\Form\FormValidator::validate()` to validate whether the form hs been submitted with valid or invalid data.
+
+```php
+$validator = new FormValidator($formData);
+
+if (!$validator->validate($rules)) {
+    $errors = $validator->getErrors();
+    // Handle errors
+}
+```
+
+You can now use the `Zana\Form\FormValidator::validate()` method with custom error messages like this:
+
+```php
+$validator = new FormValidator($formData);
+$customErrorMessages = [
+    'required' => 'The {field} field is mandatory.',
+    'email' => 'Invalid email address for {field}.',
+    'minLength' => 'Minimum length for {field} is {length} characters.',
+    'maxLength' => 'Maximum length for {field} is {length} characters.',
+];
+
+if (!$validator->validate($rules, $customErrorMessages)) {
+    $errors = $validator->getErrors();
+    // Handle errors
+}
+```
+
+### Other Form Features
+
+...
 
 ## Creators
 

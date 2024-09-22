@@ -57,10 +57,8 @@ class FormValidator {
     }
 
     public function getErrorMessage($ruleKey, $field, $rule) {
-        $customErrorMessage = $this->customErrorMessages[$field][$ruleKey] ?? null;
-    
-        if ($customErrorMessage) {
-            return $customErrorMessage;
+        if (isset($this->customErrorMessages[$ruleKey])) {
+            return str_replace('{field}', $field, $this->customErrorMessages[$ruleKey]);
         }
     
         switch ($ruleKey) {

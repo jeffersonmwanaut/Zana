@@ -2,20 +2,20 @@
 
 class FormValidator {
     private $errors = [];
-    private $data = [];
+    private $formData = [];
     private $customErrorMessages = [];
     private $ruleValidator;
 
-    public function __construct($data) {
-        $this->data = $data;
-        $this->ruleValidator = new RuleValidator();
+    public function __construct($formData) {
+        $this->formData = $formData;
+        $this->ruleValidator = new RuleValidator($formData);
     }
 
     public function validate($rules, $customErrorMessages = []) {
         $this->customErrorMessages = $customErrorMessages;
         foreach ($rules as $field => $rule) {
-            if(!isset($this->data[$field])) continue;
-            $value = $this->data[$field];
+            if(!isset($this->formData[$field])) continue;
+            $value = $this->formData[$field];
             $ruleParts = explode('|', $rule);
 
             // Prioritize rules
@@ -56,24 +56,48 @@ class FormValidator {
         $this->errors[$field][] = $errorMessage;
     }
 
-    private function getErrorMessage($ruleKey, $field, $rule) {
-        if (isset($this->customErrorMessages[$ruleKey])) {
-            return str_replace('{field}', $field, $this->customErrorMessages[$ruleKey]);
+    public function getErrorMessage($field, $rule) {
+        $ruleKey = explode(':', $rule)[0];
+        $customErrorMessage = $this->customErrorMessages[$field][$ruleKey] ?? null;
+    
+        if ($customErrorMessage) {
+            return $customErrorMessage;
         }
-
+    
         switch ($ruleKey) {
             case 'required':
                 return "The $field field is required.";
             case 'email':
-                return "Invalid email address for $field.";
+                return "The $field field must be a valid email address.";
+            case 'min':
+                $minValue = (int) explode(':', $rule)[1];
+                return "The $field field must be at least $minValue.";
+            case 'max':
+                $maxValue = (int) explode(':', $rule)[1];
+                return "The $field field must be at most $maxValue.";
             case 'minLength':
                 $length = (int) explode(':', $rule)[1];
-                return "Minimum length for $field is $length characters.";
+                return "The $field field must be at least $length characters long.";
             case 'maxLength':
                 $length = (int) explode(':', $rule)[1];
-                return "Maximum length for $field is $length characters.";
+                return "The $field field must be at most $length characters long.";
+            case 'equalTo':
+                $compareToField = explode(':', $rule)[1];
+                return "The $field field must be equal to the $compareToField field.";
+            case 'lessThan':
+                $compareToField = explode(':', $rule)[1];
+                return "The $field field must be less than the $compareToField field.";
+            case 'lessThanOrEqualTo':
+                $compareToField = explode(':', $rule)[1];
+                return "The $field field must be less than or equal to the $compareToField field.";
+            case 'greaterThan':
+                $compareToField = explode(':', $rule)[1];
+                return "The $field field must be greater than the $compareToField field.";
+            case 'greaterThanOrEqualTo':
+                $compareToField = explode(':', $rule)[1];
+                return "The $field field must be greater than or equal to the $compareToField field.";
             default:
-                return "Invalid input for $field.";
+                return "The $field field is invalid.";
         }
     }
 

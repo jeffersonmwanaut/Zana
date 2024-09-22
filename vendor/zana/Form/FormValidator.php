@@ -56,8 +56,7 @@ class FormValidator {
         $this->errors[$field][] = $errorMessage;
     }
 
-    public function getErrorMessage($field, $rule) {
-        $ruleKey = explode(':', $rule)[0];
+    public function getErrorMessage($ruleKey, $field, $rule) {
         $customErrorMessage = $this->customErrorMessages[$field][$ruleKey] ?? null;
     
         if ($customErrorMessage) {

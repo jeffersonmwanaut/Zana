@@ -36,6 +36,12 @@ class FormValidator {
                     return checkdnsrr($domain . '.', 'MX');
                 }
                 return false;
+            case 'min':
+                $minValue = (int) explode(':', $rule)[1];
+                return $value >= $minValue;
+            case 'max':
+                $maxValue = (int) explode(':', $rule)[1];
+                return $value <= $maxValue;
             case 'minLength':
                 $length = (int) explode(':', $rule)[1];
                 return strlen($value) >= $length;

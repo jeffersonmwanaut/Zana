@@ -69,10 +69,7 @@ class Entity
                 if (class_exists($manager)) {
                     // Create instance of manager
                     $manager = new $manager();
-                    $result = $manager->find(['id' => $value]);
-                    if (!empty($result)) {
-                        $value = $result->first(); // Substitute the value by the actual object property's value
-                    }
+                    $value = $manager->find(['conditions' => ['id' => $value]])->first();
                 } else {
                     // Exception is thrown here if class not found.
                     throw new Exception('Undefined class ' . $manager . ' in ' . get_class($this) . ' on line ' . __LINE__);

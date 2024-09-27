@@ -23,19 +23,20 @@ class Config
 
     private function __construct()
     {
-        // Get dirs
+        // Get config directories
         $vendorConfigDir = __DIR__;
-        $userConfigDir = dirname($vendorConfigDir, 3) . '/config';
+        $userConfigDir = dirname(__DIR__, 3) . '/config';
 
-        // Get mode
+        // Get config mode
         self::$mode = file_exists($userConfigDir . '/mode.env') ? file_get_contents($userConfigDir . DIRECTORY_SEPARATOR . 'mode.env') : file_get_contents($vendorConfigDir . DIRECTORY_SEPARATOR . 'mode.env');
         
-        // Get config directives
+        // Get vendor config 
         $vendorCommonConfig = require_once($vendorConfigDir . '/com.php');
         $vendorModeConfig   = require_once($vendorConfigDir . '/' . self::$mode . '.php');
         
         $vendorModules = json_decode(file_get_contents($vendorConfigDir . '/modules.json'), true);
         
+        // Get user config
         $userModeConfig       = $userCommonConfig = $userModules = [];
         $userCommonConfigFile = $userConfigDir . '/com.json';
         $userModulesFile      = $userConfigDir . '/modules.json';
@@ -66,14 +67,36 @@ class Config
         
         $index = 0;
         while($index < $keyLenght) {
-        	if(!isset($value[$keyParts[$index]])) {
-            	return null;
+            if(!isset($value[$keyParts[$index]])) {
+                return null;
             }
-        	$value = $value[$keyParts[$index]];
+            $value = $value[$keyParts[$index]];
             $index++;
         }
         
-        return $value;
+        return self::resolvePath($value);
+    }
+
+    private static function resolvePath($path)
+    {
+        // Check if the value is a path and needs to be resolved
+        if (is_string($path) && strpos($path, './') === 0) {
+            $path = self::resolveRelativePath($path);
+        } elseif (is_string($path) && strpos($path, '//') === 0) {
+            $path = self::resolveUrlPath($path);
+        }
+
+        return $path;
+    }
+
+    private static function resolveRelativePath($path)
+    {
+        return realpath(str_replace('./', self::$settings['path']['root'] . '/', $path));
+    }
+
+    private static function resolveUrlPath($path)
+    {
+        return str_replace('//', self::$settings['path']['url_root'] . '/', $path);
     }
 
     /**

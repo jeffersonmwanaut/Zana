@@ -24,7 +24,7 @@ class File
     /**
      * @var string
      */
-    protected $file;
+    protected $tmpFileName;
     /**
      * @var int
      */
@@ -39,7 +39,7 @@ class File
         $this->clientFileName = isset($file['name']) ? $file['name'] : '';
         $this->clientMediaType = isset($file['type']) ? $file['type'] : '';
         $this->error = isset($file['error']) ? $file['error'] : '';
-        $this->file = isset($file['tmp_name']) ? $file['tmp_name'] : '';
+        $this->tmpFileName = isset($file['tmp_name']) ? $file['tmp_name'] : '';
         $this->size = isset($file['size']) ? $file['size'] : '';
         $this->extension = isset($file['name']) ? strtolower(  substr(  strrchr($file['name'], '.')  ,1)  ) : '';
     }
@@ -101,18 +101,18 @@ class File
     /**
      * @return string
      */
-    public function getFile()
+    public function getTmpFileName()
     {
-        return $this->file;
+        return $this->tmpFileName;
     }
 
     /**
      * @param string $file
      * @return File
      */
-    public function setFile($file)
+    public function setTmpFileName($tmpFileName)
     {
-        $this->file = $file;
+        $this->tmpFileName = $tmpFileName;
         return $this;
     }
 

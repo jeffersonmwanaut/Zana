@@ -14,6 +14,12 @@ require 'partial/base-header.php';
         <a class="btn-close" href="<?= $httpRequest->requestUrl() ?>"></a>
     </div>
 <?php endif; ?>
+<?php if ($session::hasFlash('warning')): ?>
+    <div class="alert alert-warning alert-dismissible mt-2" role="alert">
+        <div><i class="fas fa-exclamation-triangle me-2"></i><?= $session::getFlash('warning') ?></div>
+        <a class="btn-close" href="<?= $httpRequest->requestUrl() ?>"></a>
+    </div>
+<?php endif; ?>
 
 <?= $content ?>
     

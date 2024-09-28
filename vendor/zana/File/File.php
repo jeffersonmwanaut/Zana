@@ -12,7 +12,7 @@ class File
     /**
      * @var string
      */
-    protected $clientFileName;
+    protected $clientFilename;
     /**
      * @var string
      */
@@ -24,7 +24,7 @@ class File
     /**
      * @var string
      */
-    protected $tmpFileName;
+    protected $tmpFilename;
     /**
      * @var int
      */
@@ -36,10 +36,10 @@ class File
 
     public function __construct(array $file)
     {
-        $this->clientFileName = isset($file['name']) ? $file['name'] : '';
+        $this->clientFilename = isset($file['name']) ? $file['name'] : '';
         $this->clientMediaType = isset($file['type']) ? $file['type'] : '';
         $this->error = isset($file['error']) ? $file['error'] : '';
-        $this->tmpFileName = isset($file['tmp_name']) ? $file['tmp_name'] : '';
+        $this->tmpFilename = isset($file['tmp_name']) ? $file['tmp_name'] : '';
         $this->size = isset($file['size']) ? $file['size'] : '';
         $this->extension = isset($file['name']) ? strtolower(  substr(  strrchr($file['name'], '.')  ,1)  ) : '';
     }
@@ -47,18 +47,18 @@ class File
     /**
      * @return string
      */
-    public function getClientFileName()
+    public function getClientFilename()
     {
-        return $this->clientFileName;
+        return $this->clientFilename;
     }
 
     /**
-     * @param string $clientFileName
+     * @param string $clientFilename
      * @return File
      */
-    public function setClientFileName($clientFileName)
+    public function setClientFilename($clientFilename)
     {
-        $this->clientFileName = $clientFileName;
+        $this->clientFilename = $clientFilename;
         return $this;
     }
 
@@ -101,18 +101,18 @@ class File
     /**
      * @return string
      */
-    public function getTmpFileName()
+    public function getTmpFilename()
     {
-        return $this->tmpFileName;
+        return $this->tmpFilename;
     }
 
     /**
      * @param string $file
      * @return File
      */
-    public function setTmpFileName($tmpFileName)
+    public function setTmpFilename($tmpFilename)
     {
-        $this->tmpFileName = $tmpFileName;
+        $this->tmpFilename = $tmpFilename;
         return $this;
     }
 

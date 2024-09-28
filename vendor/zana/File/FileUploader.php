@@ -10,6 +10,7 @@ class FileUploader
     protected $validExtensions;
     protected $maxSize;
     protected $uploadDir; // directory where uploaded files will be stored
+    protected $destinationFilename;
 
     public function __construct($file, $uploadDir, $validExtensions = [], $maxSize = 1000)
     {
@@ -54,24 +55,21 @@ class FileUploader
         }
 
         // Move the uploaded file to a permanent location
-        $fileTmpName = $this->file->getTmpFileName();
+        $tmpFilename = $this->file->getTmpFilename();
         $fileExtension = $this->file->getExtension();
-        $destination = $this->uploadDir . '/' . uniqid() . ".$fileExtension";
-        if (move_uploaded_file($fileTmpName, $destination)) {
+        $destinationFilename = uniqid() . ".$fileExtension";
+        $destination = $this->uploadDir . '/' . $destinationFilename;
+        if (move_uploaded_file($tmpFilename, $destination)) {
+            $this->destinationFilename = $destinationFilename;
             return $destination; // return the uploaded file path
         } else {
             return false;
         }
     }
 
-    protected function error()
+    public function getDestinationFilename()
     {
-        return $_FILES['file']['error'];
-    }
-
-    protected function getFileTmpName()
-    {
-        return $_FILES['file']['tmp_name'];
+        return $this->destinationFilename;
     }
 
 }

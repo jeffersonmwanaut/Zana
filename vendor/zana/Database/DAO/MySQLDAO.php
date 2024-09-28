@@ -50,6 +50,8 @@ class MySQLDAO extends DAO
      */
     public function create($object)
     {
+        if(is_null($object)) return false;
+        
         $queryString = "INSERT INTO `" . $this->table . "` SET ";
         $queryParams = [];
         $objectProperties = (new \ReflectionClass($object))->getProperties();
@@ -119,6 +121,8 @@ class MySQLDAO extends DAO
      */
     public function update($object)
     {
+        if(is_null($object)) return false;
+
         $queryString = "UPDATE `" . $this->table . "` SET ";
         $queryParams = [];
         $objectProperties = (new \ReflectionClass($object))->getProperties();
@@ -184,6 +188,8 @@ class MySQLDAO extends DAO
      */
     public function delete($object)
     {
+        if(is_null($object)) return false;
+
         $queryString = "DELETE FROM `" . $this->table . "`";
         $queryString .= " WHERE `id` = :id";
         $query = $this->pdo->prepare($queryString);
@@ -319,6 +325,8 @@ class MySQLDAO extends DAO
      */
     public function save($object)
     {
+        if(is_null($object)) return false;
+
         if(method_exists($object, 'getId')) {
             if(!empty($object->getId())){
                 $object = $this->update($object, $object->ignoreProperties());

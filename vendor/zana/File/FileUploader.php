@@ -12,10 +12,11 @@ class FileUploader
     protected $uploadDir; // directory where uploaded files will be stored
     protected $destinationFilename;
 
-    public function __construct($file, $uploadDir, $validExtensions = [], $maxSize = 1000)
+    public function __construct($file, $uploadDir, $destinationFilename = '', $validExtensions = [], $maxSize = 1000)
     {
         $this->file = $file;
         $this->uploadDir = $uploadDir;
+        $this->destinationFilename = $destinationFilename;
         $this->validExtensions = $validExtensions;
         $this->maxSize = $maxSize;
     }
@@ -23,6 +24,7 @@ class FileUploader
     public function setUploadDir($uploadDir)
     {
         $this->uploadDir = $uploadDir;
+        return $this;
     }
 
     /**
@@ -31,6 +33,7 @@ class FileUploader
     public function addExtension($extension)
     {
         $this->validExtensions[] = $extension;
+        return $this;
     }
 
     /**
@@ -39,6 +42,7 @@ class FileUploader
     public function addExtensions(array $extensions)
     {
         $this->validExtensions = array_merge($this->validExtensions, $extensions);
+        return $this;
     }
 
     public function upload()
@@ -57,14 +61,21 @@ class FileUploader
         // Move the uploaded file to a permanent location
         $tmpFilename = $this->file->getTmpFilename();
         $fileExtension = $this->file->getExtension();
-        $destinationFilename = uniqid() . ".$fileExtension";
-        $destination = $this->uploadDir . '/' . $destinationFilename;
-        if (move_uploaded_file($tmpFilename, $destination)) {
-            $this->destinationFilename = $destinationFilename;
-            return $destination; // return the uploaded file path
+        if(empty($this->destinationFilename)) {
+            $this->destinationFilename = uniqid() . ".$fileExtension";
+        }
+        $destinationFullPath = $this->uploadDir . '/' . $this->destinationFilename;
+        if (move_uploaded_file($tmpFilename, $destinationFullPath)) {
+            return $destinationFullPath; // return the uploaded file path
         } else {
             return false;
         }
+    }
+
+    public function setDestinationFilename($filename)
+    {
+        $this->destinationFilename = $filename;
+        return $this;
     }
 
     public function getDestinationFilename()

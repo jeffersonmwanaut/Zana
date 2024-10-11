@@ -10,7 +10,7 @@ class RuleValidator {
     public function validate($ruleKey, $value, $rule) {
         switch ($ruleKey) {
             case 'id':
-                return preg_match('/^[a-zA-Z0-9]+$/', $value);
+                return preg_match('/^[a-zA-Z0-9_]+$/', $value);
             case 'required':
                 return !empty($value);
             case 'email':

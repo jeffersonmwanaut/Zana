@@ -62,6 +62,8 @@ class FormValidator {
         }
     
         switch ($ruleKey) {
+            case 'id':
+                return "The $field field can only have letters and numbers.";
             case 'required':
                 return "The $field field is required.";
             case 'email':

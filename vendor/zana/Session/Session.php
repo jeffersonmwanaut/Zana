@@ -46,35 +46,38 @@ class Session implements SessionInterface
     public static function setFlash($key, $message)
     {
         self::start();
+        if (!isset($_SESSION['flash'])) {
+            $_SESSION['flash'] = []; // Initialize the flash array if it doesn't exist
+        }
         $_SESSION['flash'][$key] = $message;
     }
 
     public static function getFlash($key)
     {
         self::start();
-        if (!isset($_SESSION['flash'])) {
-            return false; // No flash messages set
+        
+        // Check if the flash array exists and the key is set
+        if (isset($_SESSION['flash']) && array_key_exists($key, $_SESSION['flash'])) {
+            $flash = $_SESSION['flash'][$key]; // Retrieve the flash message
+            unset($_SESSION['flash'][$key]); // Remove it from the session
+            return $flash; // Return the message
         }
-        $flash = array_key_exists($key, $_SESSION['flash']) ? $_SESSION['flash'][$key] : false;
-        $flashesArrayKeys = array_keys($_SESSION['flash']);
-        if(count($flashesArrayKeys) > 1) {
-            unset($_SESSION['flash'][$key]);
-            return $flash;
-        } else {
-            unset($_SESSION['flash']);
-            return $flash;
-        }
+        
+        return false; // Return false if the flash message does not exist
     }
 
     public static function getFlashes()
     {
         self::start();
-        if (!isset($_SESSION['flash'])) {
-            return []; // No flash messages set
+        
+        // Check if the flash array exists
+        if (isset($_SESSION['flash'])) {
+            $flashes = $_SESSION['flash']; // Retrieve all flash messages
+            unset($_SESSION['flash']); // Clear all flash messages from the session
+            return $flashes; // Return the array of flash messages
         }
-        $flash = $_SESSION['flash'];
-        unset($_SESSION['flash']);
-        return $flash;
+        
+        return []; // Return an empty array if no flash messages are set
     }
 
     /**
@@ -84,7 +87,7 @@ class Session implements SessionInterface
     public static function hasFlashes()
     {
         self::start();
-        return isset($_SESSION['flash']);
+        return isset($_SESSION['flash']) && !empty($_SESSION['flash']);
     }
 
     /**
@@ -94,6 +97,6 @@ class Session implements SessionInterface
     public static function hasFlash($key)
     {
         self::start();
-        return isset($_SESSION['flash'][$key]);
+        return isset($_SESSION['flash']) && array_key_exists($key, $_SESSION['flash']);
     }
 }

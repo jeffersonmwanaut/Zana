@@ -19,7 +19,7 @@ class Session implements SessionInterface
     /**
      * @inheritDoc
      */
-    public static function get($key)
+    public static function get($key): mixed
     {
         self::start();
         return array_key_exists($key, $_SESSION) ? $_SESSION[$key] : false;
@@ -52,6 +52,9 @@ class Session implements SessionInterface
     public static function getFlash($key)
     {
         self::start();
+        if (!isset($_SESSION['flash'])) {
+            return false; // No flash messages set
+        }
         $flash = array_key_exists($key, $_SESSION['flash']) ? $_SESSION['flash'][$key] : false;
         $flashesArrayKeys = array_keys($_SESSION['flash']);
         if(count($flashesArrayKeys) > 1) {
@@ -66,6 +69,9 @@ class Session implements SessionInterface
     public static function getFlashes()
     {
         self::start();
+        if (!isset($_SESSION['flash'])) {
+            return []; // No flash messages set
+        }
         $flash = $_SESSION['flash'];
         unset($_SESSION['flash']);
         return $flash;

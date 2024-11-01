@@ -2,6 +2,7 @@
 
 use Zana\File\File;
 use Zana\Image\Image;
+use Zana\Config\Config;
 
 /**
  * Class HttpRequest
@@ -9,6 +10,12 @@ use Zana\Image\Image;
  */
 class HttpRequest
 {
+    private $urlRoot;
+
+    public function __construct()
+    {
+        $this->urlRoot = Config::get('path.url_root');
+    }
 
     /**
      * @param string $key
@@ -126,10 +133,9 @@ class HttpRequest
      */
     public function requestUrl()
     {
-        $urlRoot = \Zana\Config\Config::get('path')['url_root'];
         $params = explode('?', $_SERVER['REQUEST_URI']);
         $params = isset($params[1]) ? '?' . $params[1] : '';
-        return $urlRoot . '/' . $this->get('url') . $params;
+        return $this->urlRoot . '/' . $this->get('url') . $params;
     }
 
     /**
@@ -138,8 +144,12 @@ class HttpRequest
     public function referrer()
     {
         if(!isset($_SERVER['HTTP_REFERER'])) return '#';
-        $urlRoot = \Zana\Config\Config::get('path')['url_root'];
-        return str_replace($_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] . $urlRoot . '/', '', $_SERVER['HTTP_REFERER']);
+        return str_replace($_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] . $this->urlRoot . '/', '', $_SERVER['HTTP_REFERER']);
+    }
+
+    public function back()
+    {
+        return \Zana\Router\Router::generateUrl('_NAVIGATE_BACK');
     }
 
 }

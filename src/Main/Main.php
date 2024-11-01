@@ -26,5 +26,11 @@ class Main extends Module
             'Main\Controller\MainController#underConstruction',
             Route::UNDER_CONSTRUCTION
         );
+
+        Router::get(
+            '/navigate-back',
+            'Main\Controller\MainController#navigateBack',
+            Route::NAVIGATE_BACK
+        );
     }
 }

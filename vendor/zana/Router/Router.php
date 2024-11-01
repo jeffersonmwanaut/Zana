@@ -5,6 +5,7 @@ use Zana\Http\HttpRequest;
 use Zana\Http\Page;
 use Zana\Pattern\Singleton;
 use Zana\Config\Config;
+use Zana\Http\PageStack;
 
 class Router extends Singleton
 {
@@ -162,6 +163,7 @@ class Router extends Singleton
         }
         foreach (self::$routes[$requestMethod] as $route) {
             if ($route->match(self::$path)) {
+                PageStack::push(Config::get('path.url_root') . '/' . self::$path);
                 return $route->call();
             }
         }

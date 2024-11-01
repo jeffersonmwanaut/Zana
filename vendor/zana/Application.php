@@ -5,6 +5,7 @@ use Zana\Http\HttpResponse;
 use Zana\Config\Config;
 use Zana\Router\Router;
 use Zana\Router\Route;
+use Zana\Session\Session;
 
 /**
  * Create by: Jefferson Mwanaut
@@ -20,6 +21,9 @@ class Application extends Singleton
 
     public function __construct()
     {
+        Session::start();
+        Router::getInstance();
+
         foreach (Config::get('modules') as $module)
         {
             $module = preg_replace('#/#', '\\', $module);

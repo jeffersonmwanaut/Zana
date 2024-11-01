@@ -21,7 +21,8 @@ class Route
 
     const   MAIN = '_MAIN',
             UNDER_CONSTRUCTION = '_UNDER_CONSTRUCTION',
-            ERR_404 = '_404';
+            ERR_404 = '_404',
+            NAVIGATE_BACK = '_NAVIGATE_BACK';
 
     /**
      * @param string $path

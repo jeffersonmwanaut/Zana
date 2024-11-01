@@ -30,4 +30,10 @@ class MainController extends Controller
             ->setView('under-construction')
             ->setTemplate('base.template');
     }
+
+    public function navigateBack()
+    {
+        $previousUrl = \Zana\Http\PageStack::pop();
+        $this->httpResponse->redirect($previousUrl);
+    }
 }

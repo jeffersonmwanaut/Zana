@@ -15,8 +15,6 @@ define('IMG', \Zana\Config\Config::get('path')['img_root']);
 define('CSS', \Zana\Config\Config::get('path')['css_root']);
 define('JS', \Zana\Config\Config::get('path')['js_root']);
 define('FONTS', \Zana\Config\Config::get('path')['fonts']);
-// Initialize router
-\Zana\Router\Router::getInstance();
-// Initialize app
+# Initialize app
 \Zana\Application::getInstance();
 \Zana\Application::run();

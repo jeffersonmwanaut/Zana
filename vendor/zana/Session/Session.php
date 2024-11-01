@@ -21,7 +21,6 @@ class Session implements SessionInterface
      */
     public static function get($key): mixed
     {
-        self::start();
         return array_key_exists($key, $_SESSION) ? $_SESSION[$key] : false;
     }
 
@@ -30,7 +29,6 @@ class Session implements SessionInterface
      */
     public static function set($key, $value)
     {
-        self::start();
         $_SESSION[$key] = $value;
     }
 
@@ -39,13 +37,11 @@ class Session implements SessionInterface
      */
     public static function delete($key)
     {
-        self::start();
         unset($_SESSION[$key]);
     }
 
     public static function setFlash($key, $message)
     {
-        self::start();
         if (!isset($_SESSION['flash'])) {
             $_SESSION['flash'] = []; // Initialize the flash array if it doesn't exist
         }
@@ -54,8 +50,6 @@ class Session implements SessionInterface
 
     public static function getFlash($key)
     {
-        self::start();
-        
         // Check if the flash array exists and the key is set
         if (isset($_SESSION['flash']) && array_key_exists($key, $_SESSION['flash'])) {
             $flash = $_SESSION['flash'][$key]; // Retrieve the flash message
@@ -68,8 +62,6 @@ class Session implements SessionInterface
 
     public static function getFlashes()
     {
-        self::start();
-        
         // Check if the flash array exists
         if (isset($_SESSION['flash'])) {
             $flashes = $_SESSION['flash']; // Retrieve all flash messages
@@ -86,7 +78,6 @@ class Session implements SessionInterface
      */
     public static function hasFlashes()
     {
-        self::start();
         return isset($_SESSION['flash']) && !empty($_SESSION['flash']);
     }
 
@@ -96,7 +87,6 @@ class Session implements SessionInterface
      */
     public static function hasFlash($key)
     {
-        self::start();
         return isset($_SESSION['flash']) && array_key_exists($key, $_SESSION['flash']);
     }
 }

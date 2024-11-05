@@ -8,11 +8,11 @@ class FileUploader
 {
     protected File $file;
     protected $validExtensions;
-    protected $maxSize;
+    protected $maxSize; // 1000 = 1KB
     protected $uploadDir; // directory where uploaded files will be stored
     protected $destinationFilename;
 
-    public function __construct($file, $uploadDir, $destinationFilename = '', $validExtensions = [], $maxSize = 1000)
+    public function __construct($file, $uploadDir, $destinationFilename = '', $validExtensions = [], $maxSize = 1000000)
     {
         $this->file = $file;
         $this->uploadDir = $uploadDir;

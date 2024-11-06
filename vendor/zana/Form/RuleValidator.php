@@ -20,6 +20,9 @@ class RuleValidator {
                     return checkdnsrr($domain . '.', 'MX');
                 }
                 return false;
+            case 'password':
+                $pattern = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/';
+                return preg_match($pattern, $value);
             case 'min':
                 $minValue = (int) explode(':', $rule)[1];
                 return $value >= $minValue;

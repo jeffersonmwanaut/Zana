@@ -68,6 +68,8 @@ class FormValidator {
                 return "The $field field is required.";
             case 'email':
                 return "The $field field must be a valid email address.";
+            case 'password':
+                return "The $field field must be at least 8 characters long, contains at least one uppercase and one lowercase letter, one digit, and one special character.";
             case 'min':
                 $minValue = (int) explode(':', $rule)[1];
                 return "The $field field must be at least $minValue.";

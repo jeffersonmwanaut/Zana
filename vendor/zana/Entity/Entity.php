@@ -53,26 +53,56 @@ class Entity
                  * Example: user_id
                  */
                 $property = str_replace('_id', '', $property);
-                $objectProperty = str_replace(' ', '', str_replace('_', ' ', $property));
+                //$objectProperty = str_replace(' ', '', str_replace('_', ' ', $property));
+                $objectProperty = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $property))));
                 $reflectionClass = new \ReflectionClass($this);
                 $reflectionClassProperties = $reflectionClass->getProperties();
                 foreach ($reflectionClassProperties as $reflectionClassProperty) {
                     if ($reflectionClassProperty->getName() == $objectProperty) {
-                        $objectProperty = $reflectionClassProperty->getType()->getName();
+                        $type = $reflectionClassProperty->getType();
+                        if ($type instanceof \ReflectionUnionType) {
+                            $foundType = false;
+                            foreach ($type->getTypes() as $unionType) {
+                                $typeName = $unionType->getName();
+                                // Check if the type can be instantiated
+                                if (class_exists($typeName)) {
+                                    // Assuming you have a method to find the object by ID
+                                    $managerClass = str_replace('Entity', 'Manager', $typeName);
+                                    
+                                    if (class_exists($managerClass)) {
+                                        $manager = new $managerClass();
+                                        $object = $manager->find(['conditions' => ['id' => $value]])->first();
+                                        
+                                        if ($object instanceof $typeName) {
+                                            $value = $object;
+                                            $foundType = true;
+                                            break; // Exit the loop once the correct type is found
+                                        }
+                                    }
+                                }
+                            }
+                            if (!$foundType) {
+                                throw new Exception("No valid type found for property '$objectProperty'");
+                            }
+                        } else {
+                            // Handle single type
+                            $objectType = $type->getName();
+                            if (class_exists($objectType)) {
+                                $managerClass = str_replace('Entity', 'Manager', $objectType);
+                                if (class_exists($managerClass)) {
+                                    $manager = new $managerClass();
+                                    $object = $manager->find(['conditions' => ['id' => $value]])->first();
+                                    
+                                    if ($object instanceof $objectType) {
+                                        $value = $object;
+                                    } else {
+                                        throw new Exception("Invalid object type for property '$objectProperty'");
+                                    }
+                                }
+                            }
+                        }
                         break;
                     }
-                }
-                // Find manager
-                $objectPropertyParts = explode('\\', $objectProperty);
-                $manager = $objectPropertyParts[count($objectPropertyParts) - 3] . '\\Manager\\' . str_replace('Entity', 'Manager', $objectPropertyParts[count($objectPropertyParts) - 1]);
-                // Check that the manager class exists before trying to use it
-                if (class_exists($manager)) {
-                    // Create instance of manager
-                    $manager = new $manager();
-                    $value = $manager->find(['conditions' => ['id' => $value]])->first();
-                } else {
-                    // Exception is thrown here if class not found.
-                    throw new Exception('Undefined class ' . $manager . ' in ' . get_class($this) . ' on line ' . __LINE__);
                 }
             }
             // Substitute underscores for whitespaces, capitalize the first letter of each word and remove whitespaces.

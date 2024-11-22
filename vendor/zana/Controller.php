@@ -7,6 +7,7 @@ use Zana\Session\Session;
 use Zana\Session\SessionInterface;
 use Zana\Router\Router;
 use Zana\Router\Route;
+use Zana\Router\UrlBuilder;
 use Zana\Config\Config;
 /**
  * Class Controller
@@ -36,6 +37,7 @@ class Controller
     protected $router;
     protected $route;
     protected $config;
+    protected $urlBuilder;
 
     public function __construct()
     {
@@ -46,6 +48,7 @@ class Controller
         $this->router = Router::class;
         $this->route = Route::class;
         $this->config = Config::class;
+        $this->urlBuilder = new UrlBuilder();
 
         $this->page->addVars([
             'httpRequest' => $this->httpRequest,
@@ -53,7 +56,8 @@ class Controller
             'session' => $this->session,
             'router' => $this->router,
             'route' => $this->route,
-            'config' => $this->config
+            'config' => $this->config,
+            'urlBuilder' => $this->urlBuilder
         ]);
     }
 }

@@ -73,10 +73,12 @@ class Entity
                                         $manager = new $managerClass();
                                         $object = $manager->find(['conditions' => ['id' => $value]])->first();
                                         
-                                        if ($object instanceof $typeName) {
-                                            $value = $object;
-                                            $foundType = true;
-                                            break; // Exit the loop once the correct type is found
+                                        if($object) {
+                                            if ($object instanceof $typeName) {
+                                                $value = $object;
+                                                $foundType = true;
+                                                break; // Exit the loop once the correct type is found
+                                            }
                                         }
                                     }
                                 }
@@ -87,16 +89,18 @@ class Entity
                         } else {
                             // Handle single type
                             $objectType = $type->getName();
+                            $objectType = $objectType === 'self' ? get_class($this) : $objectType;
                             if (class_exists($objectType)) {
                                 $managerClass = str_replace('Entity', 'Manager', $objectType);
                                 if (class_exists($managerClass)) {
                                     $manager = new $managerClass();
                                     $object = $manager->find(['conditions' => ['id' => $value]])->first();
-                                    
-                                    if ($object instanceof $objectType) {
-                                        $value = $object;
-                                    } else {
-                                        throw new Exception("Invalid object type for property '$objectProperty'");
+                                    if($object) {
+                                        if ($object instanceof $objectType) {
+                                            $value = $object;
+                                        } else {
+                                            throw new Exception("Invalid object type for property '$objectProperty'");
+                                        }
                                     }
                                 }
                             }

@@ -208,57 +208,55 @@ class MySQLDAO extends DAO
      */
     public function read($filter = ['fields' => [], 'conditions' => [], 'order' => 1, 'limit' => ['skip' => 0, 'range' => 20]])
     {
-        $fields = isset($filter['fields']) == false ? [] : $filter['fields'];
-        $conditions = isset($filter['conditions']) == false ? [] : $filter['conditions'];
-        $order = isset($filter['order']) == false ? 1 : $filter['order'];
-        $limit = isset($filter['limit']) == false ? ['skip' => 0, 'range' => 20] : $filter['limit'];
+        $fields = isset($filter['fields']) ? $filter['fields'] : [];
+        $conditions = isset($filter['conditions']) ? $filter['conditions'] : [];
+        $order = isset($filter['order']) ? $filter['order'] : 1;
+        $limit = isset($filter['limit']) ? $filter['limit'] : ['skip' => 0, 'range' => 20];
 
         // Build fields string
-        $fieldString = null;
-        if (empty($fields)) {
-            $fields = "*";
-            $fieldString = $fields;
-        } else {
-            $fields = explode(', ', $fields);
-            foreach ($fields as $field) {
-                $fieldString .= "`" . $field . "`, ";
-            }
-            $fieldString = substr($fieldString, 0, -2);
-        }
+        $fieldString = empty($fields) ? "*" : implode(", ", array_map(function($field) {
+            return "`" . $field . "`";
+        }, explode(', ', $fields)));
 
+        // Build conditions string
         $queryConditions = [];
-        $queryConditionString = null;
-        if (empty($conditions)) {
-            $conditions = "1";
-            $queryConditionString = $conditions;
-        } else {
+        $queryConditionString = empty($conditions) ? "1" : "";
+        if (!empty($conditions)) {
             foreach ($conditions as $condition => $value) {
                 $queryConditions[$condition] = $value;
-                if(substr($value, 0, 1) === '!') {
-                    $queryConditionString .= "`" . $condition . "` <> :" . $condition . " AND ";
-                } else {
-                    $queryConditionString .= "`" . $condition . "` = :" . $condition . " AND ";
-                }
+                $queryConditionString .= sprintf("`%s` %s :%s AND ", $condition, (substr($value, 0, 1) === '!') ? '<>' : '=', $condition);
             }
-            $queryConditionString = substr($queryConditionString, 0, -5);
+            $queryConditionString = rtrim($queryConditionString, ' AND ');
         }
 
-        $queryString = "SELECT " . $fieldString . " FROM `" . $this->table . "` WHERE " . $queryConditionString . " ORDER BY " . $order . " LIMIT :skip, :range";
+        // Build the base query
+        $queryString = "SELECT " . $fieldString . " FROM `" . $this->table . "` WHERE " . $queryConditionString . " ORDER BY " . $order;
+
+        // Append LIMIT only if range is greater than 0
+        if ($limit['range'] > 0) {
+            $queryString .= " LIMIT :skip, :range";
+        }
+
         $query = $this->pdo->prepare($queryString);
         foreach ($queryConditions as $field => $value) {
-            if(substr($value, 0, 1) === '!') {
+            if (substr($value, 0, 1) === '!') {
                 $value = substr($value, 1);
             }
-            if (is_int($value)) $query->bindValue($field, $value, \PDO::PARAM_INT);
-            elseif (is_bool($value)) $query->bindValue($field, $value, \PDO::PARAM_BOOL);
-            elseif($value instanceof \DateTime) {
-                $value = $value->format('Y-m-d H:i:s');
+            if (is_int($value)) {
+                $query->bindValue($field, $value, \PDO::PARAM_INT);
+            } elseif (is_bool($value) || $value instanceof \DateTime) {
+                $query->bindValue($field, $value, \PDO::PARAM_BOOL);
+            } else {
                 $query->bindValue($field, $value, \PDO::PARAM_STR);
             }
-            else $query->bindValue($field, $value, \PDO::PARAM_STR);
         }
-        $query->bindValue('skip', $limit['skip'], \PDO::PARAM_INT);
-        $query->bindValue('range', $limit['range'], \PDO::PARAM_INT);
+
+        // Bind limit parameters only if they are set
+        if ($limit['range'] > 0) {
+            $query->bindValue('skip', $limit['skip'], \PDO::PARAM_INT);
+            $query->bindValue('range', $limit['range'], \PDO::PARAM_INT);
+        }
+
         $query->execute();
         $data = [];
         while ($row = $query->fetch(\PDO::FETCH_ASSOC)) {
@@ -273,43 +271,59 @@ class MySQLDAO extends DAO
      */
     public function find($filter = ['conditions' => [], 'order' => 1, 'limit' => ['skip' => 0, 'range' => 20]])
     {
-        $conditions = isset($filter['conditions']) == false ? [] : $filter['conditions'];
-        $order = isset($filter['order']) == false ? 1 : $filter['order'];
-        $limit = isset($filter['limit']) == false ? ['skip' => 0, 'range' => 20] : $filter['limit'];
+        $conditions = isset($filter['conditions']) ? $filter['conditions'] : [];
+        $order = isset($filter['order']) ? $filter['order'] : 1;
+        $limit = isset($filter['limit']) ? $filter['limit'] : ['skip' => 0, 'range' => 20];
 
+        // Build conditions string
         $queryConditions = [];
-        $queryConditionString = null;
-        if (empty($conditions)) {
-            $conditions = "1";
-            $queryConditionString = $conditions;
-        } else {
+        $queryConditionString = empty($conditions) ? "1" : "";
+        
+        if (!empty($conditions)) {
             foreach ($conditions as $condition => $value) {
-                $queryConditions[$condition] = $value;
                 if ($condition === 'id') {
-                    $queryConditionString .= "`" . $condition . "` = :" . $condition . ",   ";
-                    break;
+                    $queryConditionString .= "`" . $condition . "` = :" . $condition . " AND ";
+                    $queryConditions[$condition] = $value; // Add to query conditions
+                    break; // Stop processing further conditions if 'id' is found
+                } else {
+                    $queryConditionString .= "`" . $condition . "` LIKE :" . $condition . " OR ";
+                    $queryConditions[$condition] = '%' . $value . '%'; // Use LIKE with wildcards
                 }
-                $queryConditionString .= "`" . $condition . "` LIKE :" . $condition . " OR ";
             }
-            $queryConditionString = substr($queryConditionString, 0, -4);
+            $queryConditionString = rtrim($queryConditionString, ' OR '); // Remove trailing ' OR '
+            $queryConditionString = rtrim($queryConditionString, ' AND '); // Remove trailing ' AND ' if any
         }
 
-        $queryString = "SELECT * FROM `" . $this->table . "` WHERE " . $queryConditionString . " ORDER BY " . $order . " LIMIT :skip, :range";
+        // Build the query string
+        $queryString = "SELECT * FROM `" . $this->table . "` WHERE " . $queryConditionString . " ORDER BY " . $order;
+
+        // Append LIMIT only if range is greater than 0
+        if ($limit['range'] > 0) {
+            $queryString .= " LIMIT :skip, :range";
+        }
+
         $query = $this->pdo->prepare($queryString);
+
+        // Bind parameters
         foreach ($queryConditions as $field => $value) {
-            if (is_int($value)) $query->bindValue($field, $value, \PDO::PARAM_INT);
-            elseif (is_bool($value)) $query->bindValue($field, $value, \PDO::PARAM_BOOL);
-            elseif($value instanceof \DateTime) {
+            if (is_int($value)) {
+                $query->bindValue($field, $value, \PDO::PARAM_INT);
+            } elseif (is_bool($value)) {
+                $query->bindValue($field, $value, \PDO::PARAM_BOOL);
+            } elseif ($value instanceof \DateTime) {
                 $value = $value->format('Y-m-d H:i:s');
                 $query->bindValue($field, $value, \PDO::PARAM_STR);
-            }
-            else $query->bindValue($field, $value, \PDO::PARAM_STR);
-            if($field === 'id') {
-                break;
+            } else {
+                $query->bindValue($field, $value, \PDO::PARAM_STR);
             }
         }
-        $query->bindValue('skip', $limit['skip'], \PDO::PARAM_INT);
-        $query->bindValue('range', $limit['range'], \PDO::PARAM_INT);
+
+        // Bind limit parameters only if they are set
+        if ($limit['range'] > 0) {
+            $query->bindValue('skip', $limit['skip'], \PDO::PARAM_INT);
+            $query->bindValue('range', $limit['range'], \PDO::PARAM_INT);
+        }
+
         $query->execute();
         $data = [];
         while ($row = $query->fetch(\PDO::FETCH_ASSOC)) {

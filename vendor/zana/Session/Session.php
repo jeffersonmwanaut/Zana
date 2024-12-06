@@ -19,7 +19,7 @@ class Session implements SessionInterface
     /**
      * @inheritDoc
      */
-    public static function get($key): mixed
+    public static function get($key)
     {
         return array_key_exists($key, $_SESSION) ? $_SESSION[$key] : false;
     }

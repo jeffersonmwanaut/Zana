@@ -63,6 +63,8 @@ class FileUploader
         $fileExtension = $this->file->getExtension();
         if(empty($this->destinationFilename)) {
             $this->destinationFilename = uniqid() . ".$fileExtension";
+        } else {
+            $this->destinationFilename = $this->destinationFilename . ".$fileExtension";
         }
         $destinationFullPath = $this->uploadDir . '/' . $this->destinationFilename;
         if (move_uploaded_file($tmpFilename, $destinationFullPath)) {

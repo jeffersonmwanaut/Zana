@@ -552,7 +552,7 @@ If you want to use your own template, use both the `setView()` and `setTemplate(
 
 ```php
 //src/MyModule/Controller/MyController.php
-namespace Main;
+namespace MyModule;
 
 use Zana\Controller;
 
@@ -573,9 +573,127 @@ class MyController extends Controller
 
 ## Templates
 
-...
+A template is the best way to organize and render HTML from inside your application. Zana rely on PHP capabilities for creating templates. The following is an example of template.
+
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <title><?= $dTitle ?></title>
+    </head>
+    <body>
+        <main><?= $content ?></main>
+    </body>
+</html>
+```
+
+### Creating Templates
+
+First, you need to create a new file in the `template/` folder to store the template.
+
+```html
+<!-- template/my-template.php -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title><?= $dTitle ?></title>
+    </head>
+    <body>
+        <main><?= $content ?></main>
+    </body>
+</html>
+```
+
+Second, you need to create a new file in your module `view/` folder to hold the view contents.
+
+```html
+<!-- src/MyModule/view/my-view.php -->
+<h1>Welcome <?= $firstName ?>!</h1>
+```
+
+Then, create a controller that renders the view and the template and passes to it the needed variables:
+
+```php
+//src/MyModule/Controller/MyController.php
+namespace MyModule;
+
+use Zana\Controller;
+
+class MyController extends Controller
+{
+    public function welcome()
+    {
+        return $this->page
+            ->addVars([
+                'dTitle' => "Welcome" // Document title to display in the browser tab
+                'firstName' => $firstName // Variable $firstName passed to the view
+            ])
+            ->setView('my-view') // The view that contains the web page content
+            ->setTemplate('my-template'); // The template of the web page, assuming that my-template is located in the template folder.
+    }
+    // ...
+}
+```
+
+### Template Location
+
+Templates are stored in the `templates` folder. When a controller renders the `my-template` template, it is actually referring to the `my-project/template/my-template.php` file.
+
+### Template Variables
+
+A common need for templates is to print the values stored in the templates passed from the controller. This allows to evolve your application code without having to change the template code.
+
+```php
+//src/MyModule/Controller/MyController.php
+namespace MyModule;
+
+use Zana\Controller;
+
+class MyController extends Controller
+{
+    public function welcome()
+    {
+        return $this->page
+            ->addVars([
+                'dTitle' => "Welcome" // Document title to display in the browser tab
+                'firstName' => $firstName // Variable $firstName passed to the view
+            ])
+            ->setView('my-view') // The view that contains the web page content
+            ->setTemplate('my-template'); // The template of the web page, assuming that my-template is located in the template folder.
+    }
+    // ...
+}
+```
+
+### Rendering Templates
+
+Since the controller extends from the `Zana\Controller\Controller`, you can use the page object that is responsible for generating the web page from the view and the template.
+
+```php
+//src/MyModule/Controller/MyController.php
+namespace MyModule;
+
+use Zana\Controller;
+
+class MyController extends Controller
+{
+    public function welcome()
+    {
+        // Return the page object to generate the web page
+        return $this->page
+            ->addVars([
+                'dTitle' => "Welcome"
+                'firstName' => $firstName
+            ])
+            ->setView('my-view')
+            ->setTemplate('my-template');
+    }
+    // ...
+}
+```
 
 ## Front-end Tools: Bootstrap
+
 
 ...
 

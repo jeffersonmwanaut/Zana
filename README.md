@@ -39,7 +39,7 @@ Creating a new page is a two-step process:
 Open the Main module `src/Main/Main.php` and add a new route `/hello-world` for the Hello world example.
 
 ```php
-// src/Main/Main.php
+//src/Main/Main.php
 namespace Main;
 
 use Zana\Module;
@@ -64,7 +64,7 @@ class Main extends Module
 1. Open the Main controller `src/Main/Controller/MainController.php` and add a new function `helloWorld()` that will render the page.
 
 ```php
-// src/Main/Controller/MainController.php
+//src/Main/Controller/MainController.php
 namespace Main;
 
 use Zana\Controller;
@@ -110,12 +110,22 @@ my-project/
 |    |    └── app.js
 |    └── app.php
 ├── src/
-|    └── Main
+|    ├── Main
+|    |   ├── Controller/
+|    |   ├── Entity/
+|    |   ├── Manager/
+|    |   ├── view/
+|    |   └── Main.php
+|    └── MyModule
 |        ├── Controller/
+|        |   └── MyController.php
 |        ├── Entity/
+|        |   └── MyEntity.php
 |        ├── Manager/
+|        |   └── MyManager.php
 |        ├── view/
-|        └── Main.php
+|        |   └── my-view.php
+|        └── MyModule.php
 ├── template/
 |    └── partial/
 ├── vendor/
@@ -152,7 +162,7 @@ Modules used in your applications must be enabled in the `config/modules.json` f
 ```json
 {
     "modules": [
-        "Book/Book"
+        "MyModule/MyModule"
     ]
 }
 ```
@@ -162,13 +172,13 @@ Modules used in your applications must be enabled in the `config/modules.json` f
 Let's start by creating a new class called Book:
 
 ```php
-// src/Book/Book.php
+//src/MyModule/MyModule.php
 namespace Book;
 
 use Zana\Module;
 use Zana\Router\Router;
 
-class Book extends Module
+class MyModule extends Module
 {
     
 }
@@ -179,7 +189,7 @@ Now that the module has been created, let's enable it in the `config/modules.jso
 ```json
 {
     "modules": [
-        "Book/Book"
+        "MyModule/MyModule"
     ]
 }
 ```
@@ -196,12 +206,12 @@ my-project
 .
 .
 ├── src/
-|    └── Book/
+|    └── MyModule/
 |        ├── Controller/
 |        ├── Entity/
 |        ├── Manager/
 |        ├── view/
-|        └── Book.php
+|        └── MyModule.php
 .
 .
 .
@@ -227,19 +237,19 @@ Routes can be configured in your application module using the router.
 Suppose you want to define a route for the `/books` URL in your application. To do so, create a [module class](#module) like the following:
 
 ```php
-// src/Book/Book.php
-namespace Book;
+//src/MyModule/MyModule.php
+namespace MyModule;
 
 use Zana\Module;
 use Zana\Router\Router;
 
-class Book extends Module
+class MyModule extends Module
 {
     public function __construct()
     {
         Router::get(
             '/books', // The route or URI
-            'Main\Controller\MainController#index', // The controller's method that will build the page
+            'MyModule\Controller\MyController#index', // The controller's method that will build the page
             'BOOKS' // The route name
         );
         // ...
@@ -247,7 +257,7 @@ class Book extends Module
 }
 ```
 
-This code defines a route called `BOOKS` that matches when the user requests the `/books` URL. When the match occures, the application runs the `index` method of the `MainController` class.
+This code defines a route called `BOOKS` that matches when the user requests the `/books` URL. When the match occures, the application runs the `index` method of the `MyController` class.
 
 The query string of a URL is not considered when matching routes. In this example, URLs like `/books?author=gt90` will also match the `BOOKS` route.
 
@@ -262,26 +272,26 @@ The previous examples defined routes where the URL never changes (e.g. `/books`)
 In Zana routes, variable parts start with the colon sign `:`. For example, the route to display a specific book contents is defined as `/books/:id`.
 
 ```php
-// src/Book/Book.php
-namespace Book;
+//src/MyModule/MyModule.php
+namespace MyModule;
 
 use Zana\Module;
 use Zana\Router\Router;
 
-class Book extends Module
+class MyModule extends Module
 {
     public function __construct()
     {
         Router::get(
             '/books/:id',
-            'Book\Controller\BookController#show'
+            'MyModule\Controller\MyController#show'
         );
         // ...
     }
 }
 ```
 
-The name of the variable part (`:id` in this example) is used to create a PHP variable where that route content is stored and passed to the controller. If a user visits the `/books/42` URL, Zana executes the `show()` method in the `BookController` class and passes a `$id = 42` argument to the `show()` method.
+The name of the variable part (`:id` in this example) is used to create a PHP variable where that route content is stored and passed to the controller. If a user visits the `/books/42` URL, Zana executes the `show()` method in the `MyController` class and passes a `$id = 42` argument to the `show()` method.
 
 Routes can define any number of parameters, but each of them can only be used once on each route (e.g. `/books/:id/page/:pageNumber`).
 
@@ -292,24 +302,24 @@ Imagine that your application has a show route (URL: `/books/:id`) and a list ro
 If the user requests `/books/gt90`, both routes will match and Zana will use the route which was defined first. To fix this, add some validation to the :id parameter using the requirements option:
 
 ```php
-// src/Book/Book.php
+//src/MyModule/MyModule.php
 namespace Book;
 
 use Zana\Module;
 use Zana\Router\Router;
 
-class Book extends Module
+class MyModule extends Module
 {
     public function __construct()
     {
         Router::get(
             '/books/:id',
-            'Book\Controller\BookController#show'
+            'MyModule\Controller\MyController#show'
         )->with('id', '\d+');
 
         Router::get(
             '/books/:author',
-            'Book\Controller\BookController#list'
+            'MyModule\Controller\MyController#list'
         );
         // ...
     }
@@ -323,25 +333,25 @@ The `with` option defines the PHP regular expressions that route parameters must
 Route alias allow you to have multiple name for the same route:
 
 ```php
-// src/Book/Book.php
+//src/MyModule/MyModule.php
 namespace Book;
 
 use Zana\Module;
 use Zana\Router\Router;
 
-class Book extends Module
+class MyModule extends Module
 {
     public function __construct()
     {
         Router::get(
             '/books/:id',
-            'Book\Controller\BookController#show'
+            'MyModule\Controller\MyController#show'
             'BOOK'
         )->with('id', '\d+');
 
         Router::get(
             '/books/:id',
-            'Book\Controller\BookController#show'
+            'MyModule\Controller\MyController#show'
             'SHOW_BOOK'
         )->with('id', '\d+');
         // ...
@@ -362,12 +372,12 @@ To generate a URL, you need to specify the name of the route (e.g. `BOOK`) and t
 Since your controller extends from `Zana\Controller\Controller`, you can use the `generateUrl()` static method from the `Zana\Router\Router` class.
 
 ```php
-// src/Book/Controller/BookController.php
+//src/MyModule/Controller/MyController.php
 namespace Book\Controller;
 
 use Zana\Controller;
 
-class BookController extends Controller
+class MyController extends Controller
 {
     public function index():Page
     {
@@ -388,7 +398,7 @@ Later, if you want to modify the URL of a particular page, all you'll need to do
 
 ```html
 <div>
-    <!-- src/Book/view/index.php -->
+    <!-- src/MyModule/view/index.php -->
     
     <!-- Generate a URL with no parameters -->
     <a href="<?= $router::generateUrl('BOOKS') ?>">List Books</a>
@@ -432,13 +442,13 @@ echo $url;
 If you want to redirect the user to another page, use the `redirect()` method from the `HttpResponse` object.
 
 ```php
-// src/Book/Controller/BookController.php
+//src/MyModule/Controller/MyController.php
 namespace Book\Controller;
 
 use Zana\Controller;
 use Zana\Http\HttpResponse;
 
-class BookController extends Controller
+class MyController extends Controller
 {
     public function index():Page
     {
@@ -460,12 +470,12 @@ A controller is a function that is assigned a request by the router to create an
 A controller is usually a method inside a controller class.
 
 ```php
-// src/Main/Controller/MainController.php
+//src/MyModule/Controller/MyController.php
 namespace Main\Controller;
 
 use Zana\Controller;
 
-class MainController extends Controller
+class MyController extends Controller
 {
     public function helloWorld():Page
     {
@@ -479,13 +489,13 @@ class MainController extends Controller
 In order to view the result of this controller, you need to map a URL to it via a route. Routes are defined in the modules as shown below:
 
 ```php
-// src/Main/Main.php
+//src/MyModule/MyModule.php
 namespace Main;
 
 use Zana\Module;
 use Zana\Router\Router;
 
-class Main extends Module
+class MyModule extends Module
 {
     public function __construct()
     {
@@ -493,7 +503,7 @@ class Main extends Module
 
         Router::get(
             '/hello-world',
-            'Main\Controller\MainController#helloWorld'
+            'MyModule\Controller\MyController#helloWorld'
             'HELLO_WORLD'
         );
 
@@ -511,12 +521,12 @@ For more information on routing, see [Routing](#Routing).
 If you're serving HTML, you'll want to render a template. The `setView()` method renders a template and puts that content into the response for you.
 
 ```php
-// src/Main/Controller/MainController.php
+//src/MyModule/Controller/MyController.php
 namespace Main;
 
 use Zana\Controller;
 
-class MainController extends Controller
+class MyController extends Controller
 {
     public function helloWorld()
     {
@@ -532,7 +542,7 @@ class MainController extends Controller
 
 ```html
 <div>
-    <!-- src/Main/view/hello-world.php -->
+    <!-- src/MyModule/view/hello-world.php -->
     
     <h1>Hello world</h1>
 </div>
@@ -541,12 +551,12 @@ class MainController extends Controller
 If you want to use your own template, use both the `setView()` and `setTemplate()` methods. The `setTemplate()` allows you to specify the path of your custom template. We recommand you to put your templates in the `template` folder.
 
 ```php
-// src/Main/Controller/MainController.php
+//src/MyModule/Controller/MyController.php
 namespace Main;
 
 use Zana\Controller;
 
-class MainController extends Controller
+class MyController extends Controller
 {
     public function helloWorld()
     {
@@ -646,12 +656,12 @@ For example, to define the database for the development environment in the `conf
 Since your controller extends from `Zana\Controller\Controller`, you can use the `get()` static method from the `Zana\Config\Config` class.
 
 ```php
-// src/Main/Controller/MainController.php
+//src/MyModule/Controller/MyController.php
 namespace Main\Controller;
 
 use Zana\Controller;
 
-class MainController extends Controller
+class MyController extends Controller
 {
     public function index():Page
     {
@@ -665,7 +675,7 @@ class MainController extends Controller
 
 ```html
 <div>
-    <!-- src/Main/view/hello-world.php -->
+    <!-- src/MyModule/view/hello-world.php -->
     
     <h1><?= $config::get('db.mysql.name') ?></h1>
 </div>

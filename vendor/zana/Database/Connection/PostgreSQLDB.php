@@ -1,6 +1,7 @@
 <?php namespace Zana\Database\Connection;
 
 use PDO;
+use PDOException;
 
 class PostgreSQLDB
 {
@@ -13,8 +14,16 @@ class PostgreSQLDB
     {
         $db = CONFIG['db']['pgsql'];
         if (!empty($db)) {
-            $this->pdo = new PDO('pgsql:host=' . $db['host'] . '; port=' . $db['port'] . '; dbname=' . $db['name'], $db['user'], $db['password']);
-            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            try {
+                $this->pdo = new PDO(
+                    'pgsql:host=' . $db['host'] . '; port=' . $db['port'] . '; dbname=' . $db['name'], 
+                    $db['user'], 
+                    $db['password']
+                );
+                $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            } catch (PDOException $e) {
+                throw new PDOException('Database connection failed: ' . $e->getMessage());
+            }
         }
     }
 

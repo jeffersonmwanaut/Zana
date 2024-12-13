@@ -14,7 +14,7 @@ class DbFactory extends \Zana\Pattern\AbstractFactory
             case DbType::POSTGRESQL:
                 return new PostgreSQLDB();
             case DbType::SQLITE:
-                return SQLiteDB::getInstance();
+                return new SQLiteDB();
             default:
                 return false;
         }

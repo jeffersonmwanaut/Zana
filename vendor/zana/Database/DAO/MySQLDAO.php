@@ -197,7 +197,7 @@ class MySQLDAO extends DAO
         
         foreach ($conditions as $condition => $value) {
             $operator = (substr($value, 0, 1) === '!') ? '<>' : '=';
-            Conditions[$condition] = ltrim($value, '!'); // Remove '!' for binding
+            $queryConditions[$condition] = ltrim($value, '!'); // Remove '!' for binding
             $queryConditionString .= sprintf("`%s` %s :%s AND ", $condition, $operator, $condition);
         }
         $queryConditionString = rtrim($queryConditionString, ' AND ');

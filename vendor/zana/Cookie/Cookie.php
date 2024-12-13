@@ -17,10 +17,10 @@ class Cookie
      */
     private $domain;
 
-    public function __construct($path = "", $domain = "")
+    public function __construct(?string $path = null, ?string $domain = null)
     {
-        $this->path = $path != "" ? $path : $_SERVER['SERVER_NAME'];
-        $this->domain = $domain != "" ? $domain : $_SERVER['SERVER_NAME'];
+        $this->path = $path ?? '/'; // Default path to root
+        $this->domain = $domain ?? $_SERVER['SERVER_NAME']; // Default to server name
     }
 
     /**
@@ -34,9 +34,12 @@ class Cookie
      * @param bool $httpOnly
      * @return bool
      */
-    public function set($name, $value = '', $expire = 0, $path = '', $domain = '', $secure = false, $httpOnly = false)
+    public function set(string $name, string $value = '', int $expire = 0, ?string $path = null, ?string $domain = null, bool $secure = false, bool $httpOnly = false): bool
     {
-        return setCookie($name, $value, $expire, $path, $domain, $secure, $httpOnly);
+        if (empty($name)) {
+            throw new Exception("Cookie name cannot be empty.");
+        }
+        return setcookie($name, $value, $expire, $path ?? $this->path, $domain ?? $this->domain, $secure, $httpOnly);
     }
 
     /**
@@ -44,9 +47,9 @@ class Cookie
      * @param string $name
      * @return bool
      */
-    public function get($name)
+    public function get(string $name)
     {
-        return isset($_COOKIE[$name]) ? $_COOKIE[$name] : false;
+        return $_COOKIE[$name] ?? false;
     }
 
     /**
@@ -58,47 +61,55 @@ class Cookie
      * @param bool $httpOnly
      * @return bool
      */
-    public function delete($name, $path, $domain, $secure = false, $httpOnly = false)
+    public function delete(string $name, ?string $path = null, ?string $domain = null, bool $secure = false, bool $httpOnly = false): bool
     {
-        if(isset($_COOKIE[$name])){
-            return setcookie($name, '', - time(), $path, $domain, $secure, $httpOnly);
+        if (isset($_COOKIE[$name])) {
+            return setcookie($name, '', time() - 3600, $path ?? $this->path, $domain ?? $this->domain, $secure, $httpOnly);
+        }
+        return false;
+    }
+
+    /**
+     * Set the path for the cookies
+     *
+     * @param string $path
+     * @throws Exception
+     */
+    public function setPath(string $path): void
+    {
+        if (file_exists($path)) {
+            $this->path = $path;
         } else {
-            return false;
+            throw new Exception("The file could not be found " . get_class($this) . ' on line ' . __LINE__);
         }
     }
 
     /**
-     * @param $path
-     * @throws Exception
-     */
-    public function setPath($path)
-    {
-        if (file_exists($path))
-            $this->path = $path;
-        else
-            throw new Exception("The file could not be found " . get_class($this) . ' on line ' . __LINE__);
-    }
-
-    /**
+     * Get the path for the cookies
+     *
      * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
 
     /**
+     * Get the domain for the cookies
+     *
      * @return string
      */
-    public function getDomain()
+    public function getDomain(): string
     {
         return $this->domain;
     }
 
     /**
+     * Set the domain for the cookies
+     *
      * @param string $domain
      */
-    public function setDomain($domain)
+    public function setDomain(string $domain): void
     {
         $this->domain = $domain;
     }

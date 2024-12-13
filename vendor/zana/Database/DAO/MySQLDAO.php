@@ -50,62 +50,51 @@ class MySQLDAO extends DAO
      */
     public function create($object)
     {
-        if(is_null($object)) return false;
-        
-        $queryString = "INSERT INTO `" . $this->table . "` SET ";
+        if (is_null($object)) return false;
+
         $queryParams = [];
+        $fields = [];
         $objectProperties = (new \ReflectionClass($object))->getProperties();
-        foreach ($objectProperties as $key => $reflectionProperty) {
+
+        foreach ($objectProperties as $reflectionProperty) {
             $property = $reflectionProperty->getName();
 
-            if(in_array($property, $object->ignoreProperties())) {
+            if (in_array($property, $object->ignoreProperties())) {
                 continue;
             }
 
-            if(method_exists($object, 'is' . ucfirst($property))) {
-                $method = 'is' . ucfirst($property);
-            } else {
-                $method = 'get' . ucfirst($property);
-            }
+            $method = method_exists($object, 'is' . ucfirst($property)) ? 'is' . ucfirst($property) : 'get' . ucfirst($property);
             
-            if (method_exists($object, $method)) {
-                // Get value from property getter
-                $value = $object->$method();
-                // Get database field corresponding to property name
-                $field = strtolower(preg_replace('#[A-Z]{1}#', '_' . '$0', $property));
-                // Get data and data type, identified by field name, as query param.
-
-                if (is_object($value)) {
-                    if(method_exists($value, 'getId')) {
-                        $value = $value->getId();
-                        $field = $field . '_id';
-                    }
-                }
-
-                $queryParams[$field] = $value;
-                // Concat the field and nominative param for prepared query.
-                $queryString .= "`" . $field . "` = :" . $field . ", ";
-            } else {
-                // Exception is thrown here if method not found.
-                throw new Exception('Call to undefined method ' . $method . ' in ' . get_class($this) . ' on line ' . __LINE__);
+            if (!method_exists($object, $method)) {
+                throw new Exception('Call to undefined method ' . $method . ' in ' . get_class($this));
             }
+
+            // Get value from property getter
+            $value = $object->$method();
+            // Get database field corresponding to property name
+            $field = strtolower(preg_replace('#[A-Z]{1}#', '_' . '$0', $property));
+
+            // Handle object values
+            if (is_object($value) && method_exists($value, 'getId')) {
+                $value = $value->getId();
+                $field .= '_id';
+            }
+
+            $queryParams[$field] = $value;
+            $fields[] = "`$field` = :$field"; // Collect fields for the query
         }
-        $queryString = substr($queryString, 0, -2);
+
+        $queryString = "INSERT INTO `" . $this->table . "` SET " . implode(', ', $fields);
         $query = $this->pdo->prepare($queryString);
 
         foreach ($queryParams as $field => $value) {
-            if (is_int($value)){
-                $query->bindValue($field, $value, \PDO::PARAM_INT);
-            } elseif (is_bool($value)) {
-                $query->bindValue($field, $value, \PDO::PARAM_BOOL);
-            } elseif($value instanceof \DateTime) {
+            $paramType = is_int($value) ? \PDO::PARAM_INT : (is_bool($value) ? \PDO::PARAM_BOOL : \PDO::PARAM_STR);
+            if ($value instanceof \DateTime) {
                 $value = $value->format('Y-m-d H:i:s');
-                $query->bindValue($field, $value, \PDO::PARAM_STR);
             }
-            else {
-                $query->bindValue($field, $value, \PDO::PARAM_STR);
-            }
+            $query->bindValue($field, $value, $paramType);
         }
+
         $query->execute();
         if ($query->rowCount() > 0) {
             $object->setId($this->pdo->lastInsertId());
@@ -121,65 +110,55 @@ class MySQLDAO extends DAO
      */
     public function update($object)
     {
-        if(is_null($object)) return false;
+        if (is_null($object)) return false;
 
-        $queryString = "UPDATE `" . $this->table . "` SET ";
         $queryParams = [];
+        $fields = [];
         $objectProperties = (new \ReflectionClass($object))->getProperties();
-        foreach ($objectProperties as $key => $reflectionProperty) {
+
+        foreach ($objectProperties as $reflectionProperty) {
             $property = $reflectionProperty->getName();
 
-            if(in_array($property, $object->ignoreProperties())) {
+            if (in_array($property, $object->ignoreProperties())) {
                 continue;
             }
-            
-            if(method_exists($object, 'is' . ucfirst($property))) {
-                $method = 'is' . ucfirst($property);
-            } else {
-                $method = 'get' . ucfirst($property);
-            }
-            
-            if (method_exists($object, $method)) {
-                // Get value from property getter
-                $value = $object->$method();
-                // Get database field corresponding to property name
-                $field = strtolower(preg_replace('#[A-Z]{1}#', '_' . '$0', $property));
 
-                if (is_object($value)) {
-                    if(method_exists($value, 'getId')) {
-                        $value = $value->getId();
-                        $field = $field . '_id';
-                    }
-                }
-                
-                // Get data and data type, identified by field name, as query param.
-                $queryParams[$field] = $value;
-                // Concat the field and nominative param for prepared query.
-                $queryString .= "`" . $field . "` = :" . $field . ", ";
-            } else {
-                // Exception is thrown here if method not found.
-                throw new Exception('Call to undefined method ' . $method . ' in ' . get_class($this) . ' on line ' . __LINE__);
+            $method = method_exists($object, 'is' . ucfirst($property)) ? 'is' . ucfirst($property) : 'get' . ucfirst($property);
+            
+            if (!method_exists($object, $method)) {
+                throw new Exception('Call to undefined method ' . $method . ' in ' . get_class($this));
             }
+
+            // Get value from property getter
+            $value = $object->$method();
+            // Get database field corresponding to property name
+            $field = strtolower(preg_replace('#[A-Z]{1}#', '_' . '$0', $property));
+
+            // Handle object values
+            if (is_object($value) && method_exists($value, 'getId')) {
+                $value = $value->getId();
+                $field .= '_id';
+            }
+
+            $queryParams[$field] = $value;
+            $fields[] = "`$field` = :$field"; // Collect fields for the query
         }
-        $queryString = substr($queryString, 0, -2);
-        $queryString .= " WHERE `id` = :id";
+
+        $queryString = "UPDATE `" . $this->table . "` SET " . implode(', ', $fields) . " WHERE `id` = :id";
         $query = $this->pdo->prepare($queryString);
 
         foreach ($queryParams as $field => $value) {
-            if (is_int($value)) $query->bindValue($field, $value, \PDO::PARAM_INT);
-            elseif (is_bool($value)) $query->bindValue($field, $value, \PDO::PARAM_BOOL);
-            elseif($value instanceof \DateTime) {
+            $paramType = is_int($value) ? \PDO::PARAM_INT : (is_bool($value) ? \PDO::PARAM_BOOL : \PDO::PARAM_STR);
+            if ($value instanceof \DateTime) {
                 $value = $value->format('Y-m-d H:i:s');
-                $query->bindValue($field, $value, \PDO::PARAM_STR);
             }
-            else $query->bindValue($field, $value, \PDO::PARAM_STR);
+            $query->bindValue($field, $value, $paramType);
         }
+
         $query->bindValue('id', $object->getId(), \PDO::PARAM_INT);
 
-        if ($query->execute()) {
-            return $object;
-        }
-        return false;
+        $query->execute();
+        return $query->rowCount() > 0 ? $object : false;
     }
 
     /**
@@ -188,18 +167,14 @@ class MySQLDAO extends DAO
      */
     public function delete($object)
     {
-        if(is_null($object)) return false;
+        if (is_null($object)) return false;
 
-        $queryString = "DELETE FROM `" . $this->table . "`";
-        $queryString .= " WHERE `id` = :id";
+        $queryString = "DELETE FROM `" . $this->table . "` WHERE `id` = :id";
         $query = $this->pdo->prepare($queryString);
         $query->bindValue('id', $object->getId(), \PDO::PARAM_INT);
 
         $query->execute();
-        if ($query->rowCount() > 0) {
-            return $object;
-        }
-        return false;
+        return $query->rowCount() > 0 ? $object : false;
     }
 
     /**
@@ -208,29 +183,27 @@ class MySQLDAO extends DAO
      */
     public function read($filter = ['fields' => [], 'conditions' => [], 'order' => 1, 'limit' => ['skip' => 0, 'range' => 20]])
     {
-        $fields = isset($filter['fields']) ? $filter['fields'] : [];
-        $conditions = isset($filter['conditions']) ? $filter['conditions'] : [];
-        $order = isset($filter['order']) ? $filter['order'] : 1;
-        $limit = isset($filter['limit']) ? $filter['limit'] : ['skip' => 0, 'range' => 20];
+        $fields = $filter['fields'] ?? [];
+        $conditions = $filter['conditions'] ?? [];
+        $order = $filter['order'] ?? 1;
+        $limit = $filter['limit'] ?? ['skip' => 0, 'range' => 20];
 
         // Build fields string
-        $fieldString = empty($fields) ? "*" : implode(", ", array_map(function($field) {
-            return "`" . $field . "`";
-        }, explode(', ', $fields)));
+        $fieldString = empty($fields) ? "*" : implode(", ", array_map(fn($field) => "`$field`", $fields));
 
         // Build conditions string
         $queryConditions = [];
         $queryConditionString = empty($conditions) ? "1" : "";
-        if (!empty($conditions)) {
-            foreach ($conditions as $condition => $value) {
-                $queryConditions[$condition] = $value;
-                $queryConditionString .= sprintf("`%s` %s :%s AND ", $condition, (substr($value, 0, 1) === '!') ? '<>' : '=', $condition);
-            }
-            $queryConditionString = rtrim($queryConditionString, ' AND ');
+        
+        foreach ($conditions as $condition => $value) {
+            $operator = (substr($value, 0, 1) === '!') ? '<>' : '=';
+            Conditions[$condition] = ltrim($value, '!'); // Remove '!' for binding
+            $queryConditionString .= sprintf("`%s` %s :%s AND ", $condition, $operator, $condition);
         }
+        $queryConditionString = rtrim($queryConditionString, ' AND ');
 
         // Build the base query
-        $queryString = "SELECT " . $fieldString . " FROM `" . $this->table . "` WHERE " . $queryConditionString . " ORDER BY " . $order;
+        $queryString = "SELECT $fieldString FROM `" . $this->table . "` WHERE $queryConditionString ORDER BY $order";
 
         // Append LIMIT only if range is greater than 0
         if ($limit['range'] > 0) {
@@ -238,17 +211,21 @@ class MySQLDAO extends DAO
         }
 
         $query = $this->pdo->prepare($queryString);
+
+        // Bind parameters
         foreach ($queryConditions as $field => $value) {
-            if (substr($value, 0, 1) === '!') {
-                $value = substr($value, 1);
+            $paramType = match (true) {
+                is_int($value) => \PDO::PARAM_INT,
+                is_bool($value) => \PDO::PARAM_BOOL,
+                $value instanceof \DateTime => \PDO::PARAM_STR,
+                default => \PDO::PARAM_STR,
+            };
+
+            if ($value instanceof \DateTime) {
+                $value = $value->format('Y-m-d H:i:s');
             }
-            if (is_int($value)) {
-                $query->bindValue($field, $value, \PDO::PARAM_INT);
-            } elseif (is_bool($value) || $value instanceof \DateTime) {
-                $query->bindValue($field, $value, \PDO::PARAM_BOOL);
-            } else {
-                $query->bindValue($field, $value, \PDO::PARAM_STR);
-            }
+            
+            $query->bindValue($field, $value, $paramType);
         }
 
         // Bind limit parameters only if they are set
@@ -271,31 +248,31 @@ class MySQLDAO extends DAO
      */
     public function find($filter = ['conditions' => [], 'order' => 1, 'limit' => ['skip' => 0, 'range' => 20]])
     {
-        $conditions = isset($filter['conditions']) ? $filter['conditions'] : [];
-        $order = isset($filter['order']) ? $filter['order'] : 1;
-        $limit = isset($filter['limit']) ? $filter['limit'] : ['skip' => 0, 'range' => 20];
+        $conditions = $filter['conditions'] ?? [];
+        $order = $filter['order'] ?? 1;
+        $limit = $filter['limit'] ?? ['skip' => 0, 'range' => 20];
 
         // Build conditions string
         $queryConditions = [];
         $queryConditionString = empty($conditions) ? "1" : "";
-        
-        if (!empty($conditions)) {
-            foreach ($conditions as $condition => $value) {
-                if ($condition === 'id') {
-                    $queryConditionString .= "`" . $condition . "` = :" . $condition . " AND ";
-                    $queryConditions[$condition] = $value; // Add to query conditions
-                    break; // Stop processing further conditions if 'id' is found
-                } else {
-                    $queryConditionString .= "`" . $condition . "` LIKE :" . $condition . " OR ";
-                    $queryConditions[$condition] = '%' . $value . '%'; // Use LIKE with wildcards
-                }
+
+        foreach ($conditions as $condition => $value) {
+            if ($condition === 'id') {
+                $queryConditionString .= "`$condition` = :$condition AND ";
+                $queryConditions[$condition] = $value; // Add to query conditions
+                break; // Stop processing further conditions if 'id' is found
+            } else {
+                $queryConditionString .= "`$condition` LIKE :$condition OR ";
+                $queryConditions[$condition] = "%$value%"; // Use LIKE with wildcards
             }
-            $queryConditionString = rtrim($queryConditionString, ' OR '); // Remove trailing ' OR '
-            $queryConditionString = rtrim($queryConditionString, ' AND '); // Remove trailing ' AND ' if any
         }
 
+        // Clean up the condition string
+        $queryConditionString = rtrim($queryConditionString, ' OR ');
+        $queryConditionString = rtrim($queryConditionString, ' AND ');
+
         // Build the query string
-        $queryString = "SELECT * FROM `" . $this->table . "` WHERE " . $queryConditionString . " ORDER BY " . $order;
+        $queryString = "SELECT * FROM `" . $this->table . "` WHERE $queryConditionString ORDER BY $order";
 
         // Append LIMIT only if range is greater than 0
         if ($limit['range'] > 0) {
@@ -306,16 +283,18 @@ class MySQLDAO extends DAO
 
         // Bind parameters
         foreach ($queryConditions as $field => $value) {
-            if (is_int($value)) {
-                $query->bindValue($field, $value, \PDO::PARAM_INT);
-            } elseif (is_bool($value)) {
-                $query->bindValue($field, $value, \PDO::PARAM_BOOL);
-            } elseif ($value instanceof \DateTime) {
+            $paramType = match (true) {
+                is_int($value) => \PDO::PARAM_INT,
+                is_bool($value) => \PDO::PARAM_BOOL,
+                $value instanceof \DateTime => \PDO::PARAM_STR,
+                default => \PDO::PARAM_STR,
+            };
+
+            if ($value instanceof \DateTime) {
                 $value = $value->format('Y-m-d H:i:s');
-                $query->bindValue($field, $value, \PDO::PARAM_STR);
-            } else {
-                $query->bindValue($field, $value, \PDO::PARAM_STR);
             }
+            
+            $query->bindValue($field, $value, $paramType);
         }
 
         // Bind limit parameters only if they are set
@@ -339,19 +318,56 @@ class MySQLDAO extends DAO
      */
     public function save($object)
     {
-        if(is_null($object)) return false;
+        if (is_null($object)) {
+            return false;
+        }
 
-        if(method_exists($object, 'getId')) {
-            if(!empty($object->getId())){
-                $object = $this->update($object, $object->ignoreProperties());
-            } else {
-                $object = $this->create($object, $object->ignoreProperties());
-            }
-            return $object;
-        } else {
+        if (!method_exists($object, 'getId')) {
             throw new \Exception('Class ' . get_class($this) . ' does not have method getId');
         }
-        return false;
+
+        return !empty($object->getId()) ? $this->update($object, $object->ignoreProperties()) : $this->create($object, $object->ignoreProperties());
+    }
+
+    /**
+     * @param array $filter Database filter
+     * @return int
+     */
+    public function count($filter = ['conditions' => []])
+    {
+        $conditions = $filter['conditions'] ?? [];
+
+        // Build conditions string
+        $queryConditions = [];
+        $queryConditionString = empty($conditions) ? "1" : "";
+
+        foreach ($conditions as $condition => $value) {
+            $queryConditions[$condition] = $value;
+            $operator = (substr($value, 0, 1) === '!') ? '<>' : '=';
+            $queryConditionString .= sprintf("`%s` %s :%s AND ", $condition, $operator, $condition);
+        }
+
+        // Clean up the condition string
+        $queryConditionString = rtrim($queryConditionString, ' AND ');
+
+        // Build the count query
+        $queryString = "SELECT COUNT(*) as count FROM `" . $this->table . "` WHERE $queryConditionString";
+
+        $query = $this->pdo->prepare($queryString);
+
+        // Bind parameters
+        foreach ($queryConditions as $field => $value) {
+            $paramType = is_int($value) ? \PDO::PARAM_INT : (is_bool($value) ? \PDO::PARAM_BOOL : \PDO::PARAM_STR);
+            if ($value instanceof \DateTime) {
+                $value = $value->format('Y-m-d H:i:s');
+            }
+            $query->bindValue($field, $value, $paramType);
+        }
+
+        $query->execute();
+        $result = $query->fetch(\PDO::FETCH_ASSOC);
+
+        return (int) $result['count'];
     }
 
 }

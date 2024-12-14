@@ -9,6 +9,7 @@ class MainController extends Controller
     public function index()
     {
         $this->httpResponse->redirect(Router::generateUrl(Route::UNDER_CONSTRUCTION));
+        //$this->httpResponse->redirect(Router::generateUrl(Route::UNDER_MAINTENANCE));
     }
 
     public function error404()
@@ -35,5 +36,15 @@ class MainController extends Controller
     {
         $previousUrl = \Zana\Http\PageStack::pop();
         $this->httpResponse->redirect($previousUrl);
+    }
+
+    public function underMaintenance()
+    {
+        return $this->page
+            ->addVars([
+                'dTitle' => "Under Maintenance"
+            ])
+            ->setView('under-maintenance')
+            ->setTemplate('base.template');
     }
 }

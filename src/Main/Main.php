@@ -32,5 +32,11 @@ class Main extends Module
             'Main\Controller\MainController#navigateBack',
             Route::NAVIGATE_BACK
         );
+
+        Router::get(
+            '/under-maintenance',
+            'Main\Controller\MainController#underMaintenance',
+            Route::UNDER_MAINTENANCE
+        );
     }
 }

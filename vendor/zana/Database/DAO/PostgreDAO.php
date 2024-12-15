@@ -177,14 +177,32 @@ class PostgreDAO extends DAO
         // Prepare conditions
         $queryConditions = [];
         $queryConditionString = empty($conditions) ? "1" : "";
+
+        $paramIndex = 0;
         
-        foreach ($conditions as $condition => $value) {
-            $operator = (substr($value, 0, 1) === '!') ? '<>' : '=';
-            $queryConditions[$condition] = ltrim($value, '!'); // Remove '!' for binding
-            $queryConditionString .= sprintf("\"%s\" %s :%s AND ", $condition, $operator, $condition);
+        if (!empty($conditions)) {
+            foreach ($conditions as $condition => $value) {
+                if(is_array($value)) {
+                    foreach($value as $val) {
+                        $paramName = "{$condition}_{$paramIndex}";
+                        $operator = (substr($val, 0, 1) === '!') ? '<>' : '=';
+                        $queryConditionString .= sprintf("\"%s\" %s :%s OR ", $condition, $operator, $paramName);
+                        $queryConditions[$paramName] = "$val";
+                        $paramIndex++;
+                    }
+                    $queryConditionString = rtrim($queryConditionString, ' OR ');
+                    $queryConditionString .= ' AND ';
+                } else {
+                    $paramName = "{$condition}_{$paramIndex}";
+                    $operator = (substr($value, 0, 1) === '!') ? '<>' : '=';
+                    $queryConditionString .= sprintf("\"%s\" %s :%s AND ", $condition, $operator, $paramName);
+                    $queryConditions[$paramName] = "$value";
+                    $paramIndex++;
+                }
+            }
+
+            $queryConditionString = rtrim($queryConditionString, ' AND ');
         }
-        
-        $queryConditionString = rtrim($queryConditionString, ' AND '); // Clean up trailing ' AND '
 
         // Build the query string
         $queryString = "SELECT $fieldString FROM \"$this->table\" WHERE $queryConditionString ORDER BY $order";
@@ -234,19 +252,27 @@ class PostgreDAO extends DAO
         $queryConditions = [];
         $queryConditionString = empty($conditions) ? "1" : "";
 
+        $paramIndex = 0; // To create unique parameter names
+
         if (!empty($conditions)) {
             foreach ($conditions as $condition => $value) {
-                if ($condition === 'id') {
-                    $queryConditionString .= "\"$condition\" = :$condition AND ";
-                    $queryConditions[$condition] = $value;
-                    break; // Stop processing further conditions if 'id' is found
+                if(is_array($value)) {
+                    foreach($value as $val) {
+                        $paramName = "{$condition}_{$paramIndex}"; // Unique parameter name
+                        $queryConditionString .= "\"$condition\" LIKE :$paramName OR ";
+                        $queryConditions[$paramName] = "%$val%";
+                        $paramIndex++;
+                    }
                 } else {
-                    $queryConditionString .= "\"$condition\" LIKE :$condition OR ";
-                    $queryConditions[$condition] = '%' . $value . '%';
+                    $paramName = "{$condition}_{$paramIndex}"; // Unique parameter name
+                    $queryConditionString .= "\"$condition\" LIKE :$paramName OR ";
+                    $queryConditions[$paramName] = "%$value%"; // Use LIKE with wildcards
+                    $paramIndex++;
                 }
             }
+
+            // Remove the trailing ' OR ' from the query condition string
             $queryConditionString = rtrim($queryConditionString, ' OR ');
-            $queryConditionString = rtrim($queryConditionString, ' AND ');
         }
 
         // Build the query string
@@ -313,14 +339,32 @@ class PostgreDAO extends DAO
         // Prepare conditions
         $queryConditions = [];
         $queryConditionString = empty($conditions) ? "1" : "";
-    
+
+        $paramIndex = 0;
+
         if (!empty($conditions)) {
             foreach ($conditions as $condition => $value) {
-                $operator = (substr($value, 0, 1) === '!') ? '<>' : '=';
-                $queryConditions[$condition] = ltrim($value, '!'); // Remove '!' for binding
-                $queryConditionString .= sprintf("\"%s\" %s :%s AND ", $condition, $operator, $condition);
+                if(is_array($value)) {
+                    foreach($value as $val) {
+                        $paramName = "{$condition}_{$paramIndex}";
+                        $operator = (substr($val, 0, 1) === '!') ? '<>' : '=';
+                        $queryConditionString .= sprintf("\"%s\" %s :%s OR ", $condition, $operator, $paramName);
+                        $queryConditions[$paramName] = "$val";
+                        $paramIndex++;
+                    }
+                    $queryConditionString = rtrim($queryConditionString, ' OR ');
+                    $queryConditionString .= ' AND ';
+                } else {
+                    $paramName = "{$condition}_{$paramIndex}";
+                    $operator = (substr($value, 0, 1) === '!') ? '<>' : '=';
+                    $queryConditionString .= sprintf("\"%s\" %s :%s AND ", $condition, $operator, $paramName);
+                    $queryConditions[$paramName] = "$value";
+                    $paramIndex++;
+                }
             }
-            $queryConditionString = rtrim($queryConditionString, ' AND '); // Clean up trailing ' AND '
+
+            // Clean up the condition string
+            $queryConditionString = rtrim($queryConditionString, ' AND ');
         }
     
         // Build the query string

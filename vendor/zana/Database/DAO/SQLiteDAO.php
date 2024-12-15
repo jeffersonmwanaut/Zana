@@ -169,13 +169,31 @@ class SQLiteDAO extends DAO
         $queryConditions = [];
         $queryConditionString = empty($conditions) ? "1" : "";
 
-        foreach ($conditions as $condition => $value) {
-            $operator = (substr($value, 0, 1) === '!') ? '<>' : '=';
-            $queryConditions[$condition] = ltrim($value, '!'); // Remove '!' for binding
-            $queryConditionString .= sprintf("\"%s\" %s :%s AND ", $condition, $operator, $condition);
-        }
+        $paramIndex = 0;
+        
+        if (!empty($conditions)) {
+            foreach ($conditions as $condition => $value) {
+                if(is_array($value)) {
+                    foreach($value as $val) {
+                        $paramName = "{$condition}_{$paramIndex}";
+                        $operator = (substr($val, 0, 1) === '!') ? '<>' : '=';
+                        $queryConditionString .= sprintf("\"%s\" %s :%s OR ", $condition, $operator, $paramName);
+                        $queryConditions[$paramName] = "$val";
+                        $paramIndex++;
+                    }
+                    $queryConditionString = rtrim($queryConditionString, ' OR ');
+                    $queryConditionString .= ' AND ';
+                } else {
+                    $paramName = "{$condition}_{$paramIndex}";
+                    $operator = (substr($value, 0, 1) === '!') ? '<>' : '=';
+                    $queryConditionString .= sprintf("\"%s\" %s :%s AND ", $condition, $operator, $paramName);
+                    $queryConditions[$paramName] = "$value";
+                    $paramIndex++;
+                }
+            }
 
-        $queryConditionString = rtrim($queryConditionString, ' AND '); // Clean up trailing ' AND '
+            $queryConditionString = rtrim($queryConditionString, ' AND ');
+        }
 
         // Build the base query
         $queryString = "SELECT $fieldString FROM \"$this->table\" WHERE $queryConditionString ORDER BY $order";
@@ -232,20 +250,28 @@ class SQLiteDAO extends DAO
         $queryConditions = [];
         $queryConditionString = empty($conditions) ? "1" : "";
 
-        foreach ($conditions as $condition => $value) {
-            if ($condition === 'id') {
-                $queryConditionString .= "\"$condition\" = :$condition AND ";
-                $queryConditions[$condition] = $value; // Add to query conditions
-                break; // Stop processing further conditions if 'id' is found
-            } else {
-                $queryConditionString .= "\"$condition\" LIKE :$condition OR ";
-                $queryConditions[$condition] = '%' . $value . '%'; // Use LIKE with wildcards
-            }
-        }
+        $paramIndex = 0; // To create unique parameter names
 
-        // Clean up the condition string
-        $queryConditionString = rtrim($queryConditionString, ' OR ');
-        $queryConditionString = rtrim($queryConditionString, ' AND ');
+        if (!empty($conditions)) {
+            foreach ($conditions as $condition => $value) {
+                if(is_array($value)) {
+                    foreach($value as $val) {
+                        $paramName = "{$condition}_{$paramIndex}"; // Unique parameter name
+                        $queryConditionString .= "\"$condition\" LIKE :$paramName OR ";
+                        $queryConditions[$paramName] = "%$val%";
+                        $paramIndex++;
+                    }
+                } else {
+                    $paramName = "{$condition}_{$paramIndex}"; // Unique parameter name
+                    $queryConditionString .= "\"$condition\" LIKE :$paramName OR ";
+                    $queryConditions[$paramName] = "%$value%"; // Use LIKE with wildcards
+                    $paramIndex++;
+                }
+            }
+
+            // Remove the trailing ' OR ' from the query condition string
+            $queryConditionString = rtrim($queryConditionString, ' OR ');
+        }
 
         // Build the query string
         $queryString = "SELECT * FROM \"$this->table\" WHERE $queryConditionString ORDER BY $order";
@@ -319,13 +345,32 @@ class SQLiteDAO extends DAO
         $queryConditions = [];
         $queryConditionString = empty($conditions) ? "1" : "";
 
-        foreach ($conditions as $condition => $value) {
-            $operator = (substr($value, 0, 1) === '!') ? '<>' : '=';
-            $queryConditions[$condition] = ltrim($value, '!'); // Remove '!' for binding
-            $queryConditionString .= sprintf("\"%s\" %s :%s AND ", $condition, $operator, $condition);
-        }
+        $paramIndex = 0;
 
-        $queryConditionString = rtrim($queryConditionString, ' AND '); // Clean up trailing ' AND '
+        if (!empty($conditions)) {
+            foreach ($conditions as $condition => $value) {
+                if(is_array($value)) {
+                    foreach($value as $val) {
+                        $paramName = "{$condition}_{$paramIndex}";
+                        $operator = (substr($val, 0, 1) === '!') ? '<>' : '=';
+                        $queryConditionString .= sprintf("\"%s\" %s :%s OR ", $condition, $operator, $paramName);
+                        $queryConditions[$paramName] = "$val";
+                        $paramIndex++;
+                    }
+                    $queryConditionString = rtrim($queryConditionString, ' OR ');
+                    $queryConditionString .= ' AND ';
+                } else {
+                    $paramName = "{$condition}_{$paramIndex}";
+                    $operator = (substr($value, 0, 1) === '!') ? '<>' : '=';
+                    $queryConditionString .= sprintf("\"%s\" %s :%s AND ", $condition, $operator, $paramName);
+                    $queryConditions[$paramName] = "$value";
+                    $paramIndex++;
+                }
+            }
+
+            // Clean up the condition string
+            $queryConditionString = rtrim($queryConditionString, ' AND ');
+        }
 
         // Build the count query
         $queryString = "SELECT COUNT(*) as count FROM \"$this->table\" WHERE $queryConditionString";

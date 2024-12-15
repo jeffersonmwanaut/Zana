@@ -185,6 +185,7 @@ class PostgreDAO extends DAO
                 if(is_array($value)) {
                     foreach($value as $val) {
                         $paramName = "{$condition}_{$paramIndex}";
+                        $val = $val ?? ' NULL ';
                         $operator = (substr($val, 0, 1) === '!') ? '<>' : '=';
                         $queryConditionString .= sprintf("\"%s\" %s :%s OR ", $condition, $operator, $paramName);
                         $queryConditions[$paramName] = "$val";
@@ -194,6 +195,7 @@ class PostgreDAO extends DAO
                     $queryConditionString .= ' AND ';
                 } else {
                     $paramName = "{$condition}_{$paramIndex}";
+                    $value = $value ?? ' NULL ';
                     $operator = (substr($value, 0, 1) === '!') ? '<>' : '=';
                     $queryConditionString .= sprintf("\"%s\" %s :%s AND ", $condition, $operator, $paramName);
                     $queryConditions[$paramName] = "$value";
@@ -260,12 +262,14 @@ class PostgreDAO extends DAO
                     foreach($value as $val) {
                         $paramName = "{$condition}_{$paramIndex}"; // Unique parameter name
                         $queryConditionString .= "\"$condition\" LIKE :$paramName OR ";
+                        $val = $val ?? ' NULL ';
                         $queryConditions[$paramName] = "%$val%";
                         $paramIndex++;
                     }
                 } else {
                     $paramName = "{$condition}_{$paramIndex}"; // Unique parameter name
                     $queryConditionString .= "\"$condition\" LIKE :$paramName OR ";
+                    $value = $value ?? ' NULL ';
                     $queryConditions[$paramName] = "%$value%"; // Use LIKE with wildcards
                     $paramIndex++;
                 }
@@ -347,6 +351,7 @@ class PostgreDAO extends DAO
                 if(is_array($value)) {
                     foreach($value as $val) {
                         $paramName = "{$condition}_{$paramIndex}";
+                        $val = $val ?? ' NULL ';
                         $operator = (substr($val, 0, 1) === '!') ? '<>' : '=';
                         $queryConditionString .= sprintf("\"%s\" %s :%s OR ", $condition, $operator, $paramName);
                         $queryConditions[$paramName] = "$val";
@@ -356,6 +361,7 @@ class PostgreDAO extends DAO
                     $queryConditionString .= ' AND ';
                 } else {
                     $paramName = "{$condition}_{$paramIndex}";
+                    $value = $value ?? ' NULL ';
                     $operator = (substr($value, 0, 1) === '!') ? '<>' : '=';
                     $queryConditionString .= sprintf("\"%s\" %s :%s AND ", $condition, $operator, $paramName);
                     $queryConditions[$paramName] = "$value";

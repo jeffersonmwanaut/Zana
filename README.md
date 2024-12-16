@@ -900,59 +900,72 @@ Zana provides a data access object (DAO) layer to use databases in your applicat
 Zana also provides a Query Builder, an object-oriented way to write queries. It is recommended to use this when queries are built dynamically.
 
 ```php
-// src/MyModule/Controller/MyController.php
-namespace Main\Controller;
+// Create a DAO instance
+$dao = new MySQLDAO(MyEntity::class);
 
-use Zana\Controller;
-use MyModule\Manager\MyManager;
-use MyModule\Entity\MyEntity;
+// Create a QueryBuilder instance
+$queryBuilder = $dao->queryBuilder();
 
-class MyController extends Controller
-{
-    private $myManager;
+// Build a SELECT query with named parameters
+$queryBuilder->select()
+     ->where('id', [':id_1', ':id_2', ':id_3'])
+     ->where('age', ':age');
 
-    public function __construct()
-    {
-        parent::__construct();
-        $this->myManager = new MyManager(MyEntity::class);
+// Get the built query
+$queryString = $queryBuilder->build();
+
+// Prepare the conditions for execution
+$conditions = [
+    ':id_1' => 1,
+    ':id_2' => 2,
+    ':id_3' => 8,
+    ':age' => 18
+];
+
+// Execute the query
+try {
+    $resultSet = $dao->executeQuery($queryString, $conditions);
+    
+    // Handle the results
+    foreach ($resultSet->all() as $object) {
+        // Assuming object's class has a method to get object details
+        echo $object->getId() . "\n"; // Example of accessing object data
     }
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage();
+}
+```
 
-    public function index():Page
-    {
-        // Create a QueryBuilder instance
-        $queryBuilder = $this->myManager->queryBuilder();
+Build a `SELECT` with joins.
 
-        // Build a SELECT query with named parameters
-        $queryBuilder->select()
-             ->where('id', [':id_1', ':id_2', ':id_3'])
-             ->where('age', ':age');
+```php
+// Create a DAO instance
+$dao = new MySQLDAO(MyEntity::class);
 
-        // Get the built query
-        $queryString = $queryBuilder->build();
+// Create a QueryBuilder instance
+$queryBuilder = $dao->queryBuilder();
 
-        // Prepare the conditions for execution
-        $conditions = [
-            ':id_1' => 1,
-            ':id_2' => 2,
-            ':id_3' => 8,
-            ':age' => 18
-        ];
+// Build a SELECT query with joins
+$queryBuilder->select(['users.id', 'users.name', 'profiles.bio'])
+             ->join('profiles', 'users.id', '=', 'profiles.user_id')
+             ->where('users.age', 18)
+             ->orderBy('users.name');
 
-        // Execute the query
-        try {
-            $resultSet = $this->myManager->executeQuery($queryString, $conditions);
-            
-            // Handle the results
-            foreach ($resultSet->all() as $object) {
-                // Assuming object's class has a method to get object details
-                echo $object->getId() . "\n"; // Example of accessing object data
-            }
-        } catch (Exception $e) {
-            echo "Error: " . $e->getMessage();
-        }
+// Get the built query
+$queryString = $queryBuilder->build();
 
-        // Other things to do...
-    }
+// Prepare the conditions for execution
+$conditions = [
+    ':age' => 18
+];
+
+// Execute the query using the DAO class
+$resultSet = $dao->executeQuery($queryString, $conditions);
+
+// Handle the results
+foreach ($resultSet->all() as $object) {
+    // Assuming object's class has a method to get object details
+    echo $object->getId() . "\n"; // Example of accessing object data
 }
 ```
 

@@ -13,7 +13,7 @@ Turnkey PHP framework offering components that serve as a foundation and toolbox
 - [Technical requirements](#technical-requirements)
 - [Quick start](#quick-start-up)
 - [Project structure](#project-structure)
-- [What's next](what's-next)
+- [What's next](#whats-next)
 - [Creators](#creators)
 
 ## Technical requirements

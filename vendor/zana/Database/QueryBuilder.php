@@ -9,6 +9,7 @@ class QueryBuilder
     protected array $limit;
     protected string $queryType;
     protected int $dbType;
+    protected array $joins = [];
 
     public function __construct($table, $dbType)
     {
@@ -48,6 +49,42 @@ class QueryBuilder
         return $this;
     }
 
+    public function join($table, $firstCondition, $operator = '=', $secondCondition)
+    {
+        $this->joins[] = [
+            'type' => 'INNER', // Default join type
+            'table' => $table,
+            'firstCondition' => $firstCondition,
+            'operator' => $operator,
+            'secondCondition' => $secondCondition
+        ];
+        return $this;
+    }
+
+    public function leftJoin($table, $firstCondition, $operator = '=', $secondCondition)
+    {
+        $this->joins[] = [
+            'type' => 'LEFT',
+            'table' => $table,
+            'firstCondition' => $firstCondition,
+            'operator' => $operator,
+            'secondCondition' => $secondCondition
+        ];
+        return $this;
+    }
+
+    public function rightJoin($table, $firstCondition, $operator = '=', $secondCondition)
+    {
+        $this->joins[] = [
+            'type' => 'RIGHT',
+            'table' => $table,
+            'firstCondition' => $firstCondition,
+            'operator' => $operator,
+            'secondCondition' => $secondCondition
+        ];
+        return $this;
+    }
+
     public function where($condition, $value)
     {
         // Check if the value is an array
@@ -84,6 +121,13 @@ class QueryBuilder
     {
         $fields = implode(", ", array_map(fn($field) => $this->quoteIdentifier($field), $this->fields));
         $query = "SELECT $fields FROM " . $this->quoteIdentifier($this->table);
+
+        if (!empty($this->joins)) {
+            foreach ($this->joins as $join) {
+                $query .= " " . $join['type'] . " JOIN " . $this->quoteIdentifier($join['table']) . 
+                          " ON " . $this->quoteIdentifier($join[' firstCondition']) . " " . $join['operator'] . " " . $this->quoteIdentifier($join['secondCondition']);
+            }
+        }
 
         if (!empty($this->conditions)) {
             $query .= " WHERE " . implode(" AND ", array_map(fn($c) => $this->quoteIdentifier($c[0]) . " = " . $c[1], $this->conditions));

@@ -39,7 +39,7 @@ Creating a new page is a two-step process:
 Open the Main module `src/Main/Main.php` and add a new route `/hello-world` for the Hello world example.
 
 ```php
-//src/Main/Main.php
+// src/Main/Main.php
 namespace Main;
 
 use Zana\Module;
@@ -64,7 +64,7 @@ class Main extends Module
 1. Open the Main controller `src/Main/Controller/MainController.php` and add a new function `helloWorld()` that will render the page.
 
 ```php
-//src/Main/Controller/MainController.php
+// src/Main/Controller/MainController.php
 namespace Main;
 
 use Zana\Controller;
@@ -152,6 +152,7 @@ Now that you've learned a new way of building beautiful and functional applicati
 * [Front-end Tools: Bootstrap](#front-end-tools-bootstrap)
 * [Configuring Zana](#configuring-zana)
 * [Forms](#forms)
+* [Databases and Data Access Objects](#databases-and-data-access-objects)
 
 ## Module
 
@@ -172,7 +173,7 @@ Modules used in your applications must be enabled in the `config/modules.json` f
 Let's start by creating a new class called Book:
 
 ```php
-//src/MyModule/MyModule.php
+// src/MyModule/MyModule.php
 namespace Book;
 
 use Zana\Module;
@@ -237,7 +238,7 @@ Routes can be configured in your application module using the router.
 Suppose you want to define a route for the `/books` URL in your application. To do so, create a [module class](#module) like the following:
 
 ```php
-//src/MyModule/MyModule.php
+// src/MyModule/MyModule.php
 namespace MyModule;
 
 use Zana\Module;
@@ -272,7 +273,7 @@ The previous examples defined routes where the URL never changes (e.g. `/books`)
 In Zana routes, variable parts start with the colon sign `:`. For example, the route to display a specific book contents is defined as `/books/:id`.
 
 ```php
-//src/MyModule/MyModule.php
+// src/MyModule/MyModule.php
 namespace MyModule;
 
 use Zana\Module;
@@ -302,7 +303,7 @@ Imagine that your application has a show route (URL: `/books/:id`) and a list ro
 If the user requests `/books/gt90`, both routes will match and Zana will use the route which was defined first. To fix this, add some validation to the :id parameter using the requirements option:
 
 ```php
-//src/MyModule/MyModule.php
+// src/MyModule/MyModule.php
 namespace Book;
 
 use Zana\Module;
@@ -333,7 +334,7 @@ The `with` option defines the PHP regular expressions that route parameters must
 Route alias allow you to have multiple name for the same route:
 
 ```php
-//src/MyModule/MyModule.php
+// src/MyModule/MyModule.php
 namespace Book;
 
 use Zana\Module;
@@ -372,7 +373,7 @@ To generate a URL, you need to specify the name of the route (e.g. `BOOK`) and t
 Since your controller extends from `Zana\Controller\Controller`, you can use the `generateUrl()` static method from the `Zana\Router\Router` class.
 
 ```php
-//src/MyModule/Controller/MyController.php
+// src/MyModule/Controller/MyController.php
 namespace Book\Controller;
 
 use Zana\Controller;
@@ -442,7 +443,7 @@ echo $url;
 If you want to redirect the user to another page, use the `redirect()` method from the `HttpResponse` object.
 
 ```php
-//src/MyModule/Controller/MyController.php
+// src/MyModule/Controller/MyController.php
 namespace Book\Controller;
 
 use Zana\Controller;
@@ -470,7 +471,7 @@ A controller is a function that is assigned a request by the router to create an
 A controller is usually a method inside a controller class.
 
 ```php
-//src/MyModule/Controller/MyController.php
+// src/MyModule/Controller/MyController.php
 namespace Main\Controller;
 
 use Zana\Controller;
@@ -489,7 +490,7 @@ class MyController extends Controller
 In order to view the result of this controller, you need to map a URL to it via a route. Routes are defined in the modules as shown below:
 
 ```php
-//src/MyModule/MyModule.php
+// src/MyModule/MyModule.php
 namespace Main;
 
 use Zana\Module;
@@ -521,7 +522,7 @@ For more information on routing, see [Routing](#Routing).
 If you're serving HTML, you'll want to render a template. The `setView()` method renders a template and puts that content into the response for you.
 
 ```php
-//src/MyModule/Controller/MyController.php
+// src/MyModule/Controller/MyController.php
 namespace Main;
 
 use Zana\Controller;
@@ -551,7 +552,7 @@ class MyController extends Controller
 If you want to use your own template, use both the `setView()` and `setTemplate()` methods. The `setTemplate()` allows you to specify the path of your custom template. We recommand you to put your templates in the `template` folder.
 
 ```php
-//src/MyModule/Controller/MyController.php
+// src/MyModule/Controller/MyController.php
 namespace MyModule;
 
 use Zana\Controller;
@@ -614,7 +615,7 @@ Second, you need to create a new file in your module `view/` folder to hold the 
 Then, create a controller that renders the view and the template and passes to it the needed variables:
 
 ```php
-//src/MyModule/Controller/MyController.php
+// src/MyModule/Controller/MyController.php
 namespace MyModule;
 
 use Zana\Controller;
@@ -644,7 +645,7 @@ Templates are stored in the `templates` folder. When a controller renders the `m
 A common need for templates is to print the values stored in the templates passed from the controller. This allows to evolve your application code without having to change the template code.
 
 ```php
-//src/MyModule/Controller/MyController.php
+// src/MyModule/Controller/MyController.php
 namespace MyModule;
 
 use Zana\Controller;
@@ -670,7 +671,7 @@ class MyController extends Controller
 Since the controller extends from the `Zana\Controller\Controller`, you can use the page object that is responsible for generating the web page from the view and the template.
 
 ```php
-//src/MyModule/Controller/MyController.php
+// src/MyModule/Controller/MyController.php
 namespace MyModule;
 
 use Zana\Controller;
@@ -774,7 +775,7 @@ For example, to define the database for the development environment in the `conf
 Since your controller extends from `Zana\Controller\Controller`, you can use the `get()` static method from the `Zana\Config\Config` class.
 
 ```php
-//src/MyModule/Controller/MyController.php
+// src/MyModule/Controller/MyController.php
 namespace Main\Controller;
 
 use Zana\Controller;
@@ -858,6 +859,103 @@ if (!$validator->validate($rules, $customErrorMessages)) {
 ### Other Form Features
 
 ...
+
+
+## Databases and Data Access Objects
+
+Zana provides a data access object (DAO) layer to use databases in your application. The DAO support databases like MySQL, PostgreSQL and SQLite.
+
+### Configuring the Database
+
+...
+
+### Creating an Entity Class
+
+...
+
+### Persisting Objects to the Database
+
+...
+
+### Fetching Objects from the Database
+
+...
+
+### Updating an Object
+
+...
+
+### Deleting an Object
+
+...
+
+### Querying for Objects
+
+### Querying with the DAO
+
+...
+
+### Querying with the Query Builder
+
+Zana also provides a Query Builder, an object-oriented way to write queries. It is recommended to use this when queries are built dynamically.
+
+```php
+// src/MyModule/Controller/MyController.php
+namespace Main\Controller;
+
+use Zana\Controller;
+use MyModule\Manager\MyManager;
+use MyModule\Entity\MyEntity;
+
+class MyController extends Controller
+{
+    private $myManager;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->myManager = new MyManager(MyEntity::class);
+    }
+
+    public function index():Page
+    {
+        // Create a QueryBuilder instance
+        $queryBuilder = $this->myManager->queryBuilder();
+
+        // Build a SELECT query with named parameters
+        $queryBuilder->select()
+             ->where('id', [':id_1', ':id_2', ':id_3'])
+             ->where('age', ':age');
+
+        // Get the built query
+        $queryString = $queryBuilder->build();
+
+        // Prepare the conditions for execution
+        $conditions = [
+            ':id_1' => 1,
+            ':id_2' => 2,
+            ':id_3' => 8,
+            ':age' => 18
+        ];
+
+        // Execute the query
+        try {
+            $resultSet = $this->myManager->executeQuery($queryString, $conditions);
+            
+            // Handle the results
+            foreach ($resultSet->all() as $object) {
+                // Assuming object's class has a method to get object details
+                echo $object->getId() . "\n"; // Example of accessing object data
+            }
+        } catch (Exception $e) {
+            echo "Error: " . $e->getMessage();
+        }
+
+        // Other things to do...
+    }
+}
+```
+
 
 ## Creators
 

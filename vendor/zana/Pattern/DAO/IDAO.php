@@ -9,4 +9,6 @@ interface IDAO
     public function delete($object);
     public function save($object);
     public function count($filter = ['conditions' => [], 'limit' => ['skip' => 0, 'range' => 20]]);
+    public function queryBuilder();
+    public function executeQuery($queryString, $conditions = []);
 }

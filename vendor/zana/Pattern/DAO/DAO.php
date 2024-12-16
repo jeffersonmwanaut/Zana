@@ -43,4 +43,16 @@ abstract class DAO
      * @return int
      */
     public abstract function count($filter = ['conditions' => [], 'limit' => ['skip' => 0, 'range' => 20]]);
+
+    /**
+     * @return mixed
+     */
+    public abstract function queryBuilder();
+
+    /**
+     * @param string $queryString
+     * @param array $conditions
+     * @return mixed
+     */
+    public abstract function executeQuery($queryString, $conditions = []);
 }

@@ -404,4 +404,50 @@ class SQLiteDAO extends DAO
 
         return (int) $result['count'];
     }
+
+    public function queryBuilder()
+    {
+        return new QueryBuilder($this->table, DbType::SQLITE);
+    }
+
+    public function executeQuery($queryString, $conditions = [])
+    {
+        try {
+            $query = $this->pdo->prepare($queryString);
+            foreach ($conditions as $condition => $value) {
+                $paramType = is_int($value) ? \PDO::PARAM_INT : (is_bool($value) ? \PDO::PARAM_BOOL : \PDO::PARAM_STR);
+                if ($value instanceof \DateTime) {
+                    $value = $value->format('Y-m-d H:i:s');
+                }
+                // Check if the key is an integer (for indexed parameters) or a string (for named parameters)
+                if (is_int($condition)) {
+                    // For indexed parameters, bind using key + 1 (1-based index)
+                    $query->bindValue($condition + 1, $value, $paramType);
+                } else {
+                    // For named parameters, bind using the key directly
+                    $query->bindValue($condition, $value, $paramType);
+                }
+            }
+
+            $query->execute();
+
+            if (stripos($queryString, 'SELECT') === 0) {
+                $data = [];
+                while ($row = $query->fetch(\PDO::FETCH_ASSOC)) {
+                    $data[] = new $this->entity($row);
+                }
+                return new ResultSet($data);
+            } elseif(stripos($queryString, 'UPDATE') === 0 || stripos($queryString, 'DELETE') === 0) {
+                return $query->rowCount() > 0 ? $object : false;
+            } else {
+                if ($query->rowCount() > 0) {
+                    $object->setId($this->pdo->lastInsertId());
+                    return $object;
+                }
+                return false;
+            }
+        } catch (Exception $e) {
+            throw new Exception("Database query error: " . $e->getMessage());
+        }
+    }
 }

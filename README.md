@@ -102,6 +102,8 @@ my-project/
 |    ├── mode.env
 |    ├── modules.json
 |    └── prod.json
+├── layout/
+|    └── partial/
 ├── public/
 |    ├── css/
 |    |    └── app.css
@@ -126,8 +128,6 @@ my-project/
 |        ├── view/
 |        |   └── my-view.php
 |        └── MyModule.php
-├── template/
-|    └── partial/
 ├── vendor/
 └── .htaccess
 ```
@@ -138,7 +138,7 @@ my-project/
 
 * src: All your PHP code goes here.
 
-* template: All your templates go here.
+* layout: All your layouts go here.
 
 * vendor: Zana code and third-party libraries live here! Third-party libraries are downloaded via [Composer](https://getcomposer.org/download/)
 
@@ -148,7 +148,7 @@ Now that you've learned a new way of building beautiful and functional applicati
 * [Module](#module)
 * [Routing](#routing)
 * [Controller](#controller)
-* [Templates](#templates)
+* [Layouts](#layouts)
 * [Front-end Tools: Bootstrap](#front-end-tools-bootstrap)
 * [Configuring Zana](#configuring-zana)
 * [Forms](#forms)
@@ -391,11 +391,11 @@ class MyController extends Controller
 }
 ```
 
-#### Generating URLs in Templates
+#### Generating URLs in Views
 
 Instead of writing the link URLs by hand, use the `generateUrl()` static method from the `Zana\Router\Router` to generate URLs based on the routing configuration.
 
-Later, if you want to modify the URL of a particular page, all you'll need to do is change the routing configuration, the templates will automatically generate the new URL.
+Later, if you want to modify the URL of a particular page, all you'll need to do is change the routing configuration, the layout will automatically generate the new URL.
 
 ```html
 <div>
@@ -517,9 +517,9 @@ To see your page, go to this URL in your browser: `http://localhost/my-project/h
 
 For more information on routing, see [Routing](#Routing).
 
-### Rendering Templates
+### Rendering Views
 
-If you're serving HTML, you'll want to render a template. The `setView()` method renders a template and puts that content into the response for you.
+If you're serving HTML, you'll want to render a view. The `setView()` method renders a view and puts that content into the response for you.
 
 ```php
 // src/MyModule/Controller/MyController.php
@@ -549,7 +549,7 @@ class MyController extends Controller
 </div>
 ```
 
-If you want to use your own template, use both the `setView()` and `setTemplate()` methods. The `setTemplate()` allows you to specify the path of your custom template. We recommand you to put your templates in the `template` folder.
+If you want to use your own layout, use both the `setView()` and `setLayout()` methods. The `setLayout()` allows you to specify the path of your custom layout. We recommand you to put your layouts in the `layout` folder.
 
 ```php
 // src/MyModule/Controller/MyController.php
@@ -566,15 +566,15 @@ class MyController extends Controller
                 'dTitle' => "Hello world" // Document title to display in the browser tab
             ])
             ->setView('hello-world') // The view that contains the hello-world web page content
-            ->setTemplate('my-template'); // The template of the hello-world web page, assuming that my-template is located in the template folder.
+            ->setLayout('my-layout'); // The layout of the hello-world web page, assuming that my-template is located in the template folder.
     }
     // ...
 }
 ```
 
-## Templates
+## Layouts
 
-A template is the best way to organize and render HTML from inside your application. Zana rely on PHP capabilities for creating templates. The following is an example of template.
+A layout is the best way to organize and render HTML from inside your application. Zana rely on PHP capabilities for creating layout. The following is an example of layout.
 
 ```html
 <!DOCTYPE html>
@@ -588,12 +588,12 @@ A template is the best way to organize and render HTML from inside your applicat
 </html>
 ```
 
-### Creating Templates
+### Creating Layouts
 
-First, you need to create a new file in the `template/` folder to store the template.
+First, you need to create a new file in the `layout/` folder to store the layout.
 
 ```html
-<!-- template/my-template.php -->
+<!-- layout/my-layout.php -->
 <!DOCTYPE html>
 <html>
     <head>
@@ -612,7 +612,7 @@ Second, you need to create a new file in your module `view/` folder to hold the 
 <h1>Welcome <?= $firstName ?>!</h1>
 ```
 
-Then, create a controller that renders the view and the template and passes to it the needed variables:
+Then, create a controller that renders the view and the layout and passes to it the needed variables:
 
 ```php
 // src/MyModule/Controller/MyController.php
@@ -630,19 +630,19 @@ class MyController extends Controller
                 'firstName' => $firstName // Variable $firstName passed to the view
             ])
             ->setView('my-view') // The view that contains the web page content
-            ->setTemplate('my-template'); // The template of the web page, assuming that my-template is located in the template folder.
+            ->setLayout('my-layout'); // The layout of the web page, assuming that my-template is located in the layout folder.
     }
     // ...
 }
 ```
 
-### Template Location
+### Layout Location
 
-Templates are stored in the `templates` folder. When a controller renders the `my-template` template, it is actually referring to the `my-project/template/my-template.php` file.
+Layouts are stored in the `layout` folder. When a controller renders the `my-layout` layout, it is actually referring to the `my-project/layout/my-layout.php` file.
 
-### Template Variables
+### Layout Variables
 
-A common need for templates is to print the values stored in the templates passed from the controller. This allows to evolve your application code without having to change the template code.
+A common need for layout is to print the values stored in the layouts passed from the controller. This allows to evolve your application code without having to change the layout code.
 
 ```php
 // src/MyModule/Controller/MyController.php
@@ -660,15 +660,15 @@ class MyController extends Controller
                 'firstName' => $firstName // Variable $firstName passed to the view
             ])
             ->setView('my-view') // The view that contains the web page content
-            ->setTemplate('my-template'); // The template of the web page, assuming that my-template is located in the template folder.
+            ->setLayout('my-layout'); // The layout of the web page, assuming that my-template is located in the layout folder.
     }
     // ...
 }
 ```
 
-### Rendering Templates
+### Rendering Views
 
-Since the controller extends from the `Zana\Controller\Controller`, you can use the page object that is responsible for generating the web page from the view and the template.
+Since the controller extends from the `Zana\Controller\Controller`, you can use the page object that is responsible for generating the web page from the view and the layout.
 
 ```php
 // src/MyModule/Controller/MyController.php
@@ -687,7 +687,7 @@ class MyController extends Controller
                 'firstName' => $firstName
             ])
             ->setView('my-view')
-            ->setTemplate('my-template');
+            ->setLayout('my-layout');
     }
     // ...
 }

@@ -19,7 +19,7 @@ class MainController extends Controller
                 'dTitle' => "404 Error: Page Not Found"
             ])
             ->setView('404')
-            ->setTemplate('base.template');
+            ->setLayout('base.layout');
     }
 
     public function underConstruction()
@@ -29,7 +29,7 @@ class MainController extends Controller
                 'dTitle' => "Under Construction"
             ])
             ->setView('under-construction')
-            ->setTemplate('base.template');
+            ->setLayout('base.layout');
     }
 
     public function navigateBack()
@@ -45,6 +45,6 @@ class MainController extends Controller
                 'dTitle' => "Under Maintenance"
             ])
             ->setView('under-maintenance')
-            ->setTemplate('base.template');
+            ->setLayout('base.layout');
     }
 }

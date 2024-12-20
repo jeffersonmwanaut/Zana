@@ -18,7 +18,7 @@ class Page
     /**
      * @var string
      */
-    protected $template;
+    protected $layout;
     /**
      * @var array mixed
      */
@@ -73,32 +73,32 @@ class Page
      */
     public function getGeneratedPage()
     {
-        if (is_null($this->view) && is_null($this->template) || $this->outputFormat != PageFormat::HTML) {
+        if (is_null($this->view) && is_null($this->layout) || $this->outputFormat != PageFormat::HTML) {
             return $this->output;
-        } elseif (is_null($this->view) && !is_null($this->template)) {
-            if (!file_exists($this->template)) {
-                throw new HttpException("Template <b>{$this->template}</b> not found", HttpException::TEMPLATE_NOT_FOUND);
+        } elseif (is_null($this->view) && !is_null($this->layout)) {
+            if (!file_exists($this->layout)) {
+                throw new HttpException("Layout <b>{$this->layout}</b> not found", HttpException::LAYOUT_NOT_FOUND);
             }
             extract($this->vars);
             ob_start();
-            require $this->template;
-        } elseif (!is_null($this->view) && is_null($this->template)) {
+            require $this->layout;
+        } elseif (!is_null($this->view) && is_null($this->layout)) {
             if (!file_exists($this->view)) {
                 throw new HttpException("View <b>{$this->view}</b> not found", HttpException::VIEW_NOT_FOUND);
             }
             extract($this->vars);
             ob_start();
             require $this->view;
-        } elseif (!is_null($this->view) && !is_null($this->template)) {
-            if (!file_exists($this->view) || !file_exists($this->template)) {
-                throw new HttpException("Template <b>{$this->template}</b> and view <b>{$this->view}</b> not found", HttpException::TEMPLATE_N_VIEW_NOT_FOUND);
+        } elseif (!is_null($this->view) && !is_null($this->layout)) {
+            if (!file_exists($this->view) || !file_exists($this->layout)) {
+                throw new HttpException("Layout <b>{$this->layout}</b> and view <b>{$this->view}</b> not found", HttpException::LAYOUT_N_VIEW_NOT_FOUND);
             }
             extract($this->vars);
             ob_start();
             require $this->view;
             $content = ob_get_clean();
             ob_start();
-            require $this->template;
+            require $this->layout;
             echo '<div class="text-center p-3">Powered by <a class="link-underline link-underline-opacity-0" href="https://github.com/jeffersonmwanaut/Zana">Zana</a></div>';
             
         }
@@ -120,22 +120,17 @@ class Page
     }
 
     /**
-     * @param string $template
+     * @param string $layout
      * @return $this
      * @throws HttpException
      */
-    public function setTemplate($template)
+    public function setLayout($layout)
     {
-        if (!is_string($template) || empty($template)) {
-            throw new HttpException("Invalid template", HttpException::INVALID_VIEW);
+        if (!is_string($layout) || empty($layout)) {
+            throw new HttpException("Invalid layout", HttpException::INVALID_VIEW);
         }
-
-        if(in_array($template, ['base.template', 'zana.template'])) {
-            $templateRoot = Config::get('path')['root'] . '/vendor/zana/template';
-        } else {
-            $templateRoot = Config::get('path')['root'] . '/template';
-        }
-        $this->template = $templateRoot . '/' . $template . '.php';
+        $layoutRoot = Config::get('path')['root'] . '/layout';
+        $this->layout = $layoutRoot . '/' . $layout . '.php';
         return $this;
     }
 

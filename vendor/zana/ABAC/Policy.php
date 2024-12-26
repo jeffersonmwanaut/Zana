@@ -1,28 +1,46 @@
 <?php namespace Zana\ABAC;
 
 class Policy {
-    private $policies;
+    private array $policies;
 
     public function __construct(string $policyConfigFilename) {
         $this->policies = $this->loadPolicies($policyConfigFilename);
     }
 
-    public function getPolicies()
-    {
+    /**
+     * Get the loaded policies.
+     * @return array
+     */
+    public function getPolicies(): array {
         return $this->policies;
     }
 
-    private function loadPolicies(string $policyConfigFilename) {
-        // Read the JSON policy file
-        $json = file_get_contents($policyConfigFilename);
+    /**
+     * Load policies from a JSON file.
+     * @param string $policyConfigFilename
+     * @return array
+     * @throws Exception
+     */
+    private function loadPolicies(string $policyConfigFilename): array {
+        if (!file_exists($policyConfigFilename)) {
+            throw new Exception("Policy configuration file not found: " . $policyConfigFilename);
+        }
 
-        // Convert the JSON string to a PHP array
+        $json = file_get_contents($policyConfigFilename);
         $policies = json_decode($json, true);
 
-        // Return the policies array
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new Exception("Error decoding JSON: " . json_last_error_msg());
+        }
+
         return $policies;
     }
 
+    /**
+     * Check if the access matches any policy.
+     * @param array $access
+     * @return bool
+     */
     private function isMatch(array $access): bool {
         foreach ($this->policies['policies'] as $policy) {
             if ($this->policyMatchesAccess($policy, $access)) {
@@ -32,44 +50,42 @@ class Policy {
         return false; // No matching policy found
     }
 
-    private function policyMatchesAccess($policy, $access) {
-        // Loop through the rules array in the current policy
+    /**
+     * Check if the policy matches the access.
+     * @param array $policy
+     * @param array $access
+     * @return bool
+     */
+    private function policyMatchesAccess(array $policy, array $access): bool {
         foreach ($policy['rules'] as $rule) {
-            // Check if the rule matches the access
             if ($this->ruleMatchesAccess($rule, $access)) {
-                // If a match is found, return true
-                return true;
+                return true; // If a match is found, return true
             }
         }
-    
-        // If no match is found, return false
-        return false;
+        return false; // If no match is found, return false
     }
 
-    private function ruleMatchesAccess($rule, $access) {
-        // Initialize the default result as false
-        $result = false;
-        // Loop through the conditions in the current rule
+    /**
+     * Check if the rule matches the access.
+     * @param array $rule
+     * @param array $access
+     * @return bool
+     */
+    private function ruleMatchesAccess(array $rule, array $access): bool {
         foreach ($rule as $key => $value) {
-            // Check if the access has a corresponding property
-            if (array_key_exists($key, $access)) {
-                // If a match is found, check if the rule condition matches the access property
-                if ($access[$key] !== $value) {
-                    // If the rule condition does not match the access property, return false
-                    return false;
-                } else {
-                    $r = $rule;
-                    // If the rule condition matches the access property, update the default result as true
-                    $result = true;
-                }
+            if (!array_key_exists($key, $access) || $access[$key] !== $value) {
+                return false; // If the rule condition does not match, return false
             }
         }
-    
-        // If no match is found, return the default result
-        return $result;
+        return true; // All conditions matched
     }
 
-    public function checkAccess($access) {
+    /**
+     * Check access against the policies.
+     * @param array $access
+     * @return bool
+     */
+    public function checkAccess(array $access): bool {
         return $this->isMatch($access);
     }
 }

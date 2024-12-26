@@ -48,7 +48,7 @@ class Page
      * @return $this
      * @throws HttpException
      */
-    public function addVar($var, $value)
+    public function addVar($var, $value): self
     {
         if (!is_string($var) || is_numeric($var) || empty($var)) {
             throw new HttpException("Invalid variable name", HttpException::INVALID_VAR_NAME);
@@ -61,7 +61,7 @@ class Page
      * @param $vars[]
      * @return $this
      */
-    public function addVars($vars = [])
+    public function addVars($vars = []): self
     {
         $this->vars = array_merge($this->vars, $vars);
         return $this;
@@ -110,7 +110,7 @@ class Page
      * @return $this
      * @throws HttpException
      */
-    public function setView($view)
+    public function setView($view): self
     {        
         if (!is_string($view) || empty($view)) {
             throw new HttpException("Invalid view", HttpException::INVALID_VIEW);
@@ -124,7 +124,7 @@ class Page
      * @return $this
      * @throws HttpException
      */
-    public function setTemplate($template)
+    public function setTemplate($template): self
     {
         if (!is_string($template) || empty($template)) {
             throw new HttpException("Invalid template", HttpException::INVALID_VIEW);
@@ -146,7 +146,7 @@ class Page
      * @return Page
      * @throws HttpException
      */
-    public function write($content, $outputFormat = PageFormat::HTML)
+    public function write($content, $outputFormat = PageFormat::HTML): self
     {
         $this->outputFormat = $outputFormat;
 
@@ -172,7 +172,7 @@ class Page
      * @param $html
      * @return $this
      */
-    protected function html($html)
+    protected function html($html): self
     {
         $this->output = $html;
         return $this;
@@ -182,20 +182,60 @@ class Page
      * @param mixed $param
      * @return Page
      */
-    protected function json($param)
+    protected function json($param): self
     {
         $this->output = json_encode($param);
         return $this;
     }
 
     /**
+     * Convert the given data to XML format.
      * @param mixed $param
      * @return Page
+     * @throws HttpException
      */
-    protected function xml($param)
+    protected function xml($param): self
     {
-        $this->output = $param;
+        // Check if the parameter is null
+        if ($param === null) {
+            $this->output = '<?xml version="1.0" encoding="UTF-8"?><response></response>';
+            return $this;
+        }
+
+        // Convert the parameter to XML
+        $this->output = $this->arrayToXml($param);
         return $this;
+    }
+
+    /**
+     * Convert an array or object to XML.
+     * @param mixed $data
+     * @param SimpleXMLElement|null $xmlData
+     * @return string
+     */
+    private function arrayToXml($data, \SimpleXMLElement $xmlData = null): string
+    {
+        if ($xmlData === null) {
+            $xmlData = new \SimpleXMLElement('<response/>');
+        }
+
+        foreach ($data as $key => $value) {
+            // Handle numeric keys by converting them to a string
+            if (is_numeric($key)) {
+                $key = 'item' . $key; // Change numeric keys to item1, item2, etc.
+            }
+
+            // If the value is an array or object, recursively convert it
+            if (is_array($value) || is_object($value)) {
+                $subNode = $xmlData->addChild($key);
+                $this->arrayToXml($value, $subNode);
+            } else {
+                // Add the value as a child node
+                $xmlData->addChild($key, htmlspecialchars((string)$value));
+            }
+        }
+
+        return $xmlData->asXML();
     }
 
     /**
@@ -203,7 +243,7 @@ class Page
      * @return Page
      * @throws HttpException
      */
-    protected function text($param)
+    protected function text($param): self
     {
         $this->output = $param;
         return $this;

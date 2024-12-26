@@ -124,10 +124,8 @@ class Entity
                 
                 // Call method only if exists, otherwise throw exception in else bloc.
                 $this->$setter($value);
-            } else {
-                // Exception is thrown here if method not found.
-                throw new Exception('Call to undefined method ' . $setter . ' in ' . get_class($this) . ' on line ' . __LINE__);
             }
+            // If the setter does not exist, simply ignore the property
         }
     }
 

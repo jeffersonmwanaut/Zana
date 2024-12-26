@@ -30,6 +30,9 @@ class ImageDimension
      */
     public function __construct($width, $height)
     {
+        if ($width <= 0 || $height <= 0) {
+            throw new \InvalidArgumentException('Width and height must be positive integers.');
+        }
         $this->width = $width;
         $this->height = $height;
     }
@@ -37,7 +40,7 @@ class ImageDimension
     /**
      * @return int
      */
-    public function getWidth()
+    public function getWidth(): int
     {
         return $this->width;
     }
@@ -55,7 +58,7 @@ class ImageDimension
     /**
      * @return int
      */
-    public function getHeight()
+    public function getHeight(): int
     {
         return $this->height;
     }

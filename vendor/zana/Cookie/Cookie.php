@@ -8,14 +8,15 @@ use Exception;
  */
 class Cookie
 {
+   /**
+     * @var string
+     */
+    private string $path;
+
     /**
      * @var string
      */
-    private $path;
-    /**
-     * @var string
-     */
-    private $domain;
+    private string $domain;
 
     public function __construct(?string $path = null, ?string $domain = null)
     {
@@ -77,10 +78,10 @@ class Cookie
      */
     public function setPath(string $path): void
     {
-        if (file_exists($path)) {
+        if (!empty($path)) {
             $this->path = $path;
         } else {
-            throw new Exception("The file could not be found " . get_class($this) . ' on line ' . __LINE__);
+            throw new Exception("The path cannot be empty.");
         }
     }
 
@@ -112,5 +113,16 @@ class Cookie
     public function setDomain(string $domain): void
     {
         $this->domain = $domain;
+    }
+
+    /**
+     * Set default secure and HttpOnly flags
+     * @param bool $secure
+     * @param bool $httpOnly
+     */
+    public function setDefaultFlags(bool $secure, bool $httpOnly): void
+    {
+        $this->secure = $secure;
+        $this->httpOnly = $httpOnly;
     }
 }

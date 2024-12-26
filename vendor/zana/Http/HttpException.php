@@ -11,6 +11,7 @@ class HttpException extends Exception
 {
     const UNKNOWN_HTTP_ERR = 20000,
         REQUEST_METHOD_NOT_FOUND = 20001,
+        INVALID_REDIRECT = 20002,
         UNKNOWN_PAGE_ERR = 30000,
         TEMPLATE_N_VIEW_NOT_FOUND = 30001,
         TEMPLATE_NOT_FOUND = 30002,

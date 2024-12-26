@@ -7,12 +7,10 @@ namespace Zana\Http;
  */
 class HttpResponse
 {
-
-
     /**
-     * @var Page
+     * @var Page|null
      */
-    protected $page;
+    protected ?Page $page;
 
     /**
      * HttpResponse constructor.
@@ -26,18 +24,24 @@ class HttpResponse
     /**
      * @param string $header
      */
-    public function addHeader($header)
+    public function addHeader($header): void
     {
         header($header);
     }
 
     /**
+     * Redirect the client to a specified location.
      * @param string $location
      * @param bool $replace
-     * @param int $statusCode
+     * @param int|null $statusCode
+     * @return void
+     * @throws HttpException
      */
-    public function redirect($location, $replace = true, $statusCode = null)
+    public function redirect(string $location, bool $replace = true, ?int $statusCode = null): void
     {
+        if (!filter_var($location, FILTER_VALIDATE_URL)) {
+            throw new HttpException("Invalid redirect location", HttpException::INVALID_REDIRECT);
+        }
         header('Location: ' . $location, $replace, $statusCode ?? 302);
         exit();
     }
@@ -57,7 +61,7 @@ class HttpResponse
     /**
      * @param Page $page
      */
-    public function setPage(Page $page)
+    public function setPage(Page $page): void
     {
         $this->page = $page;
     }

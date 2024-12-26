@@ -5,11 +5,10 @@ use PDOException;
 
 class MySQLDB
 {
-
     /**
-     * @var PDO
+     * @var PDO|null
      */
-    protected $pdo;
+    protected ?PDO $pdo = null;
 
     /**
      * MySQLDatabase constructor
@@ -32,11 +31,20 @@ class MySQLDB
     }
 
     /**
-     * @return PDO
+     * Get the PDO instance
+     * @return PDO|null
      */
-    public function pdo()
+    public function pdo(): ?PDO
     {
         return $this->pdo;
+    }
+
+    /**
+     * Close the database connection
+     */
+    public function close(): void
+    {
+        $this->pdo = null; // This will close the connection
     }
 
 }

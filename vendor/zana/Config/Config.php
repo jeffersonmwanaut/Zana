@@ -9,17 +9,17 @@ class Config
     /**
      * @var string
      */
-    private static $mode;
+    private static string $mode;
     /**
      * Link up to the configuration file.
-     * @var array|mixed
+     * @var array
      */
-    private static $settings = [];
+    private static array $settings = [];
     /**
      * Unique instance of Config.
-     * @var Config
+     * @var Config|null
      */
-    private static $instance = null;
+    private static ?Config $instance = null;
 
     private function __construct()
     {
@@ -30,26 +30,41 @@ class Config
         // Get config mode
         self::$mode = file_exists($userConfigDir . '/mode.env') ? file_get_contents($userConfigDir . DIRECTORY_SEPARATOR . 'mode.env') : file_get_contents($vendorConfigDir . DIRECTORY_SEPARATOR . 'mode.env');
         
-        // Get vendor config 
-        $vendorCommonConfig = require_once($vendorConfigDir . '/com.php');
-        $vendorModeConfig   = require_once($vendorConfigDir . '/' . self::$mode . '.php');
+        // Load vendor config
+        $vendorCommonConfig = $this->loadConfigFile($vendorConfigDir . '/com.php');
+        $vendorModeConfig = $this->loadConfigFile($vendorConfigDir . '/' . self::$mode . '.php');
+        $vendorModules = $this->loadJsonFile($vendorConfigDir . '/modules.json');
         
-        $vendorModules = json_decode(file_get_contents($vendorConfigDir . '/modules.json'), true);
+        // Load user config
+        $userCommonConfig = $this->loadJsonFile($userConfigDir . '/com.json');
+        $userModeConfig = $this->loadJsonFile($userConfigDir . '/' . self::$mode . '.json');
+        $userModules = $this->loadJsonFile($userConfigDir . '/modules.json');
         
-        // Get user config
-        $userModeConfig       = $userCommonConfig = $userModules = [];
-        $userCommonConfigFile = $userConfigDir . '/com.json';
-        $userModulesFile      = $userConfigDir . '/modules.json';
-        $userConfigFile       = $userConfigDir . '/' . self::$mode . '.json';
-        
-        if (file_exists($userCommonConfigFile)) $userCommonConfig = json_decode(file_get_contents($userCommonConfigFile), true);
-        if (file_exists($userConfigFile)) $userModeConfig         = json_decode(file_get_contents($userConfigFile), true);
-        if (file_exists($userModulesFile)) $userModules           = json_decode(file_get_contents($userModulesFile), true);
-        
-        $vendorConfig   = array_merge_recursive($vendorModeConfig, $vendorCommonConfig);
-        $userConfig     = array_merge_recursive($userModeConfig, $userCommonConfig);
-        $modules        = array_merge_recursive($vendorModules, $userModules);
+        Merge configurations
+        $vendorConfig = array_merge_recursive($vendorModeConfig, $vendorCommonConfig);
+        $userConfig = array_merge_recursive($userModeConfig, $userCommonConfig);
+        $modules = array_merge_recursive($vendorModules, $userModules);
         self::$settings = array_replace_recursive($vendorConfig, $userConfig, $modules);
+    }
+
+    /**
+     * Load a PHP configuration file.
+     * @param string $filePath
+     * @return array
+     */
+    private function loadConfigFile(string $filePath): array
+    {
+        return file_exists($filePath) ? require_once $filePath : [];
+    }
+
+    /**
+     * Load a JSON configuration file.
+     * @param string $filePath
+     * @return array
+     */
+    private function loadJsonFile(string $filePath): array
+    {
+        return file_exists($filePath) ? json_decode(file_get_contents($filePath), true ) : [];
     }
 
     /**

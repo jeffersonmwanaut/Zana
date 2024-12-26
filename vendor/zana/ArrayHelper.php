@@ -69,8 +69,9 @@ class ArrayHelper {
      * @param mixed $element The element to add.
      * @return void
      */
-    public function add($element): void {
+    public function add($element): self {
         $this->array[] = $element;
+        return $this;
     }
 
     /**
@@ -79,14 +80,12 @@ class ArrayHelper {
      * @param int $index The index of the element to remove.
      * @return mixed The removed element, or null if the index is out of range.
      */
-    public function remove(int $index) {
+    public function remove(int $index): self {
         if (isset($this->array[$index])) {
-            $removedElement = $this->array[$index];
             unset($this->array[$index]);
             $this->array = array_values($this->array); // Reindex the array
-            return $removedElement;
         }
-        return null;
+        return $this;
     }
 
     /**
@@ -102,5 +101,36 @@ class ArrayHelper {
             }
         }
         return null;
+    }
+
+    /**
+     * Apply a callback to each element and return a new array with the results.
+     *
+     * @param callable $callback The callback function to apply to each element.
+     * @return array The new array with transformed elements.
+     */
+    public function map(callable $callback): array {
+        return array_map($callback, $this->array);
+    }
+
+    /**
+     * Filter the array based on a callback condition.
+     *
+     * @param callable $callback The callback function to evaluate each element.
+     * @return array The filtered array.
+     */
+    public function filter(callable $callback): array {
+        return array_filter($this->array, $callback);
+    }
+
+    /**
+     * Reduce the array to a single value.
+     *
+     * @param callable $callback The callback function to apply to each element.
+     * @param mixed $initial The initial value.
+     * @return mixed The reduced value.
+     */
+    public function reduce(callable $callback, $initial) {
+        return array_reduce($this->array, $callback, $initial);
     }
 }

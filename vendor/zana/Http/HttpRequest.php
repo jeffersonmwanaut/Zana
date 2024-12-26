@@ -10,48 +10,47 @@ use Zana\Config\Config;
  */
 class HttpRequest
 {
-    private $urlRoot;
+    private string $urlRoot;
 
     public function __construct()
     {
         $this->urlRoot = Config::get('path.url_root');
     }
 
-    /**
-     * @param string $key
-     * @return bool
+     /**
+     * Get a value from the GET parameters.
+     * @param string|null $key
+     * @return mixed|bool
      */
-    public function get($key = null)
+    public function get(?string $key = null)
     {
-        if(is_null($key)) return !empty($_GET) ? $_GET : false;
-        if(isset($_GET[$key])){
-            if(is_string($_GET[$key])) return trim($_GET[$key]);
-            return $_GET[$key];
+        if (is_null($key)) {
+            return !empty($_GET) ? $_GET : false;
         }
-        return false;
+        return isset($_GET[$key]) ? (is_string($_GET[$key]) ? trim($_GET[$key]) : $_GET[$key]) : false;
     }
 
     /**
-     * @param string $key
-     * @return bool
+     * Get a value from the POST parameters.
+     * @param string|null $key
+     * @return mixed|bool
      */
-    public function post($key = null)
+    public function post(?string $key = null)
     {
-        if(is_null($key)) return !empty($_POST) ? $_POST : false;
-        if(isset($_POST[$key])){
-            if(is_string($_POST[$key])) return trim($_POST[$key]);
-            return $_POST[$key];
+        if (is_null($key)) {
+            return !empty($_POST) ? $_POST : false;
         }
-        return false;
+        return isset($_POST[$key]) ? (is_string($_POST[$key]) ? trim($_POST[$key]) : $_POST[$key]) : false;
     }
 
     /**
+     * Check if a key exists in either GET or POST parameters.
      * @param string $key
      * @return bool
      */
-    public function submit($key)
+    public function submit(string $key): bool
     {
-        return (isset($_POST[$key]) || isset($_GET[$key])) ? true : false;
+        return isset($_POST[$key]) || isset($_GET[$key]);
     }
 
     /**
@@ -85,12 +84,22 @@ class HttpRequest
     }
 
     /**
+     * Check if a file is uploaded without errors.
+     * @param string $key
+     * @return bool
+     */
+    private function isFileUploaded(string $key): bool
+    {
+        return isset($_FILES[$key]) && $_FILES[$key]['error'] === 0;
+    }
+
+    /**
      * @param string $key
      * @return bool|File
      */
     public function file($key)
     {
-        return (isset($_FILES[$key]) && $_FILES[$key]['error'] == 0) ? new File($_FILES[$key]) : false;
+        return $this->isFileUploaded($key) ? new File($_FILES[$key]) : false;
     }
 
     /**
@@ -99,7 +108,7 @@ class HttpRequest
      */
     public function image($key)
     {
-        return (isset($_FILES[$key]) && $_FILES[$key]['error'] == 0) ? new Image($_FILES[$key]) : false;
+        return $this->isFileUploaded($key) ? new Image($_FILES[$key]) : false;
     }
 
     /**
@@ -111,48 +120,57 @@ class HttpRequest
     }
 
     /**
-     * @return bool|string
+     * Get the HTTP request method.
+     * @return string
      */
-    public function requestMethod()
+    public function requestMethod(): string
     {
-        return $this->get('_METHOD') ? $this->get('_METHOD') : ($this->post('_METHOD') ? $this->post('_METHOD') : $_SERVER['REQUEST_METHOD']);
+        return $this->get('_METHOD') ?: ($this->post('_METHOD') ?: $_SERVER['REQUEST_METHOD']);
     }
 
     /**
+     * Get the request URI without the base URL.
      * @return string
      */
-    public function requestUri()
+    public function requestUri(): string
     {
         $params = explode('?', $_SERVER['REQUEST_URI']);
-        $params = isset($params[1]) ? '?' . $params[1] : '';
-        return $this->get('url') . $params;
+        return $this->get('url') . (isset($params[1]) ? '?' . $params[1] : '');
     }
 
     /**
+     * Get the full request URL.
      * @return string
      */
-    public function requestUrl()
+    public function requestUrl(): string
     {
         $params = explode('?', $_SERVER['REQUEST_URI']);
-        $params = isset($params[1]) ? '?' . $params[1] : '';
-        return $this->urlRoot . '/' . $this->get('url') . $params;
+        return $this->urlRoot . '/' . $this->get('url') . (isset($params[1]) ? '?' . $params[1] : '');
     }
 
-    /**
+     /**
+     * Get the referrer URL.
      * @return string
      */
-    public function referrer()
+    public function referrer(): string
     {
-        if(!isset($_SERVER['HTTP_REFERER'])) return '#';
-        return str_replace($_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] . $this->urlRoot . '/', '', $_SERVER['HTTP_REFERER']);
+        return $_SERVER['HTTP_REFERER'] ?? '#';
     }
 
-    public function back()
+     /**
+     * Generate a URL for navigating back.
+     * @return string
+     */
+    public function back(): string
     {
         return \Zana\Router\Router::generateUrl('_NAVIGATE_BACK');
     }
 
-    public function isAjax()
+    /**
+     * Check if the request is an AJAX request.
+     * @return bool
+     */
+    public function isAjax(): bool
     {
         return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
     }

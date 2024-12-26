@@ -9,22 +9,10 @@ use Zana\Http\PageStack;
 
 class Router extends Singleton
 {
-    /**
-     * @var HttpRequest
-     */
-    protected static $httpRequest;
-    /**
-     * @var string
-     */
-    protected static $path;
-    /**
-     * @var Route[]
-     */
-    protected static $routes = [];
-    /**
-     * @var Route[]
-     */
-    protected static $namedRoutes = [];
+    protected static HttpRequest $httpRequest;
+    protected static string $path;
+    protected static array $routes = [];
+    protected static array $namedRoutes = [];
 
     /**
      * Router constructor.
@@ -34,102 +22,48 @@ class Router extends Singleton
         self::$httpRequest = new HttpRequest();
     }
 
-    /**
-     * @param string $path
-     * @param mixed $callable
-     * @param string $routeName
-     * @return Route
-     */
-    public static function get($path, $callable, $routeName = null)
+    public static function get(string $path, $callable, string $routeName = null): Route
     {
         return self::addRoute($path, $callable, $routeName, 'GET');
     }
 
-    /**
-     * @param string $path
-     * @param mixed $callable
-     * @param string $routeName
-     * @return Route
-     */
-    public static function post($path, $callable, $routeName = null)
+    public static function post(string $path, $callable, string $routeName = null): Route
     {
         return self::addRoute($path, $callable, $routeName, 'POST');
     }
 
-    /**
-     * @param string $path
-     * @param mixed $callable
-     * @param string $routeName
-     * @return Route
-     */
-    public static function patch($path, $callable, $routeName = null)
+    public static function patch(string $path, $callable, string $routeName = null): Route
     {
         return self::addRoute($path, $callable, $routeName, 'PATCH');
     }
 
-    /**
-     * @param string $path
-     * @param mixed $callable
-     * @param string $routeName
-     * @return Route
-     */
-    public static function put($path, $callable, $routeName = null)
+    public static function put(string $path, $callable, string $routeName = null): Route
     {
         return self::addRoute($path, $callable, $routeName, 'PUT');
     }
 
-    /**
-     * @param string $path
-     * @param mixed $callable
-     * @param string $routeName
-     * @return Route
-     */
-    public static function delete($path, $callable, $routeName = null)
+    public static function delete(string $path, $callable, string $routeName = null): Route
     {
         return self::addRoute($path, $callable, $routeName, 'DELETE');
     }
 
-    /**
-     * @param string $path
-     * @param mixed $callable
-     * @param string $routeName
-     * @param array $requestMethods
-     * @return Route
-     */
-    public static function any($path, $callable, $routeName = null, $requestMethods = ['GET'])
+    public static function any(string $path, $callable, string $routeName = null, array $requestMethods = ['GET']): Route
     {
-        $route = new Route($path, $callable);
-        foreach($requestMethods as $requestMethod) {
-            $route = self::addRoute($path, $callable, $routeName, $requestMethod);
+        foreach ($requestMethods as $requestMethod) {
+            self::addRoute($path, $callable, $routeName, $requestMethod);
         }
-        return $route;
+        return new Route($path, $callable);
     }
 
-    /**
-     * @param string $path
-     * @param mixed $callable
-     * @param string $routeName
-     * @return Route
-     */
-    public static function all($path, $callable, $routeName = null)
-    {
-        $requestMethods = ['GET','POST','PATCH','PUT','DELETE'];
-        
-        $route = new Route($path, $callable);
-        foreach($requestMethods as $requestMethod) {
-            $route = self::addRoute($path, $callable, $routeName, $requestMethod);
+    public static function all(string $path, $callable, string $routeName = null): Route {
+        $requestMethods = ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'];
+        foreach ($requestMethods as $requestMethod) {
+            self::addRoute($path, $callable, $routeName, $requestMethod);
         }
-        return $route;
+        return new Route($path, $callable);
     }
 
-    /**
-     * @param string $path
-     * @param mixed $callable
-     * @param string $routeName 
-     * @param string $method
-     * @return Route
-     */
-    protected static function addRoute($path, $callable, $routeName, $method)
+    protected static function addRoute(string $path, $callable, string $routeName, string $method): Route
     {
         $route = new Route($path, $callable);
         self::$routes[$method][] = $route;
@@ -142,11 +76,7 @@ class Router extends Singleton
         return $route;
     }
 
-    /**
-     * @return Page
-     * @throws RouterException
-     */
-    public static function run()
+    public static function run(): Page
     {
         if (count(self::routes()) < 1) {
             throw new RouterException("No route found", RouterException::NO_ROUTE_FOUND);
@@ -176,7 +106,7 @@ class Router extends Singleton
      * @return mixed|string
      * @throws RouterException
      */
-    public static function generateUrl($routeName, $params = [])
+    public static function generateUrl(string $routeName, array $params = []): string
     {
         if (!isset(self::$namedRoutes[$routeName])) {
             throw new RouterException('No route matches <b>' . $routeName . '</b>', RouterException::NO_ROUTE_MATCHES);
@@ -187,7 +117,7 @@ class Router extends Singleton
     /**
      * @return Route[]
      */
-    public static function routes()
+    public static function routes(): array
     {
         return self::$routes;
     }
@@ -195,7 +125,7 @@ class Router extends Singleton
     /**
      * @return Route[]
      */
-    public static function namedRoutes()
+    public static function namedRoutes(): array
     {
         ksort(self::$namedRoutes);
         return self::$namedRoutes;

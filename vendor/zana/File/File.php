@@ -9,147 +9,128 @@ namespace Zana\File;
 class File
 {
 
-    /**
-     * @var string
-     */
-    protected $clientFilename;
-    /**
-     * @var string
-     */
-    protected $clientMediaType;
-    /**
-     * @var int
-     */
-    protected $error;
-    /**
-     * @var string
-     */
-    protected $tmpFilename;
-    /**
-     * @var int
-     */
-    protected $size;
-    /**
-     * @var string
-     */
-    protected $extension;
+    protected string $clientFilename;
+    protected string $clientMediaType;
+    protected int $error;
+    protected string $tmpFilename;
+    protected int $size;
+    protected string $extension;
 
     public function __construct(array $file)
     {
-        $this->clientFilename = isset($file['name']) ? $file['name'] : '';
-        $this->clientMediaType = isset($file['type']) ? $file['type'] : '';
-        $this->error = isset($file['error']) ? $file['error'] : '';
-        $this->tmpFilename = isset($file['tmp_name']) ? $file['tmp_name'] : '';
-        $this->size = isset($file['size']) ? $file['size'] : '';
-        $this->extension = isset($file['name']) ? strtolower(  substr(  strrchr($file['name'], '.')  ,1)  ) : '';
+        $this->clientFilename = $file['name'] ?? '';
+        $this->clientMediaType = $file['type'] ?? '';
+        $this->error = $file['error'] ?? 0;
+        $this->tmpFilename = $file['tmp_name'] ?? '';
+        $this->size = $file['size'] ?? 0;
+        $this->extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
     }
 
-    /**
-     * @return string
-     */
-    public function getClientFilename()
+    public function getClientFilename(): string
     {
         return $this->clientFilename;
     }
 
-    /**
-     * @param string $clientFilename
-     * @return File
-     */
-    public function setClientFilename($clientFilename)
+    public function setClientFilename(string $clientFilename): self
     {
         $this->clientFilename = $clientFilename;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getClientMediaType()
+    public function getClientMediaType(): string
     {
         return $this->clientMediaType;
     }
 
-    /**
-     * @param string $clientMediaType
-     * @return File
-     */
-    public function setClientMediaType($clientMediaType)
+    public function setClientMediaType(string $clientMediaType): self
     {
         $this->clientMediaType = $clientMediaType;
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getError()
+    public function getError(): int
     {
         return $this->error;
     }
 
-    /**
-     * @param int $error
-     * @return File
-     */
-    public function setError($error)
+    public function setError(int $error): self
     {
         $this->error = $error;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getTmpFilename()
+    public function getTmpFilename(): string
     {
         return $this->tmpFilename;
     }
 
-    /**
-     * @param string $file
-     * @return File
-     */
-    public function setTmpFilename($tmpFilename)
+    public function setTmpFilename(string $tmpFilename): self
     {
         $this->tmpFilename = $tmpFilename;
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getSize()
+    public function getSize(): int
     {
         return $this->size;
     }
 
-    /**
-     * @param int $size
-     * @return File
-     */
-    public function setSize($size)
+    public function setSize(int $size): self
     {
         $this->size = $size;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getExtension()
+    public function getExtension(): string
     {
         return $this->extension;
     }
 
-    /**
-     * @param string $extension
-     * @return File
-     */
-    public function setExtension($extension)
+    public function setExtension(string $extension): self
     {
         $this->extension = $extension;
         return $this;
+    }
+
+    /**
+     * Get a human-readable error message based on the error code.
+     * @return string
+     */
+    public function getErrorMessage(): string
+    {
+        switch ($this->error) {
+            case UPLOAD_ERR_OK:
+                return 'No error, the file uploaded successfully.';
+            case UPLOAD_ERR_INI_SIZE:
+                return 'The uploaded file exceeds the upload_max_filesize directive in php.ini.';
+            case UPLOAD_ERR_FORM_SIZE:
+                return 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.';
+            case UPLOAD_ERR_PARTIAL:
+                return 'The uploaded file was only partially uploaded.';
+            case UPLOAD_ERR_NO_FILE:
+                return 'No file was uploaded.';
+            case UPLOAD_ERR_NO_TMP_DIR:
+                return 'Missing a temporary folder.';
+            case UPLOAD_ERR_CANT_WRITE:
+                return 'Failed to write file to disk.';
+            case UPLOAD_ERR_EXTENSION:
+                return 'A PHP extension stopped the file upload.';
+            default:
+                return 'Unknown upload error.';
+        }
+    }
+
+    /**
+     * Move the uploaded file to a specified destination.
+     * @param string $destination
+     * @return bool
+     */
+    public function moveTo(string $destination): bool
+    {
+        if ($this->error !== UPLOAD_ERR_OK) {
+            return false;
+        }
+        return move_uploaded_file($this->tmpFilename, $destination);
     }
 
 }

@@ -23,27 +23,13 @@ class Policy {
         return $policies;
     }
 
-    private function isMatch($access) {
-        // Initialize the default result as false
-        $result = false;
-    
-        // Loop through the policies array
+    private function isMatch(array $access): bool {
         foreach ($this->policies['policies'] as $policy) {
-            if (array_key_exists($key, $access)) {
-                if(in_array($value, ['*', 'all'])) {
-                    $result = true;
-                } else {
-                    if ($access[$key] !== $value) {
-                        return false;
-                    } else {
-                        $result = true;
-                    }
-                }
+            if ($this->policyMatchesAccess($policy, $access)) {
+                return true; // Access granted if any policy matches
             }
         }
-    
-        // If no match is found, return the default result
-        return $result;
+        return false; // No matching policy found
     }
 
     private function policyMatchesAccess($policy, $access) {

@@ -2,41 +2,29 @@
 
 class Route
 {
-    /**
-     * @var string
-     */
-    private $path;
-    /**
-     * @var mixed
-     */
+    private string $path;
     private $callable;
-    /**
-     * @var string[]
-     */
-    private $matches = [];
-    /**
-     * @var string[]
-     */
-    private $params = [];
+    private array $matches = [];
+    private array $params = [];
 
-    const   MAIN = '_MAIN',
-            UNDER_CONSTRUCTION = '_UNDER_CONSTRUCTION',
-            ERR_404 = '_404',
-            NAVIGATE_BACK = '_NAVIGATE_BACK',
-            UNDER_MAINTENANCE = '_UNDER_MAINTENANCE';
+    const MAIN = '_MAIN';
+    const UNDER_CONSTRUCTION = '_UNDER_CONSTRUCTION';
+    const ERR_404 = '_404';
+    const NAVIGATE_BACK = '_NAVIGATE_BACK';
+    const UNDER_MAINTENANCE = '_UNDER_MAINTENANCE';
 
     /**
      * @param string $path
      * @param mixed $callable
      * @param string $callableNamespace
      */
-    public function __construct($path, $callable)
+    public function __construct(string $path, $callable)
     {
         $this->path = trim($path, '/');
         $this->callable = $callable;
     }
 
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
@@ -46,7 +34,7 @@ class Route
         return $this->callable;
     }
 
-    public function getParams()
+    public function getParams(): array
     {
         return $this->params;
     }
@@ -68,16 +56,22 @@ class Route
         return true;
     }
 
-    /**
-     * @param string[] $matches
-     * @return string
-     */
-    private function paramMatch($matches)
+    private function paramMatch(array $matches): string
     {
-        if (isset($this->params[$matches[2]])) {
-            return '(' . $this->params[$matches[2]] . ')';
+        $paramName = $matches[2];
+        $regex = '([^/]+)'; // Default regex for parameters
+
+        // Check if a custom regex is defined for this parameter
+        if (isset($this->params[$paramName])) {
+            $regex = '(' . $this->params[$paramName] . ')';
         }
-        return '([^/]+)';
+
+        // Check if the parameter is defined as optional in the path
+        if (strpos($this->path, '{' . $paramName . '?}') !== false) {
+            return "($regex)?"; // Make it optional
+        }
+
+        return $regex;
     }
 
     /**
@@ -103,7 +97,7 @@ class Route
      * @param string $regex
      * @return $this
      */
-    public function with($param, $regex)
+    public function with(string $param, string $regex): self
     {
         $regex = str_replace(['^', '$'], '', $regex);
         $this->params[$param] = str_replace('(', '(?:',$regex);
@@ -114,7 +108,7 @@ class Route
      * @param array $params
      * @return mixed|string
      */
-    public function getUrl(array $params = [])
+    public function getUrl(array $params = []): string
     {
         $path = $this->path;
         foreach ($params as $param => $value){

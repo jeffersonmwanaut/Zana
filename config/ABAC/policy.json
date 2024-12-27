@@ -1,40 +1,40 @@
-{ 
-    "policies": [ 
-        { 
-            "id": "policy_1", 
-            "effect": "allow", 
-            "rules": [ 
-                { 
-                    "subject": "owner", 
-                    "action": "edit", 
-                    "resource": "confidential", 
-                    "environment": "development" 
-                }, 
-                { 
-                    "subject": "admin", 
-                    "action": "*", 
-                    "resource": "*", 
-                    "environment": "*" 
-                }, 
-                { 
-                    "subject": "user", 
-                    "action": "view", 
-                    "resource": "public", 
-                    "environment": "production" 
-                } 
-            ] 
-        }, 
-        { 
-            "id": "policy_2", 
-            "effect": "deny", 
-            "rules": [ 
-                { 
-                    "subject": "owner", 
-                    "action": "delete", 
-                    "resource": "private", 
-                    "environment": "development" 
-                } 
-            ] 
-        } 
-    ] 
+{
+    "policies": [
+        {
+            "id": "policy1",
+            "effect": "allow",
+            "rules": [
+                {
+                    "subject": ["super_admin", "admin"],
+                    "action": ["*"],
+                    "resource": ["*"],
+                    "environment": ["*", "production"]
+                },
+                {
+                    "subject": "editor",
+                    "action": ["view", "edit"],
+                    "resource": ["*"],
+                    "environment": "production"
+                },
+                {
+                    "subject": "guest",
+                    "action": "view",
+                    "resource": "*",
+                    "environment": "production"
+                }
+            ]
+        },
+        {
+            "id": "policy2",
+            "effect": "deny",
+            "rules": [
+                {
+                    "subject": "admin",
+                    "action": "delete",
+                    "resource": "user",
+                    "environment": "*"
+                }
+            ]
+        }
+    ]
 }

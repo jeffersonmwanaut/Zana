@@ -153,6 +153,7 @@ Now that you've learned a new way of building beautiful and functional applicati
 * [Configuring Zana](#configuring-zana)
 * [Forms](#forms)
 * [Databases and Data Access Objects](#databases-and-data-access-objects)
+* [Access Control: Authorization](#access-control-authorization)
 
 ## Module
 
@@ -967,6 +968,152 @@ foreach ($resultSet->all() as $object) {
     // Assuming object's class has a method to get object details
     echo $object->getId() . "\n"; // Example of accessing object data
 }
+```
+
+## Access Control: Authorization
+
+Access control is a process that allows to determine if a user can access some resource (a URL, a model object, a method call, ...). The `Zana\ABAC\Policy` class is designed to manage access control policies based on the Attribute-Based Access Control (ABAC) model. It allows you to define policies in a JSON format and check access against these policies. The class has also conflicts detection capabilties between rules.
+
+### Constructor
+
+```php
+public function __construct(string $policyConfigFilename)
+```
+
+* Parameters:
+    * `policyConfigFilename`: The path to the JSON file containing the policy configuration.
+* Description: Loads the policies from the specified JSON file into the class.
+
+### Methods
+
+1. `getPolicies()`
+
+```php
+public function getPolicies(): array
+```
+
+* Returns: An array of loaded policies.
+* Description: Retrieves the policies that have been loaded into the class.
+
+2. `checkAccess(array $access): bool`
+
+```php
+public function checkAccess(array $access): bool
+```
+
+* Parameters:
+    * access: An associative array containing the access details of a logged user, including subject (e.g. a role like ADMIN), action (e.g. view, edit, delete, print, etc.), resource (e.g. a model object), and environment (e.g. sandbox, test, production, etc.).
+* Returns: true if access is allowed, false otherwise.
+* Description: Checks if the provided access request matches any of the loaded policies.
+
+3. `detectConflicts(): array`
+
+```php
+public function detectConflicts(): array
+```
+
+* Returns: An array of conflicts found in the loaded policies.
+* Description: Detects conflicts between the rules in the loaded policies, including overlapping, redundant, and shadowed rules.
+
+### Example Usage
+
+#### Step 1: Create a JSON Policy Configuration File
+
+Edit the `//config/ABAC/policy.json` config file with the following content:
+
+```json
+{
+    "policies": [
+        {
+            "id": "policy1",
+            "effect": "allow",
+            "rules": [
+                {
+                    "subject": ["super_admin", "admin"],
+                    "action": ["*"],
+                    "resource": ["*"],
+                    "environment": ["*", "production"]
+                },
+                {
+                    "subject": "editor",
+                    "action": ["view", "edit"],
+                    "resource": ["*"],
+                    "environment": "production"
+                },
+                {
+                    "subject": "guest",
+                    "action": "view",
+                    "resource": "*",
+                    "environment": "production"
+                }
+            ]
+        },
+        {
+            "id": "policy2",
+            "effect": "deny",
+            "rules": [
+                {
+                    "subject": "admin",
+                    "action": "delete",
+                    "resource": "user",
+                    "environment": "*"
+                }
+            ]
+        }
+    ]
+}
+```
+
+#### Step 2: Load the Policy Class and Check Access
+
+```php
+use Zana\ABAC\Policy;
+
+// Load the policy configuration
+$policy = new Policy('policy.json'); // Adjust the path to your policy config file
+
+// Assuming that the logged user has the following access
+$accessRequest = [
+    'subject' => 'admin ',
+    'action' => 'delete',
+    'resource' => 'user',
+    'environment' => 'production'
+];
+
+// Check access
+$access = $policy->checkAccess($accessRequest);
+echo "Access for admin to delete user in production: " . ($access ? 'Allowed' : 'Denied') . "\n";
+
+// Assuming that another logged user has the following access
+$accessRequest2 = [
+    'subject' => 'editor',
+    'action' => 'view',
+    'resource' => 'document',
+    'environment' => 'production'
+];
+
+// Check access
+$access2 = $policy->checkAccess($accessRequest2);
+echo "Access for editor to view document in production: " . ($access2 ? 'Allowed' : 'Denied') . "\n";
+
+// Detect conflicts in policies
+$conflicts = $policy->detectConflicts();
+if (!empty($conflicts)) {
+    echo "Conflicts detected:\n";
+    print_r($conflicts);
+} else {
+    echo "No conflicts detected in policies.\n";
+}
+```
+
+##### Expected Output:
+
+When you run the above script, you should see output similar to the following:
+
+```html
+Access for admin to delete user in production: Denied
+Access for editor to view document in production: Allowed
+No conflicts detected in policies.
 ```
 
 

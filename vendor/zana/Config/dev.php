@@ -1,13 +1,29 @@
 <?php
 /**
  * This is the development mode configuration file.
- * It contains the configuration directives that give instructions to Mbaar for development environment.
+ * It contains the configuration directives that give instructions to Zana for development environment.
  * 
  * Each directive is given a unique key and value.
  * 'key' => <value>
  * 
  * NOTE: This configuration is provided with some required keys that should not be edited without understanding what they do?
  */
+
+/**
+ * root: The top of the directory tree under which the project files are kept.
+ */
+$root = isset($root) ? $root : dirname(__DIR__, 3);
+
+/**
+ * domain: The server on which the project is hosted.
+ */
+$domain = $_SERVER['SERVER_NAME'];
+
+/**
+ * urlRoot: The project directory. Replace value project-dir with your own.
+ */
+$protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+$urlRoot = str_replace('/public/app.php', '', $protocol . '://'. $domain . $_SERVER['PHP_SELF']);
 
 /**
  * Configuration entries:

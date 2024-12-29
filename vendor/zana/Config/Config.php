@@ -40,7 +40,7 @@ class Config
         $userModeConfig = $this->loadJsonFile($userConfigDir . '/' . self::$mode . '.json');
         $userModules = $this->loadJsonFile($userConfigDir . '/modules.json');
         
-        Merge configurations
+        // Merge configurations
         $vendorConfig = array_merge_recursive($vendorModeConfig, $vendorCommonConfig);
         $userConfig = array_merge_recursive($userModeConfig, $userCommonConfig);
         $modules = array_merge_recursive($vendorModules, $userModules);

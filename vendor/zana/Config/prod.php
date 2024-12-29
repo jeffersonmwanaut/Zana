@@ -8,6 +8,22 @@
  */
 
 /**
+ * root: The top of the directory tree under which the project files are kept.
+ */
+$root = isset($root) ? $root : dirname(__DIR__, 3);
+
+/**
+ * domain: The server on which the project is hosted.
+ */
+$domain = $_SERVER['SERVER_NAME'];
+
+/**
+ * urlRoot: The project directory. Replace value project-dir with your own.
+ */
+$protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+$urlRoot = str_replace('/public/app.php', '', $protocol . '://'. $domain . $_SERVER['PHP_SELF']);
+
+/**
  * Configuration entries:
  * NOTE: Do not remove native keys which required to Zana. Nevertheless, you can add your own keys and their values.
  */

@@ -27,73 +27,80 @@ class Policy {
         }
 
         $json = file_get_contents($policyConfigFilename);
-        $policies = json_decode($json, true);
+        $policyData = json_decode($json, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new Exception("Error decoding JSON: " . json_last_error_msg());
         }
 
-        return $policies;
+        // Create a new array to hold the policies with Rule objects
+        $policiesWithRules = [];
+
+        foreach ($policyData['policies'] as $policy) {
+            $rules = [];
+            foreach ($policy['rules'] as $ruleData) {
+                $rules[] = new Rule(
+                    $ruleData['subject'],
+                    $ruleData['action'],
+                    $ruleData['resource'],
+                    $ruleData['environment']
+                );
+            }
+            // Add the policy with the new rules array
+            $policiesWithRules[] = [
+                'id' => $policy['id'],
+                'effect' => $policy['effect'],
+                'rules' => $rules
+            ];
+        }
+
+        return ['policies' => $policiesWithRules];
     }
 
     /**
      * Check if the access matches any policy.
-     * @param array $access
+     * @param Rule $access
      * @return bool
      */
-    private function isMatch(array $access): bool {
+    private function isMatch(Rule $access): bool {
         $allowFound = false;
         foreach ($this->policies['policies'] as $policy) {
-            // Check the effect of the policy
-            if ($this->policyMatchesAccess($policy, $access)) {
-                if ($policy['effect'] === 'deny') {
-                    return false; // Deny access immediately if a deny rule is found
-                }
-                if ($policy['effect'] === 'allow') {
-                    $allowFound = true; // Found an allow rule
+            foreach ($policy['rules'] as $rule) {
+                if ($this->ruleMatchesAccess($rule, $access)) {
+                    if ($policy['effect'] === 'deny') {
+                        return false; // Deny access immediately if a deny rule is found
+                    }
+                    if ($policy['effect'] === 'allow') {
+                        $allowFound = true; // Found an allow rule
+                    }
                 }
             }
         }
-    
+
         return $allowFound; // Grant access if an allow rule is found and no deny rule was found
     }
 
     /**
-     * Check if the policy matches the access.
-     * @param array $policy
-     * @param array $access
-     * @return bool
-     */
-    private function policyMatchesAccess(array $policy, array $access): bool {
-        foreach ($policy['rules'] as $rule) {
-            if ($this->ruleMatchesAccess($rule, $access)) {
-                return true; // If a match is found, return true
-            }
-        }
-        return false; // If no match is found, return false
-    }
-
-    /**
      * Check if the rule matches the access.
-     * @param array $rule
-     * @param array $access
+     * @param Rule $rule
+     * @param Rule $access
      * @return bool
      */
-    private function ruleMatchesAccess(array $rule, array $access): bool {
+    private function ruleMatchesAccess(Rule $rule, Rule $access): bool {
         // Check if the subject matches
-        if (isset($rule['subject']) && !$this->matchesAny($access['subject'], $rule['subject'])) {
+        if (!$this->matchesAny($access->getSubject(), $rule->getSubject())) {
             return false; // Subject does not match
         }
         // Check if the action matches
-        if (isset($rule['action']) && !$this->matchesAny($access['action'], $rule['action'])) {
+        if (!$this->matchesAny($access->getAction(), $rule->getAction())) {
             return false; // Action does not match
         }
         // Check if the resource matches
-        if (isset($rule['resource']) && !$this->matchesAny($access['resource'], $rule['resource'])) {
+        if (!$this->matchesAny($access->getResource(), $rule->getResource())) {
             return false; // Resource does not match
         }
         // Check if the environment matches
-        if (isset($rule['environment']) && !$this->matchesAny($access['environment'], $rule['environment'])) {
+        if (!$this->matchesAny($access->getEnvironment(), $rule->getEnvironment())) {
             return false; // Environment does not match
         }
         return true; // All conditions matched
@@ -101,10 +108,10 @@ class Policy {
 
     /**
      * Check access against the policies.
-     * @param array $access
+     * @param Rule $access
      * @return bool
      */
-    public function checkAccess(array $access): bool {
+    public function checkAccess(Rule $access): bool {
         return $this->isMatch($access);
     }
 
@@ -119,7 +126,7 @@ class Policy {
         $rulesByEnvironment = [];
         foreach ($this->policies['policies'] as $policy) {
             foreach ($policy['rules'] as $rule) {
-                $env = $rule['environment'] ?? 'default'; // Use 'default' if no environment is specified
+                $env = $rule->getEnvironment()[0] ?? 'default'; // Use the first environment if no specific one is specified
                 $rulesByEnvironment[$env][] = $rule;
             }
         }
@@ -171,57 +178,57 @@ class Policy {
 
     /**
      * Determine if two rules are conflicting.
-     * @param array $rule1
-     * @param array $rule2
+     * @param Rule $rule1
+     * @param Rule $rule2
      * @return bool
      */
-    private function isOverlapping(array $rule1, array $rule2): bool {
-        return $this->conditionsOverlap($rule1, $rule2) && $rule1['effect'] !== $rule2['effect'];
+    private function isOverlapping(Rule $rule1, Rule $rule2): bool {
+        return $this->conditionsOverlap($rule1, $rule2) && $rule1->getEffect() !== $rule2->getEffect();
     }
 
     /**
      * Check if two rules are redundant.
-     * @param array $rule1
-     * @param array $rule2
+     * @param Rule $rule1
+     * @param Rule $rule2
      * @return bool
      */
-    private function isRedundant(array $rule1, array $rule2): bool {
-        return $this->conditionsMatch($rule1, $rule2) && $rule1['effect'] === $rule2['effect'];
+    private function isRedundant(Rule $rule1, Rule $rule2): bool {
+        return $this->conditionsMatch($rule1, $rule2) && $rule1->getEffect() === $rule2->getEffect();
     }
 
     /**
      * Check if one rule is shadowed by another.
-     * @param array $rule1
-     * @param array $rule2
+     * @param Rule $rule1
+     * @param Rule $rule2
      * @return bool
      */
-    private function isShadowed(array $rule1, array $rule2): bool {
-        return $this->conditionsMatch($rule1, $rule2) && $rule1['effect'] !== $rule2['effect'];
+    private function isShadowed(Rule $rule1, Rule $rule2): bool {
+        return $this->conditionsMatch($rule1, $rule2) && $rule1->getEffect() !== $rule2->getEffect();
     }
 
     /**
      * Check if two rules have the same conditions.
-     * @param array $rule1
-     * @param array $rule2
+     * @param Rule $rule1
+     * @param Rule $rule2
      * @return bool
      */
-    private function conditionsMatch(array $rule1, array $rule2): bool {
-        return $this->matchesAny($rule1['subject'], $rule2['subject']) &&
-               $this->matchesAny($rule1['action'], $rule2['action']) &&
-               $this->matchesAny($rule1['resource'], $rule2['resource']) &&
-               $this->matchesAny($rule1['environment'], $rule2['environment']);
+    private function conditionsMatch(Rule $rule1, Rule $rule2): bool {
+        return $this->matchesAny($rule1->getSubject(), $rule2->getSubject()) &&
+               $this->matchesAny($rule1->getAction(), $rule2->getAction()) &&
+               $this->matchesAny($rule1->getResource(), $rule2->getResource()) &&
+               $this->matchesAny($rule1->getEnvironment(), $rule2->getEnvironment());
     }
 
     /**
      * Check if two rules overlap in terms of subject, action, and resource.
-     * @param array $rule1
-     * @param array $rule2
+     * @param Rule $rule1
+     * @param Rule $rule2
      * @return bool
      */
-    private function conditionsOverlap(array $rule1, array $rule2): bool {
-        return ($this->matchesAny($rule1['subject'], $rule2['subject']) &&
-                $this->matchesAny($rule1['action'], $rule2['action']) &&
-                $this->matchesAny($rule1['resource'], $rule2['resource']));
+    private function conditionsOverlap(Rule $rule1, Rule $rule2): bool {
+        return ($this->matchesAny($rule1->getSubject(), $rule2->getSubject()) &&
+                $this->matchesAny($rule1->getAction(), $rule2->getAction()) &&
+                $this->matchesAny($rule1->getResource(), $rule2->getResource()));
     }
 
     /**

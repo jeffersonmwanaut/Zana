@@ -63,7 +63,7 @@ class FormBuilder {
                 $form->addField($select);
             } else {
                 // Create a standard input field
-                $input = new Input($propertyName, $propertyName, $inputType, $label);
+                $input = new Input($inputType, $propertyName, $propertyName, $label);
                 $form->addField($input);
             }
         }

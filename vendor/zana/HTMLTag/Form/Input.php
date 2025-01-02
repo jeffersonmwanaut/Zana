@@ -3,7 +3,7 @@
 class Input extends HTMLTag {
     protected $label;
 
-    public function __construct($id, $name, $type = 'text', Label $label = null) {
+    public function __construct($type = 'text', $id = '', $name = '', Label $label = null) {
         parent::__construct('input'); // Set the tag to 'input'
         $this->setType($type);
         $this->setId($id);

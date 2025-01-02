@@ -68,10 +68,6 @@ class FormBuilder {
             }
         }
 
-        // Add a submit button
-        $submitButton = new Button('Submit');
-        $form->addButton($submitButton);
-
         return $form;
     }
 }

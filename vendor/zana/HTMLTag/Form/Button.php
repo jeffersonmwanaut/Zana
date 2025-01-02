@@ -4,7 +4,7 @@ class Button extends HTMLTag {
     public function __construct($type = 'submit', string $text = 'submit') {
         parent::__construct('button');
         $this->setType($type);
-        $this->addContent($content);
+        $this->addContent($text);
     }
 
     public function setType($type) {

@@ -42,7 +42,6 @@ class Form extends HTMLTag {
     }
 
     public function clearControls() {
-        $this->clearContent(); // Clear the content of the form
-        return $this; // Allow method chaining
+        return $this->clearContent();
     }
 }

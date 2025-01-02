@@ -8,7 +8,9 @@ class Input extends HTMLTag {
         $this->setType($type);
         $this->setId($id);
         $this->setName($name);
-        $this->label = $label; // Store the Label object
+        if ($label) {
+            $this->label = $label; // Store the Label object
+        }
     }
 
     public function setType($type) {

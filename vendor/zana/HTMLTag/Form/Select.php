@@ -3,7 +3,7 @@
 class Select extends HTMLTag {
     protected $label;
 
-    public function __construct($id, $name, Label $label = null) {
+    public function __construct($id = '', $name = '', Label $label = null) {
         parent::__construct('select');
         $this->setAttribute('name', $name);
         $this->selectedValue = $selectedValue;

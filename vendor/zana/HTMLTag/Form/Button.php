@@ -1,7 +1,7 @@
 <?php namespace Zana\HTMLTag\Form;
 
 class Button extends HTMLTag {
-    public function __construct($type = 'submit', string $content = 'submit') {
+    public function __construct($type = 'submit', string $text = 'submit') {
         parent::__construct('button');
         $this->setType($type);
         $this->addContent($content);

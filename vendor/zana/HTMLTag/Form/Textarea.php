@@ -7,6 +7,7 @@ class Textarea extends HTMLTag {
         $this->setName($name);
         $this->setRows($rows);
         $this->setCols($cols);
+        $this->setAttribute('class', 'form-control');
         if ($label) {
             $this->label = $label;
         }

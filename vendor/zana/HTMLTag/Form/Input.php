@@ -8,6 +8,7 @@ class Input extends HTMLTag {
         $this->setType($type);
         $this->setId($id);
         $this->setName($name);
+        $this->setAttribute('class', 'form-control');
         if ($label) {
             $this->label = $label; // Store the Label object
         }

@@ -1,10 +1,13 @@
 <?php namespace Zana\HTMLTag\Form;
 
+use Zana\HTMLTag\Div;
+
 class Form extends HTMLTag {
     public function __construct($action = '', $method = 'POST') {
-        parent::__construct('form'); // Set the tag to 'form'
-        $this->setAction($action); // Set the form action
-        $this->setMethod($method); // Set the form method
+        parent::__construct('form');
+        $this->setAction($action);
+        $this->setMethod($method);
+        $this->setAttribute('class', 'form');
     }
 
     public function setAction($action) {
@@ -16,29 +19,53 @@ class Form extends HTMLTag {
     }
 
     public function addField(Input $input) {
-        $this->addContent($input);
+        $div = new Div();
+        $div->setAttribute('class', 'mb-3');
+        $div->addContent($input);
+        $this->addContent($div);
         return $this; // Allow method chaining
     }
 
     public function addButton(Button $button) {
+        $div = new Div();
+        $div->setAttribute('class', 'mb-3');
+        $div->addContent($input);
         $this->addContent($button);
-        return $this; // Allow method chaining
+        return $this;
     }
 
     public function clearFields() {
-        // Filter out all Input objects from the content
+        // Filter out all divs that contain Input objects from the content
         $this->content = array_filter($this->content, function($item) {
-            return !($item instanceof Input); // Keep only non-Input items
+            // Check if the item is a Div and contains an Input
+            if ($item instanceof Div) {
+                // Check if the Div contains an Input
+                foreach ($item->getContent() as $contentItem) {
+                    if ($contentItem instanceof Input) {
+                        return false; // Remove this Div
+                    }
+                }
+            }
+            return true; // Keep non-Div items and Divs without Inputs
         });
-        return $this; // Allow method chaining
+        return $this;
     }
 
     public function clearButtons() {
-        // Filter out all Button objects from the content
+        // Filter out all divs that contain Button objects from the content
         $this->content = array_filter($this->content, function($item) {
-            return !($item instanceof Button); // Keep only non-Button items
+            // Check if the item is a Div and contains a Button
+            if ($item instanceof Div) {
+                // Check if the Div contains a Button
+                foreach ($item->getContent() as $contentItem) {
+                    if ($contentItem instanceof Button) {
+                        return false; // Remove this Div
+                    }
+                }
+            }
+            return true; // Keep non-Div items and Divs without Buttons
         });
-        return $this; // Allow method chaining
+        return $this;
     }
 
     public function clearControls() {

@@ -6,6 +6,7 @@ class Select extends HTMLTag {
     public function __construct($id = '', $name = '', Label $label = null) {
         parent::__construct('select');
         $this->setAttribute('name', $name);
+        $this->setAttribute('class', 'form-select');
         $this->selectedValue = $selectedValue;
 
         if ($label) {

@@ -48,33 +48,14 @@ class FormBuilder {
                 $managerClass = str_replace('Entity', 'Manager', $propertyType->getName());
                 if (class_exists($managerClass)) {
                     $manager = new $managerClass();
-                    $relatedEntities = $manager->read(); // Fetch all related entities
+                    $relatedEntities = $manager->read()->all(); // Fetch all related entities
                     foreach ($relatedEntities as $relatedEntity) {
                         $value = $relatedEntity->getId(); // Assuming each related entity has an `getId()` method
 
-                        // Use reflection to find a suitable property for the display text
-                        $relatedReflectionClass = new \ReflectionClass($relatedEntity);
-                        $text = null;
+                        // Use the optionDisplayText method to get the display text
+                        $text = $relatedEntity->optionDisplayText();
 
-                        // Check for a property that could serve as a display name
-                        foreach ($relatedReflectionClass->getProperties() as $relatedProperty) {
-                            $relatedPropertyName = $relatedProperty->getName();
-                            // Check if the property has a getter method
-                            $getterMethod = 'get' . ucfirst($relatedPropertyName);
-                            if ($relatedReflectionClass->hasMethod($getterMethod)) {
-                                $getter = $relatedReflectionClass->getMethod($getterMethod);
-                                if ($getter->isPublic()) {
-                                    $text = $relatedEntity->$getterMethod(); // Call the getter method
-                                    break; // Use the first suitable property found
-                                }
-                            }
-                        }
-
-                        // Fallback to using the ID if no suitable property is found
-                        if ($text === null) {
-                            $text = (string)$value; // Use the ID as the text
-                        }
-
+                        // Add the option to the select input
                         $select->addOption(new Option($value, $text));
                     }
                 }

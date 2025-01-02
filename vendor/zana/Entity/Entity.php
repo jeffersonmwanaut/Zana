@@ -24,6 +24,11 @@ class Entity
         return [];
     }
 
+    public function optionDisplayText(): string
+    {
+        return (string)$this->id;
+    }
+
     /**
      * This method assigns values from table columns to the object properties
      * To make it easy I set some simple rules :<br>

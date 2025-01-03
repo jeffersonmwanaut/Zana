@@ -31,7 +31,7 @@ class Form extends HTMLTag {
         $div = new Div();
         $div->setAttribute('class', 'mb-3');
         $div->addContent($button);
-        $this->addContent($button);
+        $this->addContent($div);
         return $this;
     }
 

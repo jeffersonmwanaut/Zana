@@ -1,9 +1,7 @@
 <?php namespace Zana\HTMLTag\Form;
 
-use Zana\Entity;
-
 class FormBuilder {
-    public static function createFormForEntity(Entity $entity, $action = '', $method = 'POST') {
+    public static function createFormForEntity($entity, $action = '', $method = 'POST') {
         $form = new Form($action, $method);
         
         // Use reflection to get the properties of the entity

@@ -1,5 +1,7 @@
 <?php namespace Zana\HTMLTag\Table;
 
+use Zana\HTMLTag\HTMLtag;
+
 class Table extends HTMLTag {
     public function __construct() {
         parent::__construct('table');

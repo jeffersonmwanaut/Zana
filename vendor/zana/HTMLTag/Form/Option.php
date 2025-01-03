@@ -1,5 +1,7 @@
 <?php namespace Zana\HTMLTag\Form;
 
+use Zana\HTMLTag\HTMLtag;
+
 class Option extends HTMLTag {
     public function __construct($value, $text, $isSelected = false) {
         parent::__construct('option'); // Set the tag to 'option'

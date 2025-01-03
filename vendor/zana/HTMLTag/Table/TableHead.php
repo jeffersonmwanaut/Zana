@@ -1,5 +1,7 @@
 <?php namespace Zana\HTMLTag\Table;
 
+use Zana\HTMLTag\HTMLtag;
+
 class TableHead extends HTMLTag {
     public function __construct() {
         parent::__construct('thead'); // Set the tag to 'thead'

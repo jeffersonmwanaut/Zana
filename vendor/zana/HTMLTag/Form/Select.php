@@ -1,5 +1,7 @@
 <?php namespace Zana\HTMLTag\Form;
 
+use Zana\HTMLTag\HTMLtag;
+
 class Select extends HTMLTag {
     protected $label;
 

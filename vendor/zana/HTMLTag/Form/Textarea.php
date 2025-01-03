@@ -1,5 +1,7 @@
 <?php namespace Zana\HTMLTag\Form;
 
+use Zana\HTMLTag\HTMLtag;
+
 class Textarea extends HTMLTag {
     public function __construct($id = '', $name = '', Label $label = null, $rows = 4, $cols = 50) {
         parent::__construct('textarea'); // Set the tag to 'textarea'

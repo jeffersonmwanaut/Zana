@@ -1,5 +1,6 @@
 <?php namespace Zana\HTMLTag\Form;
 
+use Zana\HTMLTag\HTMLtag;
 use Zana\HTMLTag\Div;
 
 class Form extends HTMLTag {

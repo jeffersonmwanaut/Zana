@@ -16,6 +16,11 @@ class HTMLTag {
         return $this;
     }
 
+    public function getAttribute($name)
+    {
+        return $this->attributes[$name];
+    }
+
     public function addContent($content) {
         if (!$this->selfClosing) { // Only add content if the tag is not self-closing
             $this->content[] = $content;

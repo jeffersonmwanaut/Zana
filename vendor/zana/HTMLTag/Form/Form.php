@@ -19,10 +19,10 @@ class Form extends HTMLTag {
         return $this->setAttribute('method', $method);
     }
 
-    public function addField($input) {
+    public function addField($field) {
         $div = new Div();
         $div->setAttribute('class', 'mb-3');
-        $div->addContent($input);
+        $div->addContent($field);
         $this->addContent($div);
         return $this;
     }

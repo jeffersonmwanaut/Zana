@@ -38,6 +38,6 @@ class Textarea extends HTMLTag {
         // Render the input element using the HTMLTag's render method
         $textareaHtml = parent::render(); // Use the parent render method for the textarea
 
-        return $labelHtml . $inputHtml; // Combine label and textarea HTML
+        return $labelHtml . $textareaHtml; // Combine label and textarea HTML
     }
 }

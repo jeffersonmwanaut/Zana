@@ -18,7 +18,7 @@ class HTMLTag {
 
     public function getAttribute($name)
     {
-        return $this->attributes[$name];
+        return array_key_exists($name, $attributes) ? $attributes[$name] : null;
     }
 
     public function addContent($content) {

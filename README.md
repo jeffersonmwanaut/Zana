@@ -1015,25 +1015,36 @@ To use the Policy class, you would typically:
 
 ```php
 // Load the policy configuration
-$policy = new Policy('policy.json'); // Adjust the path to your policy config file
+$policy = new Policy('path/to/policy.json');
 ```
 
 3. Use the `checkAccess` method to determine if a specific access request is allowed or denied based on the loaded policies.
 
 ```php
 // Assuming that the logged user has the following access
-$accessRequest = new Rule('admin ', 'delete', 'user', 'production');
+$accessRequest = new Rule(
+    ['admin'], // subject
+    ['delete'], // action
+    ['user'], // resource
+    ['production'], // environment
+    ['confidential'] // confidentiality level as an array
+);
 
 // Check access
 $access = $policy->checkAccess($accessRequest);
 echo "Access for admin to delete user in production: " . ($access ? 'Allowed' : 'Denied') . "\n";
 
 // Assuming that another logged user has the following access
-$accessRequest2 = new Rule('editor', 'view', 'document', 'production');
+$accessRequest2 = new Rule(
+    ['editor'], // subject
+    ['view'], // action
+    ['document'] // resource
+    // environment and confidentialityLevel are omitted
+);
 
 // Check access
 $access2 = $policy->checkAccess($accessRequest2);
-echo "Access for editor to view document in production: " . ($access2 ? 'Allowed' : 'Denied') . "\n";
+echo "Access for editor to view document: " . ($access2 ? 'Allowed' : 'Denied') . "\n";
 ```
 
 4. Optionally, call `detectConflicts` to identify any conflicting rules in your policies.
@@ -1055,7 +1066,7 @@ When you run the above script, you should see output similar to the following:
 
 ```html
 Access for admin to delete user in production: Denied
-Access for editor to view document in production: Allowed
+Access for editor to view document: Allowed
 No conflicts detected in policies.
 ```
 
@@ -1071,20 +1082,22 @@ No conflicts detected in policies.
                 {
                     "subject": ["super_admin", "admin"],
                     "action": ["*"],
-                    "resource": ["*"],
-                    "environment": ["*", "production"]
+                    "resource": ["*"]
+                    // environment and confidentialityLevel are omitted
                 },
                 {
                     "subject": "editor",
                     "action": ["view", "edit"],
                     "resource": ["*"],
-                    "environment": "production"
+                    "environment": "production",
+                    "confidentialityLevel": ["confidential"]
                 },
                 {
                     "subject": "guest",
                     "action": "view",
                     "resource": "*",
-                    "environment": "production"
+                    "environment": ["production"],
+                    "confidentialityLevel": ["public"]
                 }
             ]
         },
@@ -1096,7 +1109,7 @@ No conflicts detected in policies.
                     "subject": "admin",
                     "action": "delete",
                     "resource": "user",
-                    "environment": "*"
+                    // environment and confidentialityLevel are omitted
                 }
             ]
         }

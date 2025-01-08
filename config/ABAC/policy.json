@@ -7,20 +7,21 @@
                 {
                     "subject": ["super_admin", "admin"],
                     "action": ["*"],
-                    "resource": ["*"],
-                    "environment": ["*", "production"]
+                    "resource": ["*"]
                 },
                 {
                     "subject": "editor",
                     "action": ["view", "edit"],
                     "resource": ["*"],
-                    "environment": "production"
+                    "environment": ["production"],
+                    "confidentialityLevel": ["confidential"]
                 },
                 {
                     "subject": "guest",
                     "action": "view",
                     "resource": "*",
-                    "environment": "production"
+                    "environment": ["production"],
+                    "confidentialityLevel": ["public"]
                 }
             ]
         },
@@ -31,8 +32,7 @@
                 {
                     "subject": "admin",
                     "action": "delete",
-                    "resource": "user",
-                    "environment": "*"
+                    "resource": "user"
                 }
             ]
         }

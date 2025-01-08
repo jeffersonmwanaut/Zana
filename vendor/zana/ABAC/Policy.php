@@ -99,9 +99,13 @@ class Policy {
         if (!$this->matchesAny($access->getResource(), $rule->getResource())) {
             return false; // Resource does not match
         }
-        // Check if the environment matches
-        if (!$this->matchesAny($access->getEnvironment(), $rule->getEnvironment())) {
+        // Check if the environment matches (if specified in the rule)
+        if (!empty($rule->getEnvironment() && !$this->matchesAny($access->getEnvironment(), $rule->getEnvironment()))) {
             return false; // Environment does not match
+        }
+        // Check if the confidentiality level matches (if specified in the rule)
+        if (!empty($rule->getConfidentialityLevel()) && !$this->matchesAny($access->getConfidentialityLevel(), $rule->getConfidentialityLevel())) {
+            return false; // Confidentiality level does not match
         }
         return true; // All conditions matched
     }

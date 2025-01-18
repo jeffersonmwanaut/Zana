@@ -29,6 +29,7 @@ class Page
     protected $output;
     protected $outputFormat;
     protected $module;
+    protected $controller;
 
     /**
      * Page constructor.
@@ -111,11 +112,11 @@ class Page
      * @throws HttpException
      */
     public function setView($view): self
-    {        
+    {
         if (!is_string($view) || empty($view)) {
             throw new HttpException("Invalid view", HttpException::INVALID_VIEW);
         }
-        $this->view = Config::get('path')['root'] . '/src/' . $this->module . '/view/' . $view . '.php';
+        $this->view = Config::get('path')['root'] . '/src/' . $this->module . '/view/' . $this->controller . '/' . $view . '.php';
         return $this;
     }
 
@@ -252,6 +253,12 @@ class Page
     public function setModule($module)
     {
         $this->module = $module;
+        return $this;
+    }
+
+    public function setController($controller)
+    {
+        $this->controller = $controller;
         return $this;
     }
 }

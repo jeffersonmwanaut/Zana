@@ -41,7 +41,10 @@ class Controller
 
     public function __construct()
     {
-        $this->page = (new Page())->setModule(explode('\\', get_class($this))[0]);
+        $controllerClassParts = explode('\\', get_class($this));
+        $this->page = (new Page())->setModule($controllerClassParts[0])
+                                  ->setController(preg_replace('#Controller#', '', end($controllerClassParts)));
+
         $this->httpRequest = new HttpRequest();
         $this->httpResponse = new HttpResponse();
         $this->session = Session::class;

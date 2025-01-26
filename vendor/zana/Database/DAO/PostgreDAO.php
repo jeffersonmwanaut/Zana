@@ -258,18 +258,40 @@ class PostgreDAO extends DAO
 
         if (!empty($conditions)) {
             foreach ($conditions as $condition => $value) {
+                if($condition === 'id') {
+                    if(is_array($value)) {
+                        foreach($value as $val) {
+                            $paramName = "{$condition}_{$paramIndex}"; // Unique parameter name
+                            $val = $val ?? ' NULL ';
+                            $operator = '=';
+                            $queryConditionString .= sprintf("\"%s\" %s :%s ", $condition, $operator, $paramName);
+                            $queryConditions[$paramName] = "$val";
+                            $paramIndex++;
+                        }
+                    } else {
+                        $paramName = "{$condition}_{$paramIndex}"; // Unique parameter name
+                        $value = $value ?? ' NULL ';
+                        $operator = '=';
+                        $queryConditionString .= sprintf("\"%s\" %s :%s ", $condition, $operator, $paramName);
+                        $queryConditions[$paramName] = "$value";
+                        $paramIndex++;
+                    }
+                    break;
+                }
                 if(is_array($value)) {
                     foreach($value as $val) {
                         $paramName = "{$condition}_{$paramIndex}"; // Unique parameter name
-                        $queryConditionString .= "\"$condition\" LIKE :$paramName OR ";
                         $val = $val ?? ' NULL ';
+                        $operator = 'LIKE';
+                        $queryConditionString .= sprintf("\"%s\" %s :%s OR ", $condition, $operator, $paramName);
                         $queryConditions[$paramName] = "%$val%";
                         $paramIndex++;
                     }
                 } else {
                     $paramName = "{$condition}_{$paramIndex}"; // Unique parameter name
-                    $queryConditionString .= "\"$condition\" LIKE :$paramName OR ";
                     $value = $value ?? ' NULL ';
+                    $operator = 'LIKE';
+                    $queryConditionString .= sprintf("\"%s\" %s :%s OR ", $condition, $operator, $paramName);
                     $queryConditions[$paramName] = "%$value%"; // Use LIKE with wildcards
                     $paramIndex++;
                 }

@@ -24,11 +24,6 @@ class Entity
         return [];
     }
 
-    public function optionDisplayText(): string
-    {
-        return (string)$this->id;
-    }
-
     /**
      * This method assigns values from table columns to the object properties
      * To make it easy I set some simple rules :<br>
@@ -49,7 +44,16 @@ class Entity
     public function hydrate(array $data)
     {
         foreach ($data as $property => $value) {
-            if (substr($property, -3) == '_id') {
+
+            $isForeignKey = substr($property, -3) === '_id' ? true : false;
+            $property = str_replace('_id', '', $property);
+            $property = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $property))));
+
+            if (in_array($property, $this->ignoreProperties())) {
+                continue;
+            }
+
+            if ($isForeignKey) {
                 // Property is an object
                 /**
                  * For a property to be detected as an object, its type must be explicitly added when declared in the class.
@@ -57,13 +61,11 @@ class Entity
                  * In addition, the column name in the database must end with "_id".
                  * Example: user_id
                  */
-                $property = str_replace('_id', '', $property);
-                //$objectProperty = str_replace(' ', '', str_replace('_', ' ', $property));
-                $objectProperty = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $property))));
+                
                 $reflectionClass = new \ReflectionClass($this);
                 $reflectionClassProperties = $reflectionClass->getProperties();
                 foreach ($reflectionClassProperties as $reflectionClassProperty) {
-                    if ($reflectionClassProperty->getName() == $objectProperty) {
+                    if ($reflectionClassProperty->getName() == $property) {
                         $type = $reflectionClassProperty->getType();
                         if ($type instanceof \ReflectionUnionType) {
                             $foundType = false;
@@ -89,7 +91,7 @@ class Entity
                                 }
                             }
                             if (!$foundType) {
-                                throw new Exception("No valid type found for property '$objectProperty'");
+                                throw new Exception("No valid type found for property '$property'");
                             }
                         } else {
                             // Handle single type
@@ -104,7 +106,7 @@ class Entity
                                         if ($object instanceof $objectType) {
                                             $value = $object;
                                         } else {
-                                            throw new Exception("Invalid object type for property '$objectProperty'");
+                                            throw new Exception("Invalid object type for property '$property'");
                                         }
                                     }
                                 }
@@ -115,7 +117,7 @@ class Entity
                 }
             }
             // Substitute underscores for whitespaces, capitalize the first letter of each word and remove whitespaces.
-            $setter = 'set' . str_replace(' ', '', ucwords(str_replace('_', ' ', $property)));
+            $setter = 'set' . ucwords($property);
             if (method_exists($this, $setter)) {
                 if(!$value instanceof \DateTime) {
                     if (!is_null($value) && is_string($value)) {
